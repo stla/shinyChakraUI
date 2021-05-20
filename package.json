@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "dependencies": {
+    "@chakra-ui/react": "^1.0.0",
+"framer-motion": "^4.0.0",
+"@emotion/react": "^11.0.0",
+"@emotion/styled": "^11.0.0",
+"react-icons": "^4.0.0",
+"react-html-parser": "^2.0.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2",
+    "@babel/core": "^7.2.0",
+    "babel-loader": "^8.0.4",
+    "@babel/preset-env": "^7.2.0",
+    "@babel/preset-react": "^7.0.0",
+    "css-loader": "^5.0.1",
+    "style-loader": "^2.0.0"
+  },
+  "scripts": {
+    "watch": "webpack --watch",
+    "build": "webpack"
+  }
+}

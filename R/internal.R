@@ -2,6 +2,14 @@ dropNulls <- function(x){
   Filter(Negate(is.null), x)
 }
 
+isChakraBox <- function(x){
+  inherits(x, "box")
+}
+
+isChakraButton <- function(x){
+  inherits(x, "button")
+}
+
 chakraIcons <- function(){
   c(
     "Add",

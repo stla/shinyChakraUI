@@ -17,10 +17,19 @@ chakraInput <- function(inputId, configuration, default = NULL) {
     ),
     default = default,
     configuration = configuration,
-    container = htmltools::tags$div
+    container = tags$div
   )
 }
 
+#' Title
+#'
+#' @param text
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
 chakraBox <- function(text, ...){
   box <- list(
     props = list(...),
@@ -30,10 +39,16 @@ chakraBox <- function(text, ...){
   box
 }
 
-isChakraBox <- function(x){
-  inherits(x, "box")
-}
-
+#' Title
+#'
+#' @param icon
+#' @param boxSize
+#' @param color
+#'
+#' @return
+#' @export
+#'
+#' @examples
 chakraIcon <- function(icon, boxSize = "1em", color = "currentColor"){
   icon <- match.arg(icon, chakraIcons())
   list(
@@ -45,6 +60,22 @@ chakraIcon <- function(icon, boxSize = "1em", color = "currentColor"){
   )
 }
 
+#' Title
+#'
+#' @param text
+#' @param id
+#' @param colorScheme
+#' @param isFullWidth
+#' @param leftIcon
+#' @param rightIcon
+#' @param size
+#' @param variant
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
 chakraButton <- function(
   text,
   id = NULL,
@@ -135,6 +166,18 @@ chakraAlertInput <- function(inputId) {
   )
 }
 
+#' Title
+#'
+#' @param closeOnEsc
+#' @param colorScheme
+#' @param isCentered
+#' @param motionPreset
+#' @param size
+#'
+#' @return
+#' @export
+#'
+#' @examples
 chakraAlertDialogOptions <- function(
   closeOnEsc = TRUE,
   colorScheme = "red",
@@ -157,7 +200,16 @@ chakraAlertDialogOptions <- function(
   )
 }
 
-chakraAlertDialog <- function(
+#' Title
+#'
+#' @param inputId
+#'
+#' @return
+#' @export
+#'
+#' @examples
+chakraAlertDialogInput <- function(
+  inputId,
   options = chakraAlertDialogOptions(),
   openButton,
   header,
@@ -165,27 +217,27 @@ chakraAlertDialog <- function(
   cancelButton = chakraButton("Cancel", id = "cancel"),
   otherFooterButtons = NULL
 ){
-  if(!inherits(openButton, "button")){
+  if(!isChakraButton(openButton)){
     stop("")
   }
   openButton[["element"]] <- "OpenButton"
   if(!is.null(cancelButton)){
-    if(!inherits(cancelButton, "button")){
+    if(!isChakraButton(cancelButton)){
       stop("")
     }
     cancelButton[["element"]] <- "CancelButton"
   }
   if(!is.null(otherFooterButtons)){
-    if(inherits(otherFooterButtons, "button")){
+    if(isChakraButton(otherFooterButtons)){
       otherFooterButtons <- list(otherFooterButtons)
     }else{
-      isListOfButtons <- all(vapply(otherFooterButtons, function(x){
-        inherits(x, "button")
-      }, FUN.VALUE = logical(1L)))
+      isListOfButtons <-
+        all(vapply(otherFooterButtons, isChakraButton, FUN.VALUE = logical(1L)))
       if(!isListOfButtons){
         stop("")
       }
     }
+    otherFooterButtons <- lapply(otherFooterButtons, unclass)
   }
   if(!isChakraBox(header)){
     stop("")
@@ -195,11 +247,11 @@ chakraAlertDialog <- function(
   }
   header[["element"]] <- "AlertDialogHeader"
   body[["element"]] <- "AlertDialogBody"
-  list(
+  component <- list(
     element = "Fragment",
     props = list(),
     children = list(
-      openButton,
+      unclass(openButton),
       list(
         element = "AlertDialog",
         props = list(),
@@ -212,101 +264,14 @@ chakraAlertDialog <- function(
                 element = "AlertDialogContent",
                 props = list(),
                 children = list(
-                  header,
-                  body,
+                  unclass(header),
+                  unclass(body),
                   list(
                     element = "AlertDialogFooter",
                     props = list(),
                     children = append(
                       otherFooterButtons,
-                      dropNulls(list(cancelButton))
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-    )
-  )
-}
-
-#' Title
-#'
-#' @param inputId
-#'
-#' @return
-#' @export
-#'
-#' @examples
-chakraAlertDialogInput <- function(inputId){
-  component <- list(
-    element = "Fragment",
-    props = list(),
-    children = list(
-      list(
-        element = "OpenButton",
-        props = list(
-          colorScheme = "red"
-        ),
-        children = list(
-          "Delete customer"
-        )
-      ),
-      list(
-        element = "AlertDialog",
-        props = list(),
-        children = list(
-          list(
-            element = "AlertDialogOverlay",
-            props = list(),
-            children = list(
-              list(
-                element = "AlertDialogContent",
-                props = list(),
-                children = list(
-                  list(
-                    element = "AlertDialogHeader",
-                    props = list(
-                      fontSize = "lg",
-                      fontWeight = "bold"
-                    ),
-                    children = list(
-                      "Delete customer"
-                    )
-                  ),
-                  list(
-                    element = "AlertDialogBody",
-                    props = list(),
-                    children = list(
-                      "Are you sure? You can't undo this action afterwards"
-                    )
-                  ),
-                  list(
-                    element = "AlertDialogFooter",
-                    props = list(),
-                    children = list(
-                      list(
-                        element = "CancelButton",
-                        props = list(
-                          id = "cancel"
-                        ),
-                        children = list(
-                          "Cancel"
-                        )
-                      ),
-                      list(
-                        element = "Button",
-                        props = list(
-                          id = "delete",
-                          colorScheme = "red",
-                          ml = 3
-                        ),
-                        children = list(
-                          "Delete"
-                        )
-                      )
+                      dropNulls(list(unclass(cancelButton)))
                     )
                   )
                 )
@@ -322,6 +287,89 @@ chakraAlertDialogInput <- function(inputId){
     configuration = list(widget = "alertdialog", component = component)
   )
 }
+
+# chakraAlertDialogInput <- function(inputId){
+#   component <- list(
+#     element = "Fragment",
+#     props = list(),
+#     children = list(
+#       list(
+#         element = "OpenButton",
+#         props = list(
+#           colorScheme = "red"
+#         ),
+#         children = list(
+#           "Delete customer"
+#         )
+#       ),
+#       list(
+#         element = "AlertDialog",
+#         props = list(),
+#         children = list(
+#           list(
+#             element = "AlertDialogOverlay",
+#             props = list(),
+#             children = list(
+#               list(
+#                 element = "AlertDialogContent",
+#                 props = list(),
+#                 children = list(
+#                   list(
+#                     element = "AlertDialogHeader",
+#                     props = list(
+#                       fontSize = "lg",
+#                       fontWeight = "bold"
+#                     ),
+#                     children = list(
+#                       "Delete customer"
+#                     )
+#                   ),
+#                   list(
+#                     element = "AlertDialogBody",
+#                     props = list(),
+#                     children = list(
+#                       "Are you sure? You can't undo this action afterwards"
+#                     )
+#                   ),
+#                   list(
+#                     element = "AlertDialogFooter",
+#                     props = list(),
+#                     children = list(
+#                       list(
+#                         element = "CancelButton",
+#                         props = list(
+#                           id = "cancel"
+#                         ),
+#                         children = list(
+#                           "Cancel"
+#                         )
+#                       ),
+#                       list(
+#                         element = "Button",
+#                         props = list(
+#                           id = "delete",
+#                           colorScheme = "red",
+#                           ml = 3
+#                         ),
+#                         children = list(
+#                           "Delete"
+#                         )
+#                       )
+#                     )
+#                   )
+#                 )
+#               )
+#             )
+#           )
+#         )
+#       )
+#     )
+#   )
+#   chakraInput(
+#     inputId = inputId,
+#     configuration = list(widget = "alertdialog", component = component)
+#   )
+# }
 
 #' <Add Title>
 #'

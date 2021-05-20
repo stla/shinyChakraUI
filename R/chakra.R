@@ -5,19 +5,61 @@
 #' @importFrom reactR createReactShinyInput
 #' @importFrom htmltools htmlDependency tags
 chakraInput <- function(inputId, configuration, default = NULL) {
-  reactR::createReactShinyInput(
-    inputId,
-    "chakra",
-    htmltools::htmlDependency(
+  createReactShinyInput(
+    inputId = inputId,
+    class = "chakra",
+    dependencies = htmlDependency(
       name = "chakra-input",
       version = "1.0.0",
       src = "www/shinyChakraUI/chakra",
       package = "shinyChakraUI",
       script = "chakra.js"
     ),
-    default,
+    default = default,
     configuration = configuration,
-    htmltools::tags$div
+    container = htmltools::tags$div
+  )
+}
+
+chakraBox <- function(text, ...){
+  list(
+    props = list(...),
+    children = list(text)
+  )
+}
+
+chakraIcon <- function(icon, boxSize = "1em", color = "currentColor"){
+  icon <- match.arg(icon, chakraIcons())
+  list(
+    element = paste0(icon, "Icon"),
+    props = list(
+      boxSize = boxSize,
+      color = color
+    )
+  )
+}
+
+chakraButton <- function(
+  text,
+  colorScheme = "gray",
+  isFullWidth = FALSE,
+  leftIcon = NULL,
+  rightIcon = NULL,
+  ...
+){
+  boxprops <- list(...)
+  list(
+    element = "Button",
+    props = append(
+      boxprops,
+      dropNulls(list(
+        colorScheme = match.arg(colorScheme, chakraColorSchemes()),
+        isFullWidth = isFullWidth,
+        leftIcon = leftIcon,
+        rightIcon = rightIcon
+      ))
+    ),
+    children = list(text)
   )
 }
 
@@ -77,6 +119,27 @@ chakraAlertInput <- function(inputId) {
   )
 }
 
+chakraAlertDialogOptions <- function(
+  closeOnEsc = TRUE,
+  colorScheme = "red",
+  isCentered = TRUE,
+  motionPreset = "scale",
+  size = "md"
+){
+  list(
+    closeOnEsc = closeOnEsc,
+    colorScheme = match.arg(colorScheme, chakraColorSchemes()),
+    isCentered = isCentered,
+    motionPreset = match.arg(
+      motionPreset,
+      c("scale", "none", "slideInBottom", "slideInRight")
+    ),
+    size = match.arg(
+      size,
+      c("sm", "md", "lg", "xl", "2xl", "full", "xs", "3xl", "4xl", "5xl", "6xl")
+    )
+  )
+}
 
 #' Title
 #'

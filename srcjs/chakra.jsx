@@ -24,6 +24,66 @@ import {
   MenuCommand,
   MenuDivider,
 } from "@chakra-ui/react";
+import {
+  AddIcon,
+  ArrowBackIcon,
+  ArrowDownIcon,
+  ArrowForwardIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  ArrowUpDownIcon,
+  AtSignIcon,
+  AttachmentIcon,
+  BellIcon,
+  CalendarIcon,
+  ChatIcon,
+  CheckIcon,
+  CheckCircleIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  CloseIcon,
+  CopyIcon,
+  DeleteIcon,
+  DownloadIcon,
+  DragHandleIcon,
+  EditIcon,
+  EmailIcon,
+  ExternalLinkIcon,
+  HamburgerIcon,
+  InfoIcon,
+  InfoOutlineIcon,
+  LinkIcon,
+  LockIcon,
+  MinusIcon,
+  MoonIcon,
+  NotAllowedIcon,
+  PhoneIcon,
+  PlusSquareIcon,
+  QuestionIcon,
+  QuestionOutlineIcon,
+  RepeatIcon,
+  RepeatClockIcon,
+  SearchIcon,
+  Search2Icon,
+  SettingsIcon,
+  SmallAddIcon,
+  SmallCloseIcon,
+  SpinnerIcon,
+  StarIcon,
+  SunIcon,
+  TimeIcon,
+  TriangleDownIcon,
+  TriangleUpIcon,
+  UnlockIcon,
+  UpDownIcon,
+  ViewIcon,
+  ViewOffIcon,
+  WarningIcon,
+  WarningTwoIcon
+} from "@chakra-ui/icons";
 
 //const evalComponent = new Function("React", "component", "return component");
 
@@ -33,6 +93,64 @@ const OpenButton = Button;
 
 const ChakraComponents = {
   Fragment,
+  AddIcon,
+  ArrowBackIcon,
+  ArrowDownIcon,
+  ArrowForwardIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  ArrowUpDownIcon,
+  AtSignIcon,
+  AttachmentIcon,
+  BellIcon,
+  CalendarIcon,
+  ChatIcon,
+  CheckIcon,
+  CheckCircleIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  CloseIcon,
+  CopyIcon,
+  DeleteIcon,
+  DownloadIcon,
+  DragHandleIcon,
+  EditIcon,
+  EmailIcon,
+  ExternalLinkIcon,
+  HamburgerIcon,
+  InfoIcon,
+  InfoOutlineIcon,
+  LinkIcon,
+  LockIcon,
+  MinusIcon,
+  MoonIcon,
+  NotAllowedIcon,
+  PhoneIcon,
+  PlusSquareIcon,
+  QuestionIcon,
+  QuestionOutlineIcon,
+  RepeatIcon,
+  RepeatClockIcon,
+  SearchIcon,
+  Search2Icon,
+  SettingsIcon,
+  SmallAddIcon,
+  SmallCloseIcon,
+  SpinnerIcon,
+  StarIcon,
+  SunIcon,
+  TimeIcon,
+  TriangleDownIcon,
+  TriangleUpIcon,
+  UnlockIcon,
+  UpDownIcon,
+  ViewIcon,
+  ViewOffIcon,
+  WarningIcon,
+  WarningTwoIcon,
   ChakraProvider,
   Button,
   CancelButton,
@@ -60,15 +178,21 @@ const ChakraComponents = {
 };
 
 const chakraComponent = (component, patch) => {
+  let props = component.props;
+  for(const key in props){
+    if(props[key].element){
+      props[key] = React.createElement(ChakraComponents[props[key].element], props[key].props);
+    }
+  }
   if(component.children !== undefined){
-    let props = $.extend(component.props, patch[component.element]);
-    props.children = component.children.map((x) => {return chakraComponent(x, patch);});
-    return React.createElement(ChakraComponents[component.element], props);
+    let newprops = $.extend(props, patch[component.element]);
+    newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
+    return React.createElement(ChakraComponents[component.element], newprops);
   }else{
     if(component.element === undefined){
       return component;
     }else{
-      return React.createElement(ChakraComponents[component.element], component.props);
+      return React.createElement(ChakraComponents[component.element], props);
     }
   }
 };
@@ -105,7 +229,8 @@ const ChakraAlert = ({component}) => {
     AlertDialog: {
       isOpen: isOpen,
       leastDestructiveRef: cancelRef,
-      onClose: onClose
+      onClose: onClose,
+      onEsc: () => {setShinyValue("esc");}
     }
   };
   return (

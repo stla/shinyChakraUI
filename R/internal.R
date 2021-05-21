@@ -2,6 +2,11 @@ dropNulls <- function(x){
   Filter(Negate(is.null), x)
 }
 
+isNamedList <- function(x){
+  is.null(x) || identical(x, list()) ||
+    (is.list(x) && !is.null(names(x)) && all(names(x) != ""))
+}
+
 isChakraBox <- function(x){
   inherits(x, "box")
 }

@@ -30,9 +30,18 @@ chakraInput <- function(inputId, configuration, default = NULL) {
 #' @export
 #'
 #' @examples
-chakraBox <- function(text, ...){
+chakraBox <- function(
+  text, as = NULL, onHover = NULL, onActive = NULL, onFocus = NULL, ...
+){
+  stopifnot(isNamedList(onHover))
+  stopifnot(isNamedList(onActive))
+  stopifnot(isNamedList(onFocus))
+  stopifnot(isNamedList(list(...)))
   box <- list(
-    props = list(...),
+    element = "Box",
+    props = dropNulls(list(
+      as = as, "_hover" = onHover, "_active" = onActive, "_focus" = onFocus, ...
+    )),
     children = list(text)
   )
   class(box) <- "box"
@@ -90,6 +99,7 @@ chakraButton <- function(
 ){
   action <- match.arg(action, c("none", "cancel", "disable", "unmount"))
   boxprops <- list(...)
+  stopifnot(isNamedList(boxprops))
   element <- switch(
     action,
     none = "Button",
@@ -223,7 +233,7 @@ chakraAlertDialogInput <- function(
   openButton,
   header,
   body,
-  footerButtons = chakraButton("Cancel", id = "cancel")
+  footerButtons = chakraButton("Cancel", action = "cancel", id = "cancel")
 ){
   if(!isChakraButton(openButton)){
     stop("")

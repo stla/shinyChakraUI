@@ -15,7 +15,7 @@ chakraInput <- function(inputId, configuration, default = NULL) {
       package = "shinyChakraUI",
       script = "chakra.js"
     ),
-    default = default,
+    default = list(value = default, widget = configuration[["widget"]]),
     configuration = configuration,
     container = tags$div
   )
@@ -507,9 +507,6 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
       optiongroup[["props"]][["title"]]
     })
     names(values) <- titles
-    value <- list(value = values, widget = "menuWithGroups")
-  }else{
-    value <- list(value = NULL, widget = "menu")
   }
   menuList[["children"]] <- lapply(content, unclass)
   component <- list(
@@ -537,14 +534,14 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
     inputId = inputId,
     configuration =
       list(
-        widget = "menu",
+        widget = if(length(menuoptiongroups)) "menuWithGroups" else "menu",
         component = component,
         text = menuButton[["children"]],
         closeOnSelect = closeOnSelect,
         optiongroups =
           if(length(menuoptiongroups)) as.list(menuoptiongroups - 1L)
       ),
-    default = value
+    default = if(length(menuoptiongroups)) values
   )
 }
 

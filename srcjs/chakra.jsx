@@ -304,8 +304,8 @@ const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
 };
 
 const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, setShinyValue}) => {
-  const [value, setValue] = React.useState(selected);
   if(optiongroups){
+    const [value, setValue] = React.useState(selected);
     let menulist = component.children[1].children;
     for(let i = 0; i < optiongroups.length; i++){
       let groupprops = menulist[optiongroups[i]].props;
@@ -332,32 +332,42 @@ const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, set
   return (
     <ChakraProvider>
       <Menu closeOnSelect={closeOnSelect}>
-      {({ isOpen }) => (
-        chakraComponent(component, patch(isOpen))
-      )}
+        {({ isOpen }) => (
+          chakraComponent(component, patch(isOpen))
+        )}
       </Menu>
     </ChakraProvider>
   );
  };
 
 const ChakraInput = ({ configuration, value, setValue }) => {
-  switch (configuration.widget) {
+  let widget = configuration.widget;
+  const setShinyValue = (value) => { setValue({value: value, widget: widget}); };
+  value = value.value;
+  switch(widget) {
     case "alert":
       return <ChakraAlert component={configuration.component}/>;
-      break;
+    break;
     case "alertdialog":
       return (
         <ChakraAlertDialog 
           component={configuration.component} 
-          setShinyValue={(value) => {setValue({value: value, widget: "alertdialog"});}} 
+          setShinyValue={setShinyValue} 
           inputId={configuration.inputId}
         />
       );
-      break;
+    break;
     case "menu":
-      let widget = configuration.optiongroups ? "menuWithGroups" : "menu";
-      //value = configuration.optiongroups ? value.value : value;
-      value = value.value;
+      return (
+        <ChakraMenu 
+          component={configuration.component} 
+          text={configuration.text}
+          closeOnSelect={configuration.closeOnSelect} 
+          setShinyValue={setShinyValue} 
+        />
+      );
+    break;
+    case "menuWithGroups":
       return (
         <ChakraMenu 
           component={configuration.component} 
@@ -365,12 +375,11 @@ const ChakraInput = ({ configuration, value, setValue }) => {
           closeOnSelect={configuration.closeOnSelect} 
           selected={value}
           optiongroups={configuration.optiongroups}
-          setShinyValue={(value) => {setValue({value: value, widget: widget});}} 
+          setShinyValue={setShinyValue} 
         />
       );
-      break;
-    }
-//  return <input type='text' value={value} onChange={e => setValue(e.target.value)}/>;
+    break;
+  }
 };
 
 reactShinyInput('.chakra', 'shinyChakraUI.chakra', ChakraInput, {type: "shinyChakraUI.widget"});

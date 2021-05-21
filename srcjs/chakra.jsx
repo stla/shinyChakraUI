@@ -201,7 +201,13 @@ const chakraComponent = (component, patch) => {
   }
   if(component.children !== undefined){
     let newprops = $.extend(props, patch[component.element]);
-    newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
+    // if(component.element === "MenuButton"){
+    //   newprops.children = newprops.isActive ? 
+    //     component.children.textWhenOpen : component.children.textWhenClose;
+    // }
+    if(component.element !== "MenuButton"){
+      newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
+    }
     return React.createElement(ChakraComponents[component.element], newprops);
   }else{
     if(component.element === undefined){
@@ -220,7 +226,7 @@ const ChakraAlert = ({component}) => {
   );
  };
 
- const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
+const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [disabled, setDisabled] = React.useState(false);
   const onClose = () => {
@@ -292,6 +298,25 @@ const ChakraAlert = ({component}) => {
       {chakraComponent(component, patch)}
     </ChakraProvider>
   );
+};
+
+const ChakraMenu = ({component, text, setShinyValue}) => {
+  const patch = (isOpen) => {return {
+    MenuButton: {
+      as: Button,
+      isActive: isOpen,
+      children: [isOpen ? text.textWhenOpen : text.textWhenClose]
+    }
+  }};
+  return (
+    <ChakraProvider>
+      <Menu>
+      {({ isOpen }) => (
+        chakraComponent(component, patch(isOpen))
+      )}
+      </Menu>
+    </ChakraProvider>
+  );
  };
 
 const ChakraInput = ({ configuration, value, setValue }) => {
@@ -302,7 +327,10 @@ const ChakraInput = ({ configuration, value, setValue }) => {
     case "alertdialog":
       return <ChakraAlertDialog component={configuration.component} setShinyValue={setValue} inputId={configuration.inputId}/>;
       break;
-  }
+    case "menu":
+      return <ChakraMenu component={configuration.component} text={configuration.text} setShinyValue={setValue}/>;
+      break;
+    }
 //  return <input type='text' value={value} onChange={e => setValue(e.target.value)}/>;
 };
 

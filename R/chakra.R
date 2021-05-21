@@ -165,6 +165,26 @@ chakraIconButton <- function(icon, ...){
 
 #' Title
 #'
+#' @param textWhenOpen
+#' @param textWhenClose
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
+chakraMenuButton <- function(textWhenOpen, textWhenClose = textWhenOpen, ...){
+  button <- chakraButton(
+    text = list(textWhenOpen = textWhenOpen, textWhenClose = textWhenClose),
+    ...
+  )
+  button[["element"]] <- "MenuButton"
+  button[["children"]] = unlist(button[["children"]], recursive = FALSE)
+  button
+}
+
+#' Title
+#'
 #' @param inputId
 #'
 #' @return
@@ -333,6 +353,43 @@ chakraAlertDialogInput <- function(
     inputId = inputId,
     configuration =
       list(widget = "alertdialog", component = component, inputId = inputId)
+  )
+}
+
+#' Title
+#'
+#' @param inputId
+#' @param menuButton
+#'
+#' @return
+#' @export
+#'
+#' @examples
+chakraMenuInput <- function(inputId, menuButton){
+  component <- list(
+    element = "Fragment",
+    props = list(),
+    children = list(
+      unclass(menuButton),
+      list(
+        element = "MenuList",
+        props = list(),
+        children = list(
+          list(
+            element = "MenuItem",
+            props = list(),
+            children = list(
+              "Download"
+            )
+          )
+        )
+      )
+    )
+  )
+  chakraInput(
+    inputId = inputId,
+    configuration =
+      list(widget = "menu", component = component, text = menuButton[["children"]])
   )
 }
 

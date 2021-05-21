@@ -79,7 +79,7 @@ chakraIcon <- function(icon, boxSize = "1em", color = "currentColor"){
 chakraButton <- function(
   text,
   id = NULL,
-  unmounting = FALSE,
+  action = "none",
   colorScheme = "gray",
   isFullWidth = FALSE,
   leftIcon = NULL,
@@ -88,9 +88,17 @@ chakraButton <- function(
   variant = "solid",
   ...
 ){
+  action <- match.arg(action, c("none", "cancel", "disable", "unmount"))
   boxprops <- list(...)
+  element <- switch(
+    action,
+    none = "Button",
+    cancel = "CancelButton",
+    disable = "DisableButton",
+    unmount = "UnmountingButton"
+  )
   button <- list(
-    element = ifelse(unmounting, "UnmountingButton", "Button"),
+    element = element,
     props = append(
       boxprops,
       dropNulls(list(
@@ -215,31 +223,28 @@ chakraAlertDialogInput <- function(
   openButton,
   header,
   body,
-  cancelButton = chakraButton("Cancel", id = "cancel"),
-  otherFooterButtons = NULL
+  footerButtons = chakraButton("Cancel", id = "cancel")
 ){
   if(!isChakraButton(openButton)){
     stop("")
   }
   openButton[["element"]] <- "OpenButton"
-  if(!is.null(cancelButton)){
-    if(!isChakraButton(cancelButton)){
+  # if(!is.null(cancelButton)){
+  #   if(!isChakraButton(cancelButton)){
+  #     stop("")
+  #   }
+  #   cancelButton[["element"]] <- "CancelButton"
+  # }
+  if(isChakraButton(footerButtons)){
+    footerButtons <- list(footerButtons)
+  }else{
+    isListOfButtons <-
+      all(vapply(footerButtons, isChakraButton, FUN.VALUE = logical(1L)))
+    if(!isListOfButtons){
       stop("")
     }
-    cancelButton[["element"]] <- "CancelButton"
   }
-  if(!is.null(otherFooterButtons)){
-    if(isChakraButton(otherFooterButtons)){
-      otherFooterButtons <- list(otherFooterButtons)
-    }else{
-      isListOfButtons <-
-        all(vapply(otherFooterButtons, isChakraButton, FUN.VALUE = logical(1L)))
-      if(!isListOfButtons){
-        stop("")
-      }
-    }
-    otherFooterButtons <- lapply(otherFooterButtons, unclass)
-  }
+  footerButtons <- lapply(footerButtons, unclass)
   if(!isChakraBox(header)){
     stop("")
   }
@@ -270,10 +275,7 @@ chakraAlertDialogInput <- function(
                   list(
                     element = "AlertDialogFooter",
                     props = list(),
-                    children = append(
-                      otherFooterButtons,
-                      dropNulls(list(unclass(cancelButton)))
-                    )
+                    children = footerButtons
                   )
                 )
               )
@@ -285,7 +287,8 @@ chakraAlertDialogInput <- function(
   )
   chakraInput(
     inputId = inputId,
-    configuration = list(widget = "alertdialog", component = component, inputId = inputId)
+    configuration =
+      list(widget = "alertdialog", component = component, inputId = inputId)
   )
 }
 

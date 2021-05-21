@@ -92,6 +92,7 @@ const Fragment = React.Fragment;
 const CancelButton = Button;
 const OpenButton = Button;
 const UnmountingButton = Button;
+const DisableButton = Button;
 
 const ChakraComponents = {
   Fragment,
@@ -158,6 +159,7 @@ const ChakraComponents = {
   CancelButton,
   OpenButton,
   UnmountingButton,
+  DisableButton,
   Alert,
   AlertIcon,
   AlertTitle,
@@ -210,6 +212,7 @@ const ChakraAlert = ({component}) => {
 
  const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [disabled, setDisabled] = React.useState(false);
   const onClose = () => {
     setIsOpen(false);
   };
@@ -220,7 +223,15 @@ const ChakraAlert = ({component}) => {
   const cancelRef = React.useRef();
   const patch = {
     OpenButton: {
-      onClick: () => {setIsOpen(true);}
+      onClick: () => {setIsOpen(true);},
+      isDisabled: disabled
+    },
+    DisableButton: {
+      onClick: (e) => {
+        setShinyValue(e.currentTarget.id);
+        setDisabled(true);
+        setIsOpen(false);
+      }
     },
     CancelButton: {
       ref: cancelRef,

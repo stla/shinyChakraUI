@@ -292,7 +292,7 @@ chakraMenuItemOption <- function(text, value = text, checked = FALSE, ...){
   box[["element"]] <- "MenuItemOption"
   box[["props"]] <- append(
     box[["props"]],
-    list(value = value, isChecked = checked)
+    list(value = value, isChecked = checked, type = "radio")
   )
   class(box) <- "menuitemoption"
   box
@@ -507,8 +507,9 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
       optiongroup[["props"]][["title"]]
     })
     names(values) <- titles
+    value <- list(value = values, widget = "menuWithGroups")
   }else{
-    values <- NULL
+    value <- NULL
   }
   menuList[["children"]] <- lapply(content, unclass)
   component <- list(
@@ -543,7 +544,7 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
         optiongroups =
           if(length(menuoptiongroups)) as.list(menuoptiongroups - 1L)
       ),
-    default = values
+    default = value
   )
 }
 

@@ -344,12 +344,14 @@ const ChakraInput = ({ configuration, value, setValue }) => {
       return (
         <ChakraAlertDialog 
           component={configuration.component} 
-          setShinyValue={setValue} 
+          setShinyValue={(value) => {setValue({value: value, widget: "alertdialog"});}} 
           inputId={configuration.inputId}
         />
       );
       break;
     case "menu":
+      let widget = configuration.optiongroups ? "menuWithGroups" : "menu";
+      value = configuration.optiongroups ? value.value : value;
       return (
         <ChakraMenu 
           component={configuration.component} 
@@ -357,7 +359,7 @@ const ChakraInput = ({ configuration, value, setValue }) => {
           closeOnSelect={configuration.closeOnSelect} 
           selected={value}
           optiongroups={configuration.optiongroups}
-          setShinyValue={setValue}
+          setShinyValue={(value) => {setValue({value: value, widget: widget});}} 
         />
       );
       break;
@@ -365,4 +367,4 @@ const ChakraInput = ({ configuration, value, setValue }) => {
 //  return <input type='text' value={value} onChange={e => setValue(e.target.value)}/>;
 };
 
-reactShinyInput('.chakra', 'shinyChakraUI.chakra', ChakraInput);
+reactShinyInput('.chakra', 'shinyChakraUI.chakra', ChakraInput, {type: "shinyChakraUI.widget"});

@@ -60,13 +60,15 @@ chakraBox <- function(
 #' @examples
 chakraIcon <- function(icon, boxSize = "1em", color = "currentColor"){
   icon <- match.arg(icon, chakraIcons())
-  list(
+  icon <- list(
     element = paste0(icon, "Icon"),
     props = list(
       boxSize = boxSize,
       color = color
     )
   )
+  class(icon) <- "icon"
+  icon
 }
 
 #' Title
@@ -95,11 +97,25 @@ chakraButton <- function(
   rightIcon = NULL,
   size = "md",
   variant = "solid",
+  onHover = NULL,
+  onActive = NULL,
+  onFocus = NULL,
   ...
 ){
   action <- match.arg(action, c("none", "cancel", "disable", "unmount"))
-  boxprops <- list(...)
-  stopifnot(isNamedList(boxprops))
+  stopifnot(isNamedList(onHover))
+  stopifnot(isNamedList(onActive))
+  stopifnot(isNamedList(onFocus))
+  stopifnot(isNamedList(list(...)))
+  if(!is.null(leftIcon)){
+    stopifnot(isChakraIcon(leftIcon))
+  }
+  if(!is.null(rightIcon)){
+    stopifnot(isChakraIcon(rightIcon))
+  }
+  boxprops <- dropNulls(
+    list("_hover" = onHover, "_active" = onActive, "_focus" = onFocus, ...)
+  )
   element <- switch(
     action,
     none = "Button",
@@ -115,8 +131,8 @@ chakraButton <- function(
         id = id,
         colorScheme = match.arg(colorScheme, chakraColorSchemes()),
         isFullWidth = isFullWidth,
-        leftIcon = leftIcon,
-        rightIcon = rightIcon,
+        leftIcon = unclass(leftIcon),
+        rightIcon = unclass(rightIcon),
         size = match.arg(size, c("sm", "md", "lg", "xs")),
         variant = match.arg(
           variant, c("link", "outline", "solid", "ghost", "unstyled")
@@ -126,6 +142,24 @@ chakraButton <- function(
     children = list(text)
   )
   class(button) <- "button"
+  button
+}
+
+
+#' Title
+#'
+#' @param icon
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
+chakraIconButton <- function(icon, ...){
+  stopifnot(isChakraIcon(icon))
+  button <- chakraButton(...)
+  button[["element"]] <- sub("Button", "IconButton", button[["element"]])
+  button[["props"]][["icon"]] <- unclass(icon)
   button
 }
 

@@ -15,6 +15,10 @@ isChakraButton <- function(x){
   inherits(x, "button")
 }
 
+isChakraIcon <- function(x){
+  inherits(x, "icon")
+}
+
 chakraIcons <- function(){
   c(
     "Add",

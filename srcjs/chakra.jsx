@@ -4,6 +4,7 @@ import { unmountComponentAtNode } from "react-dom";
 import {
   ChakraProvider,
   Button,
+  IconButton,
   Alert,
   AlertIcon,
   AlertTitle,
@@ -93,6 +94,10 @@ const CancelButton = Button;
 const OpenButton = Button;
 const UnmountingButton = Button;
 const DisableButton = Button;
+const CancelIconButton = IconButton;
+const OpenIconButton = IconButton;
+const UnmountingIconButton = IconButton;
+const DisableIconButton = IconButton;
 
 const ChakraComponents = {
   Fragment,
@@ -160,6 +165,11 @@ const ChakraComponents = {
   OpenButton,
   UnmountingButton,
   DisableButton,
+  IconButton,
+  CancelIconButton,
+  OpenIconButton,
+  UnmountingIconButton,
+  DisableIconButton,
   Alert,
   AlertIcon,
   AlertTitle,
@@ -222,6 +232,9 @@ const ChakraAlert = ({component}) => {
   };
   const cancelRef = React.useRef();
   const patch = {
+    Button: {
+      onClick: onCloseButton
+    },
     OpenButton: {
       onClick: () => {setIsOpen(true);},
       isDisabled: disabled
@@ -237,10 +250,31 @@ const ChakraAlert = ({component}) => {
       ref: cancelRef,
       onClick: onCloseButton
     },
-    Button: {
+    UnmountingButton: {
+      onClick: (e) => {
+        setShinyValue(e.currentTarget.id);
+        unmountComponentAtNode(document.getElementById(inputId));
+      }
+    },
+    IconButton: {
       onClick: onCloseButton
     },
-    UnmountingButton: {
+    OpenIconButton: {
+      onClick: () => {setIsOpen(true);},
+      isDisabled: disabled
+    },
+    DisableIconButton: {
+      onClick: (e) => {
+        setShinyValue(e.currentTarget.id);
+        setDisabled(true);
+        setIsOpen(false);
+      }
+    },
+    CancelIconButton: {
+      ref: cancelRef,
+      onClick: onCloseButton
+    },
+    UnmountingIconButton: {
       onClick: (e) => {
         setShinyValue(e.currentTarget.id);
         unmountComponentAtNode(document.getElementById(inputId));

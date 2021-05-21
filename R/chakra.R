@@ -183,6 +183,80 @@ chakraMenuButton <- function(textWhenOpen, textWhenClose = textWhenOpen, ...){
   button
 }
 
+chakraMenuList <- function(content, ...){
+  box <- chakraBox(text = content, ...)
+  box[["element"]] <- "MenuList"
+  box
+}
+
+chakraMenuItem <- function(text, icon = NULL){
+  if(!is.null(icon)){
+    stopifnot(isChakraIcon(icon))
+  }
+  list(
+    element = "MenuItem",
+    props = dropNulls(list(icon = icon)),
+    children = list(text)
+  )
+}
+
+chakraMenuGroup <- function(title, items, ...){
+  box <- chakraBox(text = NA, ...)
+  box[["children"]] <- items
+  box[["props"]][["title"]] <- title
+  box[["element"]] <- "MenuGroup"
+  box
+}
+
+chakraMenuOptionGroup <- function(title, multiple = FALSE, items){
+  itemclasses <- vapply(items, class, FUN.VALUE = character(1L))
+  if(!all(itemclasses %in% c("menuitemoption", "menudivider"))){
+    stop("Invalid items.", call. = TRUE)
+  }
+  menuitemoptions <- items[itemclasses == "menuitemoption"]
+  values <- as.list(
+    Filter(Negate(is.na), vapply(menuitemoptions, function(item){
+      itemprops <- item[["props"]]
+      if(itemprops[["isChecked"]]){
+        itemprops[["value"]]
+      }else{
+        NA_character_
+      }
+    }))
+  )
+  group <- list(
+    element = "MenuOptionGroup",
+    props = list(
+      title = title,
+      type = ifelse(multiple, "checkbox", "radio")
+    ),
+    children = items
+  )
+  class(group) <- "menuoptiongroup"
+  attr(group, "values") <- values
+  group
+}
+
+chakraMenuItemOption <- function(text, value = text, checked = FALSE, ...){
+  box <- chakraBox(text = text, ...)
+  box[["element"]] <- "MenuItemOption"
+  box[["props"]] <- append(
+    box[["props"]],
+    list(value = value, isChecked = checked)
+  )
+  class(box) <- "menuitemoption"
+  box
+}
+
+chakraMenuDivider <- function(){
+  divider <- list(
+    element = "MenuDivider",
+    props = list()
+  )
+  class(divider) <- "menudivider"
+  divider
+}
+
 #' Title
 #'
 #' @param inputId
@@ -365,7 +439,20 @@ chakraAlertDialogInput <- function(
 #' @export
 #'
 #' @examples
-chakraMenuInput <- function(inputId, menuButton){
+chakraMenuInput <- function(inputId, menuButton, closeOnSelect = TRUE, content){
+  elements <- vapply(content, class, FUN.VALUE = character(1L))
+  menuoptiongroups <- which(elements == "menuoptiongroup")
+  if(length(menuoptiongroups)){
+    values <- lapply(elements[menuoptiongroups], function(optiongroup){
+      attr(optiongroup, "values")
+    })
+    titles <- lapply(elements[menuoptiongroups], function(optiongroup){
+      optiongroup[["props"]][["title"]]
+    })
+    names(values) <- titles
+  }else{
+    values <- NULL
+  }
   component <- list(
     element = "Fragment",
     props = list(),
@@ -389,7 +476,13 @@ chakraMenuInput <- function(inputId, menuButton){
   chakraInput(
     inputId = inputId,
     configuration =
-      list(widget = "menu", component = component, text = menuButton[["children"]])
+      list(
+        widget = "menu",
+        component = component,
+        text = menuButton[["children"]],
+        closeOnSelect = closeOnSelect
+      ),
+    default = values
   )
 }
 

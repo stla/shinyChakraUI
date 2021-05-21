@@ -300,17 +300,25 @@ const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
   );
 };
 
-const ChakraMenu = ({component, text, setShinyValue}) => {
+const ChakraMenu = ({component, text, closeOnSelect, selected, setShinyValue}) => {
+  const [value, setValue] = React.useState(selected);
   const patch = (isOpen) => {return {
     MenuButton: {
       as: Button,
       isActive: isOpen,
       children: [isOpen ? text.textWhenOpen : text.textWhenClose]
+    },
+    MenuOptionGroup: {
+      onChange: (selections) => {
+        value[this.props.title] = selections;
+        setValue(value);
+        setShinyValue(value);
+      }
     }
   }};
   return (
     <ChakraProvider>
-      <Menu>
+      <Menu closeOnSelect={closeOnSelect}>
       {({ isOpen }) => (
         chakraComponent(component, patch(isOpen))
       )}
@@ -325,10 +333,24 @@ const ChakraInput = ({ configuration, value, setValue }) => {
       return <ChakraAlert component={configuration.component}/>;
       break;
     case "alertdialog":
-      return <ChakraAlertDialog component={configuration.component} setShinyValue={setValue} inputId={configuration.inputId}/>;
+      return (
+        <ChakraAlertDialog 
+          component={configuration.component} 
+          setShinyValue={setValue} 
+          inputId={configuration.inputId}
+        />
+      );
       break;
     case "menu":
-      return <ChakraMenu component={configuration.component} text={configuration.text} setShinyValue={setValue}/>;
+      return (
+        <ChakraMenu 
+          component={configuration.component} 
+          text={configuration.text}
+          closeOnSelect={configuration.closeOnSelect} 
+          selected={value}
+          setShinyValue={setValue}
+        />
+      );
       break;
     }
 //  return <input type='text' value={value} onChange={e => setValue(e.target.value)}/>;

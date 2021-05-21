@@ -208,13 +208,13 @@ chakraMenuList <- function(content, ...){
 #' @export
 #'
 #' @examples
-chakraMenuItem <- function(text, icon = NULL){
+chakraMenuItem <- function(text, value = text, icon = NULL){
   if(!is.null(icon)){
     stopifnot(isChakraIcon(icon))
   }
   list(
     element = "MenuItem",
-    props = dropNulls(list(icon = icon)),
+    props = dropNulls(list("data-val" = value, icon = icon)),
     children = list(text)
   )
 }
@@ -509,7 +509,7 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
     names(values) <- titles
     value <- list(value = values, widget = "menuWithGroups")
   }else{
-    value <- NULL
+    value <- list(value = NULL, widget = "menu")
   }
   menuList[["children"]] <- lapply(content, unclass)
   component <- list(

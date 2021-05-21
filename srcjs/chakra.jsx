@@ -322,6 +322,11 @@ const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, set
       as: Button,
       isActive: isOpen,
       children: [isOpen ? text.textWhenOpen : text.textWhenClose]
+    },
+    MenuItem: {
+      onClick: (e) => {
+        setShinyValue(e.currentTarget.dataset.val);
+      }
     }
   }};
   return (
@@ -351,7 +356,8 @@ const ChakraInput = ({ configuration, value, setValue }) => {
       break;
     case "menu":
       let widget = configuration.optiongroups ? "menuWithGroups" : "menu";
-      value = configuration.optiongroups ? value.value : value;
+      //value = configuration.optiongroups ? value.value : value;
+      value = value.value;
       return (
         <ChakraMenu 
           component={configuration.component} 

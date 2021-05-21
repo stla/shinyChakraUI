@@ -194,6 +194,9 @@ const ChakraComponents = {
 
 const chakraComponent = (component, patch) => {
   let props = component.props;
+  // if(props && typeof props.onchange === "string"){
+  //   props.onChange = eval(decodeURI(props.onchange));
+  // }
   for(const key in props){
     if(props[key].element){
       props[key] = React.createElement(ChakraComponents[props[key].element], props[key].props);
@@ -300,20 +303,25 @@ const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
   );
 };
 
-const ChakraMenu = ({component, text, closeOnSelect, selected, setShinyValue}) => {
+const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, setShinyValue}) => {
   const [value, setValue] = React.useState(selected);
+  if(optiongroups){
+    let menulist = component.children[1].children;
+    for(let i = 0; i < optiongroups.length; i++){
+      let groupprops = menulist[optiongroups[i]].props;
+      let grouptitle = groupprops.title;
+      groupprops.onChange = (selection) => {
+        value[grouptitle] = selection;
+        setValue(value);
+        setShinyValue(value);
+      };
+    }
+  }
   const patch = (isOpen) => {return {
     MenuButton: {
       as: Button,
       isActive: isOpen,
       children: [isOpen ? text.textWhenOpen : text.textWhenClose]
-    },
-    MenuOptionGroup: {
-      onChange: (selections) => {
-        value[this.props.title] = selections;
-        setValue(value);
-        setShinyValue(value);
-      }
     }
   }};
   return (
@@ -348,6 +356,7 @@ const ChakraInput = ({ configuration, value, setValue }) => {
           text={configuration.text}
           closeOnSelect={configuration.closeOnSelect} 
           selected={value}
+          optiongroups={configuration.optiongroups}
           setShinyValue={setValue}
         />
       );

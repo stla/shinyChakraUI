@@ -79,6 +79,7 @@ chakraIcon <- function(icon, boxSize = "1em", color = "currentColor"){
 chakraButton <- function(
   text,
   id = NULL,
+  unmounting = FALSE,
   colorScheme = "gray",
   isFullWidth = FALSE,
   leftIcon = NULL,
@@ -89,7 +90,7 @@ chakraButton <- function(
 ){
   boxprops <- list(...)
   button <- list(
-    element = "Button",
+    element = ifelse(unmounting, "UnmountingButton", "Button"),
     props = append(
       boxprops,
       dropNulls(list(
@@ -284,7 +285,7 @@ chakraAlertDialogInput <- function(
   )
   chakraInput(
     inputId = inputId,
-    configuration = list(widget = "alertdialog", component = component)
+    configuration = list(widget = "alertdialog", component = component, inputId = inputId)
   )
 }
 

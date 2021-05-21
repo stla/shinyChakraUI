@@ -1,5 +1,6 @@
 import { reactShinyInput } from 'reactR';
 import React, { useState } from 'react';
+import { unmountComponentAtNode } from "react-dom";
 import {
   ChakraProvider,
   Button,
@@ -90,6 +91,7 @@ import {
 const Fragment = React.Fragment;
 const CancelButton = Button;
 const OpenButton = Button;
+const UnmountingButton = Button;
 
 const ChakraComponents = {
   Fragment,
@@ -155,6 +157,7 @@ const ChakraComponents = {
   Button,
   CancelButton,
   OpenButton,
+  UnmountingButton,
   Alert,
   AlertIcon,
   AlertTitle,
@@ -205,7 +208,7 @@ const ChakraAlert = ({component}) => {
   );
  };
 
- const ChakraAlertDialog = ({component, setShinyValue}) => {
+ const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => {
     setIsOpen(false);
@@ -225,6 +228,12 @@ const ChakraAlert = ({component}) => {
     },
     Button: {
       onClick: onCloseButton
+    },
+    UnmountingButton: {
+      onClick: (e) => {
+        setShinyValue(e.currentTarget.id);
+        unmountComponentAtNode(document.getElementById(inputId));
+      }
     },
     AlertDialog: {
       isOpen: isOpen,
@@ -246,7 +255,7 @@ const ChakraInput = ({ configuration, value, setValue }) => {
       return <ChakraAlert component={configuration.component}/>;
       break;
     case "alertdialog":
-      return <ChakraAlertDialog component={configuration.component} setShinyValue={setValue}/>;
+      return <ChakraAlertDialog component={configuration.component} setShinyValue={setValue} inputId={configuration.inputId}/>;
       break;
   }
 //  return <input type='text' value={value} onChange={e => setValue(e.target.value)}/>;

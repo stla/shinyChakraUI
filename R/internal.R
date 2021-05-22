@@ -19,6 +19,14 @@ isChakraIcon <- function(x){
   inherits(x, "icon")
 }
 
+encode <- function(x){
+  if(inherits(x, c("html", "shiny.tag"))){
+    list(list(html = URLencode(as.character(x))))
+  }else{
+    list(URLencode(x))
+  }
+}
+
 chakraIcons <- function(){
   c(
     "Add",

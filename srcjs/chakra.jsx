@@ -86,6 +86,7 @@ import {
   WarningIcon,
   WarningTwoIcon
 } from "@chakra-ui/icons";
+import ReactHtmlParser from "react-html-parser";
 
 //const evalComponent = new Function("React", "component", "return component");
 
@@ -214,7 +215,7 @@ const chakraComponent = (component, patch) => {
     return React.createElement(ChakraComponents[component.element], newprops);
   }else{
     if(component.element === undefined){
-      return component;
+      return component.html ? ReactHtmlParser(decodeURI(component.html)) : decodeURI(component);
     }else{
       return React.createElement(ChakraComponents[component.element], props);
     }
@@ -311,21 +312,23 @@ const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, set
       let groupprops = menulist[optiongroups[i]].props;
       let grouptitle = groupprops.title;
       groupprops.onChange = (selection) => {
-        value[grouptitle] = selection;
+        value[grouptitle] = Array.isArray(selection) ? selection.map(decodeURI) : decodeURI(selection);
         setValue(value);
         setShinyValue(value);
       };
     }
   }
+  let textWhenOpen = decodeURI(text.textWhenOpen);
+  let textWhenClose = decodeURI(text.textWhenClose);
   const patch = (isOpen) => {return {
     MenuButton: {
       as: Button,
       isActive: isOpen,
-      children: [isOpen ? text.textWhenOpen : text.textWhenClose]
+      children: [isOpen ? textWhenOpen : textWhenClose]
     },
     MenuItem: {
       onClick: (e) => {
-        setShinyValue(e.currentTarget.dataset.val);
+        setShinyValue(decodeURI(e.currentTarget.dataset.val));
       }
     }
   }};

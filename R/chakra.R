@@ -42,7 +42,7 @@ chakraBox <- function(
     props = dropNulls(list(
       as = as, "_hover" = onHover, "_active" = onActive, "_focus" = onFocus, ...
     )),
-    children = list(text)
+    children = encode(text)
   )
   class(box) <- "box"
   box
@@ -139,7 +139,7 @@ chakraButton <- function(
         )
       ))
     ),
-    children = list(text)
+    children = encode(text)
   )
   class(button) <- "button"
   button
@@ -157,9 +157,10 @@ chakraButton <- function(
 #' @examples
 chakraIconButton <- function(icon, ...){
   stopifnot(isChakraIcon(icon))
-  button <- chakraButton(...)
+  button <- chakraButton(text = "", ...)
   button[["element"]] <- sub("Button", "IconButton", button[["element"]])
   button[["props"]][["icon"]] <- unclass(icon)
+  button[["children"]] <- NULL
   button
 }
 
@@ -174,12 +175,12 @@ chakraIconButton <- function(icon, ...){
 #'
 #' @examples
 chakraMenuButton <- function(textWhenOpen, textWhenClose = textWhenOpen, ...){
-  button <- chakraButton(
-    text = list(textWhenOpen = textWhenOpen, textWhenClose = textWhenClose),
-    ...
-  )
+  button <- chakraButton(text = "", ...)
   button[["element"]] <- "MenuButton"
-  button[["children"]] = unlist(button[["children"]], recursive = FALSE)
+  button[["children"]] <- list(
+    textWhenOpen = URLencode(textWhenOpen),
+    textWhenClose = URLencode(textWhenClose)
+  )
   button
 }
 
@@ -193,7 +194,7 @@ chakraMenuButton <- function(textWhenOpen, textWhenClose = textWhenOpen, ...){
 #'
 #' @examples
 chakraMenuList <- function(content, ...){
-  box <- chakraBox(text = NA, ...)
+  box <- chakraBox(text = "", ...)
   box[["element"]] <- "MenuList"
   box[["children"]] <- content
   box
@@ -209,13 +210,14 @@ chakraMenuList <- function(content, ...){
 #'
 #' @examples
 chakraMenuItem <- function(text, value = text, icon = NULL){
+  stopifnot(is.character(value))
   if(!is.null(icon)){
     stopifnot(isChakraIcon(icon))
   }
   list(
     element = "MenuItem",
-    props = dropNulls(list("data-val" = value, icon = icon)),
-    children = list(text)
+    props = dropNulls(list("data-val" = URLencode(value), icon = icon)),
+    children = encode(text)
   )
 }
 
@@ -230,7 +232,7 @@ chakraMenuItem <- function(text, value = text, icon = NULL){
 #'
 #' @examples
 chakraMenuGroup <- function(title, items, ...){
-  box <- chakraBox(text = NA, ...)
+  box <- chakraBox(text = "", ...)
   box[["children"]] <- lapply(items, unclass)
   box[["props"]][["title"]] <- title
   box[["element"]] <- "MenuGroup"
@@ -257,7 +259,7 @@ chakraMenuOptionGroup <- function(title, multiple = FALSE, items){
     Filter(Negate(is.na), vapply(menuitemoptions, function(item){
       itemprops <- item[["props"]]
       if(itemprops[["isChecked"]]){
-        itemprops[["value"]]
+        URLdecode(itemprops[["value"]])
       }else{
         NA_character_
       }
@@ -288,11 +290,12 @@ chakraMenuOptionGroup <- function(title, multiple = FALSE, items){
 #'
 #' @examples
 chakraMenuItemOption <- function(text, value = text, checked = FALSE, ...){
+  stopifnot(is.character(value))
   box <- chakraBox(text = text, ...)
   box[["element"]] <- "MenuItemOption"
   box[["props"]] <- append(
     box[["props"]],
-    list(value = value, isChecked = checked, type = "radio")
+    list(value = URLencode(value), isChecked = checked)
   )
   class(box) <- "menuitemoption"
   box

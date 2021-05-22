@@ -89,7 +89,7 @@ chakraIcon <- function(icon, boxSize = "1em", color = "currentColor"){
 #' @examples
 chakraButton <- function(
   text,
-  id = NULL,
+  value = text,
   action = "none",
   colorScheme = "gray",
   isFullWidth = FALSE,
@@ -102,6 +102,7 @@ chakraButton <- function(
   onFocus = NULL,
   ...
 ){
+  stopifnot(is.character(value))
   action <- match.arg(action, c("none", "cancel", "disable", "unmount"))
   stopifnot(isNamedList(onHover))
   stopifnot(isNamedList(onActive))
@@ -128,7 +129,7 @@ chakraButton <- function(
     props = append(
       boxprops,
       dropNulls(list(
-        id = id,
+        "data-val" = URLencode(value),
         colorScheme = match.arg(colorScheme, chakraColorSchemes()),
         isFullWidth = isFullWidth,
         leftIcon = unclass(leftIcon),

@@ -237,7 +237,7 @@ const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
     setIsOpen(false);
   };
   const onCloseButton = (e) => {
-    setShinyValue(e.currentTarget.id);
+    setShinyValue(decodeURI(e.currentTarget.dataset.val));
     setIsOpen(false);
   };
   const cancelRef = React.useRef();
@@ -251,7 +251,7 @@ const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
     },
     DisableButton: {
       onClick: (e) => {
-        setShinyValue(e.currentTarget.id);
+        setShinyValue(decodeURI(e.currentTarget.dataset.val));
         setDisabled(true);
         setIsOpen(false);
       }
@@ -262,7 +262,7 @@ const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
     },
     UnmountingButton: {
       onClick: (e) => {
-        setShinyValue(e.currentTarget.id);
+        setShinyValue(decodeURI(e.currentTarget.dataset.val));
         unmountComponentAtNode(document.getElementById(inputId));
       }
     },
@@ -275,7 +275,7 @@ const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
     },
     DisableIconButton: {
       onClick: (e) => {
-        setShinyValue(e.currentTarget.id);
+        setShinyValue(decodeURI(e.currentTarget.dataset.val));
         setDisabled(true);
         setIsOpen(false);
       }
@@ -286,7 +286,7 @@ const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
     },
     UnmountingIconButton: {
       onClick: (e) => {
-        setShinyValue(e.currentTarget.id);
+        setShinyValue(decodeURI(e.currentTarget.dataset.val));
         unmountComponentAtNode(document.getElementById(inputId));
       }
     },

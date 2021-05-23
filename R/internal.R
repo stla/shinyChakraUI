@@ -20,11 +20,29 @@ isChakraIcon <- function(x){
 }
 
 encode <- function(x){
-  if(inherits(x, c("html", "shiny.tag"))){
+  if(inherits(x, "shiny.tag")){
+    list(list(tag = unclassComponent(x)))
+  }else if(inherits(x, "html")){
     list(list(html = URLencode(as.character(x))))
   }else{
     list(URLencode(x))
   }
+}
+
+unclassComponent <- function(component){
+  if(length(component[["children"]])){
+    component[["children"]] <- lapply(component[["children"]], function(child){
+      if(inherits(child, "shiny.tag")){
+        unclassComponent(child)
+      }else{
+        child
+      }
+    })
+  }
+  # if(length(component[["attribs"]])){
+  #   component[["attribs"]] <- lapply(component[["attribs"]], unclass)
+  # }
+  unclass(component)
 }
 
 chakraIcons <- function(){

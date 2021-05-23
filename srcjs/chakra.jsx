@@ -1,10 +1,11 @@
-import { reactShinyInput } from 'reactR';
+import { reactShinyInput, hydrate } from 'reactR';
 import React, { useState } from 'react';
 import { unmountComponentAtNode } from "react-dom";
 import {
   ChakraProvider,
   Button,
   IconButton,
+  Box,
   Alert,
   AlertIcon,
   AlertTitle,
@@ -171,6 +172,7 @@ const ChakraComponents = {
   OpenIconButton,
   UnmountingIconButton,
   DisableIconButton,
+  Box,
   Alert,
   AlertIcon,
   AlertTitle,
@@ -194,30 +196,36 @@ const ChakraComponents = {
 };
 
 const chakraComponent = (component, patch) => {
-  let props = component.props;
+  let props = component.attribs;
   // if(props && typeof props.onchange === "string"){
   //   props.onChange = eval(decodeURI(props.onchange));
   // }
   for(const key in props){
-    if(props[key].element){
-      props[key] = React.createElement(ChakraComponents[props[key].element], props[key].props);
+    if(props[key].name){
+      props[key] = React.createElement(ChakraComponents[props[key].name], props[key].attribs);
     }
   }
   if(component.children !== undefined){
-    let newprops = $.extend(props, patch[component.element]);
+    let newprops = $.extend(props, patch[component.name]);
     // if(component.element === "MenuButton"){
     //   newprops.children = newprops.isActive ? 
     //     component.children.textWhenOpen : component.children.textWhenClose;
     // }
-    if(component.element !== "MenuButton"){
+    if(component.name !== "MenuButton"){
       newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
     }
-    return React.createElement(ChakraComponents[component.element], newprops);
+    return React.createElement(ChakraComponents[component.name], newprops);
   }else{
-    if(component.element === undefined){
-      return component.html ? ReactHtmlParser(decodeURI(component.html)) : decodeURI(component);
+    if(component.name === undefined){
+      if(component.tag){
+        return hydrate(ChakraComponents, component.tag);
+      }
+      if(component.html){
+        return ReactHtmlParser(decodeURI(component.html));
+      }
+      return decodeURI(component);
     }else{
-      return React.createElement(ChakraComponents[component.element], props);
+      return React.createElement(ChakraComponents[component.name], props);
     }
   }
 };
@@ -309,7 +317,7 @@ const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, set
     const [value, setValue] = React.useState(selected);
     let menulist = component.children[1].children;
     for(let i = 0; i < optiongroups.length; i++){
-      let groupprops = menulist[optiongroups[i]].props;
+      let groupprops = menulist[optiongroups[i]].attribs;
       let grouptitle = groupprops.title;
       groupprops.onChange = (selection) => {
         value[grouptitle] = Array.isArray(selection) ? selection.map(decodeURI) : decodeURI(selection);
@@ -385,4 +393,12 @@ const ChakraInput = ({ configuration, value, setValue }) => {
   }
 };
 
+const ChakraComponent = ({ configuration, value, setValue }) => {
+  return hydrate(
+    ChakraComponents, // if using components then provide them here wrapped in an object
+    configuration
+  )
+};
+
+reactShinyInput('.chakracomponent', 'shinyChakraUI.chakracomponent', ChakraComponent);
 reactShinyInput('.chakra', 'shinyChakraUI.chakra', ChakraInput, {type: "shinyChakraUI.widget"});

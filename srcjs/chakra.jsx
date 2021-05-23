@@ -2,6 +2,7 @@ import { reactShinyInput, hydrate } from 'reactR';
 import React, { useState } from 'react';
 import { unmountComponentAtNode } from "react-dom";
 import {
+  useDisclosure,
   ChakraProvider,
   Button,
   IconButton,
@@ -26,6 +27,13 @@ import {
   MenuIcon,
   MenuCommand,
   MenuDivider,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -94,6 +102,7 @@ import ReactHtmlParser from "react-html-parser";
 const Fragment = React.Fragment;
 const CancelButton = Button;
 const OpenButton = Button;
+const CloseButton = Button,
 const UnmountingButton = Button;
 const DisableButton = Button;
 const CancelIconButton = IconButton;
@@ -165,6 +174,7 @@ const ChakraComponents = {
   Button,
   CancelButton,
   OpenButton,
+  CloseButton,
   UnmountingButton,
   DisableButton,
   IconButton,
@@ -192,7 +202,14 @@ const ChakraComponents = {
   MenuOptionGroup,
   MenuIcon,
   MenuCommand,
-  MenuDivider
+  MenuDivider,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
 };
 
 const formatStringToCamelCase = str => {
@@ -411,7 +428,36 @@ const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, set
       </ChakraProvider>
     );  
   }
- };
+};
+
+const ChakraDrawer = ({component, setShinyValue}) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = React.useRef();
+  const patch = {
+    OpenButton: {
+      ref: btnRef,
+      onClick: onOpen
+    },
+    Drawer: {
+      isOpen: isOpen,
+      onClose: onClose,
+      finalFocusRef: btnRef
+    },
+    CloseButton: {
+      onClick: onClose
+    },
+    Button: {
+      onClick: (e) => {
+        setShinyValue(decodeURI(e.currentTarget.dataset.val));
+      }
+    }
+  };
+  return (
+    <ChakraProvider>
+      {chakraComponent(component, patch)}
+    </ChakraProvider>
+  );
+};
 
 const ChakraInput = ({ configuration, value, setValue }) => {
   let widget = configuration.widget;
@@ -449,6 +495,14 @@ const ChakraInput = ({ configuration, value, setValue }) => {
           selected={value}
           optiongroups={configuration.optiongroups}
           setShinyValue={setShinyValue} 
+        />
+      );
+    break;
+    case "drawer":
+      return (
+        <ChakraDrawer
+          component={configuration.component}
+          setShinyValue={setShinyValue}
         />
       );
     break;

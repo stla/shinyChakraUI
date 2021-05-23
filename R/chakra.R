@@ -127,7 +127,9 @@ chakraButton <- function(
   ...
 ){
   stopifnot(is.character(value))
-  action <- match.arg(action, c("none", "cancel", "disable", "unmount"))
+  action <- match.arg(
+    action, c("none", "cancel", "disable", "unmount", "close")
+  )
   stopifnot(isNamedList(onHover))
   stopifnot(isNamedList(onActive))
   stopifnot(isNamedList(onFocus))
@@ -146,7 +148,8 @@ chakraButton <- function(
     none = "Button",
     cancel = "CancelButton",
     disable = "DisableButton",
-    unmount = "UnmountingButton"
+    unmount = "UnmountingButton",
+    close = "CloseButton"
   )
   button <- list(
     name = element,
@@ -574,6 +577,52 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
           if(length(menuoptiongroups)) as.list(menuoptiongroups - 1L)
       ),
     default = if(length(menuoptiongroups)) values
+  )
+}
+
+#' Title
+#'
+#' @param inputId
+#' @param openButton
+#' @param options
+#' @param closeButton
+#' @param header
+#' @param body
+#' @param footer
+#'
+#' @return
+#' @export
+#'
+#' @examples
+chakraDrawer <- function(
+  inputId, openButton, options, closeButton = TRUE, header, body, footer
+){
+  openButton[["name"]] <- "OpenButton"
+  drawer <- list(
+    name = "Drawer",
+    attribs = options,
+    children = list(
+      React$DrawerOverLay(),
+      React$DrawerContent(
+        if(closeButton) React$DrawerCloseButton(),
+        header,
+        body,
+        footer
+      )
+    )
+  )
+  class(drawer) <- "shiny.tag"
+  component <- React$Fragment(
+    openButton,
+    drawer
+  )
+  chakraInput(
+    inputId = inputId,
+    configuration =
+      list(
+        widget = "drawer",
+        component = unclassComponent(component)
+      )
   )
 }
 

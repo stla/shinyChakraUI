@@ -244,9 +244,13 @@ const chakraComponent = (component, patch) => {
   //   props.onChange = eval(decodeURI(props.onchange));
   // }
   for(const key in props){
-    if(props[key].name){
-      //props[key] = hydrate(ChakraComponents, props[key]);
-      props[key] = React.createElement(ChakraComponents[props[key].name], props[key].attribs);
+    let name = props[key].name; 
+    if(name){
+      if(name[0] === name[0].toUpperCase()){
+        props[key] = React.createElement(ChakraComponents[name], props[key].attribs);
+      }else{
+        props[key] = React.createElement(name, props[key].attribs);
+      }
     }
   }
   if(component.children !== undefined){
@@ -258,22 +262,22 @@ const chakraComponent = (component, patch) => {
     if(!newprops.hasOwnProperty("children")){
       newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
     }
-    // let tag = component.name;
-    // if(tag[0] === tag[0].toUpperCase()){
-    //   tag = ChakraComponents[tag];
-    // }else{
-    //   if(typeof component.attribs.style === "string"){
-    //     component.attribs.style = getStyleObjectFromString(component.attribs.style);
-    //   }
-    // }
-    return React.createElement(ChakraComponents[component.name], newprops);
+    let tag = component.name;
+    if(tag[0] === tag[0].toUpperCase()){
+      return React.createElement(ChakraComponents[tag], newprops);
+    }else{
+      if(typeof props.style === "string"){
+        props.style = getStyleObjectFromString(props.style);
+      }
+      return React.createElement(tag, newprops);
+    }
   }else{
     if(component.name === undefined){
       if(component.tag){
         if(typeof component.tag.attribs.style === "string"){
           component.tag.attribs.style = getStyleObjectFromString(component.tag.attribs.style);
         }
-        return hydrate(ChakraComponents, component.tag);
+        return hydrate({}, component.tag);
       }
       if(component.html){
         return ReactHtmlParser(decodeURI(component.html));

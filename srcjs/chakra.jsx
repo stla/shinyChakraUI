@@ -438,21 +438,21 @@ const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, set
 };
 
 const ChakraDrawer = ({component, setShinyValue}) => {
-  const [isOpen, setOpen] = React.useState(false);
-//  const { isOpen, onOpen, onClose } = useDisclosure();
+//  const [isOpen, setOpen] = React.useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
   const patch = {
     OpenButton: {
       ref: btnRef,
-      onClick: () => {setOpen(true)}
+      onClick: onOpen
     },
     Drawer: {
       isOpen: isOpen,
-      onClose: () => {setOpen(false)},
+      onClose: onClose,
       finalFocusRef: btnRef
     },
     CloseButton: {
-      onClick: () => {setOpen(false)}
+      onClick: onClose
     },
     Button: {
       onClick: (e) => {

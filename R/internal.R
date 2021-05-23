@@ -12,7 +12,7 @@ isChakraBox <- function(x){
 }
 
 isChakraButton <- function(x){
-  inherits(x, "button") || x[["name"]] == "Button"
+  inherits(x, "button") || identical(x[["name"]], "Button")
 }
 
 isChakraIcon <- function(x){

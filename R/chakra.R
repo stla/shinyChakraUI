@@ -89,7 +89,8 @@ chakraIcon <- function(icon, boxSize = "1em", color = "currentColor"){
     attribs = list(
       boxSize = boxSize,
       color = color
-    )
+    ),
+    children = list()
   )
   class(icon) <- c("icon", "shiny.tag")
   icon
@@ -594,7 +595,7 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
 #' @export
 #'
 #' @examples
-chakraDrawer <- function(
+chakraDrawerInput <- function(
   inputId, openButton, options, closeButton = TRUE, header, body, footer
 ){
   openButton[["name"]] <- "OpenButton"
@@ -602,7 +603,7 @@ chakraDrawer <- function(
     name = "Drawer",
     attribs = options,
     children = list(
-      React$DrawerOverLay(),
+      React$DrawerOverlay(),
       React$DrawerContent(
         if(closeButton) React$DrawerCloseButton(),
         header,

@@ -102,7 +102,7 @@ import ReactHtmlParser from "react-html-parser";
 const Fragment = React.Fragment;
 const CancelButton = Button;
 const OpenButton = Button;
-const CloseButton = Button,
+const CloseButton = Button;
 const UnmountingButton = Button;
 const DisableButton = Button;
 const CancelIconButton = IconButton;
@@ -237,13 +237,16 @@ const getStyleObjectFromString = str => {
 
 const chakraComponent = (component, patch) => {
   let props = component.attribs;
+  if(Array.isArray(props) && props.length === 0){
+    props = {};
+  }
   // if(props && typeof props.onchange === "string"){
   //   props.onChange = eval(decodeURI(props.onchange));
   // }
   for(const key in props){
     if(props[key].name){
-      props[key] = hydrate(ChakraComponents, props[key]);
-      //props[key] = React.createElement(ChakraComponents[props[key].name], props[key].attribs);
+      //props[key] = hydrate(ChakraComponents, props[key]);
+      props[key] = React.createElement(ChakraComponents[props[key].name], props[key].attribs);
     }
   }
   if(component.children !== undefined){
@@ -255,15 +258,15 @@ const chakraComponent = (component, patch) => {
     if(!newprops.hasOwnProperty("children")){
       newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
     }
-    let tag = component.name;
-    if(tag[0] === tag[0].toUpperCase()){
-      tag = ChakraComponents[tag];
-    }else{
-      if(typeof component.attribs.style === "string"){
-        component.attribs.style = getStyleObjectFromString(component.attribs.style);
-      }
-    }
-    return React.createElement(tag, newprops);
+    // let tag = component.name;
+    // if(tag[0] === tag[0].toUpperCase()){
+    //   tag = ChakraComponents[tag];
+    // }else{
+    //   if(typeof component.attribs.style === "string"){
+    //     component.attribs.style = getStyleObjectFromString(component.attribs.style);
+    //   }
+    // }
+    return React.createElement(ChakraComponents[component.name], newprops);
   }else{
     if(component.name === undefined){
       if(component.tag){
@@ -431,20 +434,21 @@ const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, set
 };
 
 const ChakraDrawer = ({component, setShinyValue}) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isOpen, setOpen] = React.useState(false);
+//  const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
   const patch = {
     OpenButton: {
       ref: btnRef,
-      onClick: onOpen
+      onClick: () => {setOpen(true)}
     },
     Drawer: {
       isOpen: isOpen,
-      onClose: onClose,
+      onClose: () => {setOpen(false)},
       finalFocusRef: btnRef
     },
     CloseButton: {
-      onClick: onClose
+      onClick: () => {setOpen(false)}
     },
     Button: {
       onClick: (e) => {
@@ -499,6 +503,7 @@ const ChakraInput = ({ configuration, value, setValue }) => {
       );
     break;
     case "drawer":
+      console.log(JSON.stringify(configuration.component));
       return (
         <ChakraDrawer
           component={configuration.component}
@@ -510,9 +515,9 @@ const ChakraInput = ({ configuration, value, setValue }) => {
 };
 
 const ChakraComponent = ({ configuration, value, setValue }) => {
-  return hydrate(
-    ChakraComponents, // if using components then provide them here wrapped in an object
-    configuration
+  return chakraComponent(
+    configuration, // if using components then provide them here wrapped in an object
+    {}
   )
 };
 

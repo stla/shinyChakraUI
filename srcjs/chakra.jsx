@@ -195,6 +195,29 @@ const ChakraComponents = {
   MenuDivider
 };
 
+const formatStringToCamelCase = str => {
+  const splitted = str.split("-");
+  if (splitted.length === 1) return splitted[0];
+  return (
+    splitted[0] +
+    splitted
+      .slice(1)
+      .map(word => word[0].toUpperCase() + word.slice(1))
+      .join("")
+  );
+};
+
+const getStyleObjectFromString = str => {
+  const style = {};
+  str.split(";").forEach(el => {
+    const [property, value] = el.split(":");
+    if (!property) return;
+    const formattedProperty = formatStringToCamelCase(property.trim());
+    style[formattedProperty] = value.trim();
+  });
+  return style;
+};
+
 const chakraComponent = (component, patch) => {
   let props = component.attribs;
   // if(props && typeof props.onchange === "string"){
@@ -215,10 +238,21 @@ const chakraComponent = (component, patch) => {
     if(!newprops.hasOwnProperty("children")){
       newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
     }
-    return React.createElement(ChakraComponents[component.name], newprops);
+    let tag = component.name;
+    if(tag[0] === tag[0].toUpperCase()){
+      tag = ChakraComponents[tag];
+    }else{
+      if(typeof component.attribs.style === "string"){
+        component.attribs.style = getStyleObjectFromString(component.attribs.style);
+      }
+    }
+    return React.createElement(tag, newprops);
   }else{
     if(component.name === undefined){
       if(component.tag){
+        if(typeof component.tag.attribs.style === "string"){
+          component.tag.attribs.style = getStyleObjectFromString(component.tag.attribs.style);
+        }
         return hydrate(ChakraComponents, component.tag);
       }
       if(component.html){

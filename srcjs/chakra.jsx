@@ -202,7 +202,8 @@ const chakraComponent = (component, patch) => {
   // }
   for(const key in props){
     if(props[key].name){
-      props[key] = React.createElement(ChakraComponents[props[key].name], props[key].attribs);
+      props[key] = hydrate(ChakraComponents, props[key]);
+      //props[key] = React.createElement(ChakraComponents[props[key].name], props[key].attribs);
     }
   }
   if(component.children !== undefined){
@@ -211,7 +212,7 @@ const chakraComponent = (component, patch) => {
     //   newprops.children = newprops.isActive ? 
     //     component.children.textWhenOpen : component.children.textWhenClose;
     // }
-    if(component.name !== "MenuButton"){
+    if(!newprops.hasOwnProperty("children")){
       newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
     }
     return React.createElement(ChakraComponents[component.name], newprops);
@@ -326,29 +327,56 @@ const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, set
       };
     }
   }
-  let textWhenOpen = decodeURI(text.textWhenOpen);
-  let textWhenClose = decodeURI(text.textWhenClose);
-  const patch = (isOpen) => {return {
-    MenuButton: {
-      as: Button,
-      isActive: isOpen,
-      children: [isOpen ? textWhenOpen : textWhenClose]
-    },
-    MenuItem: {
-      onClick: (e) => {
-        setShinyValue(decodeURI(e.currentTarget.dataset.val));
+  if(text){
+    let buttonprops = component.children[0].attribs;
+    component = component.children[1];
+    let textWhenOpen = decodeURI(text.textWhenOpen);
+    let textWhenClose = decodeURI(text.textWhenClose);
+    const patch = {
+      // MenuButton: {
+      //   as: Button,
+      //   isActive: isOpen,
+      //   children: [isOpen ? textWhenOpen : textWhenClose]
+      // },
+      MenuItem: {
+        onClick: (e) => {
+          setShinyValue(decodeURI(e.currentTarget.dataset.val));
+        }
       }
-    }
-  }};
-  return (
-    <ChakraProvider>
-      <Menu closeOnSelect={closeOnSelect}>
-        {({ isOpen }) => (
-          chakraComponent(component, patch(isOpen))
-        )}
-      </Menu>
-    </ChakraProvider>
-  );
+    };
+    return (
+      <ChakraProvider>
+        <Menu closeOnSelect={closeOnSelect}>
+          {({ isOpen }) => (
+            <React.Fragment>
+              <MenuButton isActive={isOpen} as={Button} {...buttonprops}>
+                {isOpen ? textWhenOpen : textWhenClose}
+              </MenuButton>
+              {chakraComponent(component, patch)}
+            </React.Fragment>
+          )}
+        </Menu>
+      </ChakraProvider>
+    );  
+  }else{
+    const patch = {
+      MenuButton: {
+        as: Button
+      },
+      MenuItem: {
+        onClick: (e) => {
+          setShinyValue(decodeURI(e.currentTarget.dataset.val));
+        }
+      }
+    };
+    return (
+      <ChakraProvider>
+        <Menu closeOnSelect={closeOnSelect}>
+          {chakraComponent(component, patch)}
+        </Menu>
+      </ChakraProvider>
+    );  
+  }
  };
 
 const ChakraInput = ({ configuration, value, setValue }) => {

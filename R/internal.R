@@ -8,15 +8,15 @@ isNamedList <- function(x){
 }
 
 isChakraBox <- function(x){
-  inherits(x, "box")
+  inherits(x, "box") || x[["name"]] == "Box"
 }
 
 isChakraButton <- function(x){
-  inherits(x, "button")
+  inherits(x, "button") || x[["name"]] == "Button"
 }
 
 isChakraIcon <- function(x){
-  inherits(x, "icon")
+  inherits(x, "icon") || x[["name"]] == "Icon"
 }
 
 encode <- function(x){

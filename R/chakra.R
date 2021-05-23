@@ -68,7 +68,7 @@ chakraBox <- function(
     )),
     children = encode(text)
   )
-  class(box) <- "box"
+  class(box) <- c("box", "shiny.tag")
   box
 }
 
@@ -91,7 +91,7 @@ chakraIcon <- function(icon, boxSize = "1em", color = "currentColor"){
       color = color
     )
   )
-  class(icon) <- "icon"
+  class(icon) <- c("icon", "shiny.tag")
   icon
 }
 
@@ -166,7 +166,7 @@ chakraButton <- function(
     ),
     children = encode(text)
   )
-  class(button) <- "button"
+  class(button) <- c("button", "shiny.tag")
   button
 }
 
@@ -202,7 +202,8 @@ chakraIconButton <- function(icon, ...){
 chakraMenuButton <- function(textWhenOpen, textWhenClose = textWhenOpen, ...){
   button <- chakraButton(text = "", ...)
   button[["name"]] <- "MenuButton"
-  button[["children"]] <- list(
+  button[["children"]] <- list()
+  attr(button, "text") <- list(
     textWhenOpen = URLencode(textWhenOpen),
     textWhenClose = URLencode(textWhenClose)
   )
@@ -239,11 +240,13 @@ chakraMenuItem <- function(text, value = text, icon = NULL){
   if(!is.null(icon)){
     stopifnot(isChakraIcon(icon))
   }
-  list(
+  menuitem <- list(
     name = "MenuItem",
     attribs = dropNulls(list("data-val" = URLencode(value), icon = icon)),
     children = encode(text)
   )
+  class(menuitem) <- "shiny.tag"
+  menuitem
 }
 
 #' Title
@@ -275,11 +278,11 @@ chakraMenuGroup <- function(title, items, ...){
 #'
 #' @examples
 chakraMenuOptionGroup <- function(title, multiple = FALSE, items){
-  itemclasses <- vapply(items, class, FUN.VALUE = character(1L))
-  if(!all(itemclasses %in% c("menuitemoption", "menudivider"))){
+  itemclasses <- vapply(items, `[[`, FUN.VALUE = character(1L), "name")
+  if(!all(itemclasses %in% c("MenuItemOption", "MenuDivider"))){
     stop("Invalid items.", call. = TRUE)
   }
-  menuitemoptions <- items[itemclasses == "menuitemoption"]
+  menuitemoptions <- items[itemclasses == "MenuItemOption"]
   values <- as.list(
     Filter(Negate(is.na), vapply(menuitemoptions, function(item){
       itemprops <- item[["attribs"]]
@@ -298,7 +301,7 @@ chakraMenuOptionGroup <- function(title, multiple = FALSE, items){
     ),
     children = lapply(items, unclass)
   )
-  class(group) <- "menuoptiongroup"
+  class(group) <- c("menuoptiongroup", "shiny.tag")
   attr(group, "values") <- values
   group
 }
@@ -322,7 +325,7 @@ chakraMenuItemOption <- function(text, value = text, checked = FALSE, ...){
     box[["attribs"]],
     list(value = URLencode(value), isChecked = checked)
   )
-  class(box) <- "menuitemoption"
+  class(box) <- c("menuitemoption", "shiny.tag")
   box
 }
 
@@ -337,7 +340,7 @@ chakraMenuDivider <- function(){
     name = "MenuDivider",
     attribs = list()
   )
-  class(divider) <- "menudivider"
+  class(divider) <- c("menudivider", "shiny.tag")
   divider
 }
 
@@ -507,8 +510,11 @@ chakraAlertDialogInput <- function(
   )
   chakraInput(
     inputId = inputId,
-    configuration =
-      list(widget = "alertdialog", component = component, inputId = inputId)
+    configuration = list(
+      widget = "alertdialog",
+      component = unclassComponent(component),
+      inputId = inputId
+    )
   )
 }
 
@@ -523,8 +529,8 @@ chakraAlertDialogInput <- function(
 #' @examples
 chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE){
   content <- menuList[["children"]]
-  elements <- vapply(content, class, FUN.VALUE = character(1L))
-  menuoptiongroups <- which(elements == "menuoptiongroup")
+  elements <- vapply(content, `[[`, FUN.VALUE = character(1L), "name")
+  menuoptiongroups <- which(elements == "MenuOptionGroup")
   if(length(menuoptiongroups)){
     values <- lapply(content[menuoptiongroups], function(optiongroup){
       attr(optiongroup, "values")
@@ -561,8 +567,8 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
     configuration =
       list(
         widget = if(length(menuoptiongroups)) "menuWithGroups" else "menu",
-        component = component,
-        text = menuButton[["children"]],
+        component = unclassComponent(component),
+        text = attr(menuButton, "text"),
         closeOnSelect = closeOnSelect,
         optiongroups =
           if(length(menuoptiongroups)) as.list(menuoptiongroups - 1L)

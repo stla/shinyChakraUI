@@ -4,6 +4,7 @@
 #'
 #' @importFrom reactR createReactShinyInput
 #' @importFrom htmltools htmlDependency tags
+#' @noRd
 chakraInput <- function(inputId, configuration, default = NULL) {
   createReactShinyInput(
     inputId = inputId,
@@ -583,6 +584,53 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
 
 #' Title
 #'
+#' @param closeOnEsc
+#' @param closeOnOverlayClick
+#' @param colorScheme
+#' @param id
+#' @param isCentered
+#' @param isFullHeight
+#' @param motionPreset
+#' @param placement
+#' @param size
+#'
+#' @return
+#' @export
+#'
+#' @examples
+chakraDrawerOptions <- function(
+  closeOnEsc = TRUE,
+  closeOnOverlayClick = TRUE,
+  colorScheme = NULL,
+  id = NULL,
+  isCentered = FALSE,
+  isFullHeight = FALSE,
+  motionPreset = "scale",
+  placement = "right",
+  size = "xs"
+){
+  dropNulls(list(
+    closeOnEsc = closeOnEsc,
+    closeOnOverlayClick = closeOnOverlayClick,
+    colorScheme =
+      if(!is.null(colorScheme)) match.arg(colorScheme, chakraColorSchemes()),
+    id = id,
+    isCentered = isCentered,
+    isFullHeight = isFullHeight,
+    motionPreset = match.arg(
+      motionPreset, c("scale", "none", "slideInBottom", "slideInRight")
+    ),
+    placement = match.arg(placement, c("bottom", "left", "right", "top")),
+    size = match.arg(
+      size,
+      c("sm", "md", "lg", "xl", "2xl", "full", "xs", "3xl", "4xl", "5xl", "6xl")
+    )
+  ))
+}
+
+
+#' Title
+#'
 #' @param inputId
 #' @param openButton
 #' @param options
@@ -596,7 +644,8 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
 #'
 #' @examples
 chakraDrawerInput <- function(
-  inputId, openButton, options, closeButton = TRUE, header, body, footer
+  inputId, openButton, options = chakraDrawerOptions(),
+  closeButton = TRUE, header, body, footer
 ){
   openButton[["name"]] <- "OpenButton"
   drawer <- list(

@@ -578,17 +578,19 @@ const ChakraInput = ({ configuration, value, setValue }) => {
 };
 
 const ChakraComponent = ({ configuration, value, setValue }) => {
-  $(document).on('shiny:inputchanged', function(event) {
-    if (event.name === 'text') {
-      event.value = "hello";
-    }
-  });
-  $(document).ready(function(){
-    $("#text").val("hello");
-//    Shiny.setInputValue("text", "hello");
-  });
+  let inputs = configuration.inputs;
+  if(inputs){
+    $(document).on('shiny:connected', function() {
+      for(let i = 0; i < inputs.length; i++){
+        let id = inputs[i].id;
+        let val = inputs[i].value;
+        Shiny.setInputValue(id, val);
+        $("#" + id).val(val);
+      }
+    });  
+  }
   return chakraComponent(
-    configuration, // if using components then provide them here wrapped in an object
+    configuration.component, // if using components then provide them here wrapped in an object
     {}
   )
 };

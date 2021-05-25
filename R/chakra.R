@@ -41,7 +41,7 @@ chakraComponent <- function(inputId, component){
       script = "chakra.js"
     ),
     default = NULL,
-    configuration = component,
+    configuration = unclassComponent(component),
     container = tags$div
   )
 }
@@ -292,7 +292,7 @@ chakraMenuOptionGroup <- function(title, multiple = FALSE, items){
     Filter(Negate(is.na), vapply(menuitemoptions, function(item){
       itemprops <- item[["attribs"]]
       if(itemprops[["isChecked"]]){
-        URLdecode(itemprops[["value"]])
+        itemprops[["value"]]
       }else{
         NA_character_
       }
@@ -532,7 +532,6 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
     })
     names(values) <- titles
   }
-  menuList[["children"]] <- content
   component <- list(
     name = "Fragment",
     attribs = list(),

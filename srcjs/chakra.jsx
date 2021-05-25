@@ -336,7 +336,7 @@ const chakraComponent = (component, patch) => {
     }
   }
   let newprops = $.extend(props, patch[component.name]);
-  if(!newprops.hasOwnProperty("children")){
+  if(!newprops.hasOwnProperty("children") && component.children.length > 0){
     newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
   }
   let tag = component.name;
@@ -578,6 +578,15 @@ const ChakraInput = ({ configuration, value, setValue }) => {
 };
 
 const ChakraComponent = ({ configuration, value, setValue }) => {
+  $(document).on('shiny:inputchanged', function(event) {
+    if (event.name === 'text') {
+      event.value = "hello";
+    }
+  });
+  $(document).ready(function(){
+    $("#text").val("hello");
+//    Shiny.setInputValue("text", "hello");
+  });
   return chakraComponent(
     configuration, // if using components then provide them here wrapped in an object
     {}

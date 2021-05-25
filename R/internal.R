@@ -36,18 +36,35 @@ asShinyTag <- function(x){
   x
 }
 
-unclassComponent <- function(component){
-  attribsNames <- names(component[["attribs"]])
+unclassComponent <- function(component, inputs = NULL){
+  attribs <- component[["attribs"]]
+  attribsNames <- names(attribs)
   if(sum(attribsNames == "class") > 1L){
     component[["attribs"]][["class"]] <-
-      do.call(paste, component[["attribs"]][attribsNames == "class"])
+      do.call(paste, attribs[attribsNames == "class"])
+  }
+  inputs <- NULL
+  if(
+    component[["name"]] == "input" &&
+    attribs[["type"]] %in% c("text", "number") &&
+    !is.null(attribs[["value"]])
+  ){
+    # warning(
+    #   "It is not possible to set an initial value to an `input` element; ",
+    #   sprintf("deleting value of input element \"%s\".", attribs[["id"]]),
+    #   call. = FALSE
+    # )
+    inputs <- list(list(id = attribs[["id"]], value = attribs[["value"]]))
+    component[["attribs"]][["value"]] <- NULL
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
       if(is.list(child) && !inherits(child, "shiny.tag")){
         unlist(child) # this handles actionButton
       }else if(inherits(child, "shiny.tag")){
-        unclassComponent(child)
+        x <- unclassComponent(child)
+        inputs <<- c(inputs, x[["inputs"]])
+        x[["component"]]
       }else if(is.character(child)){
         URLencode(child)
       }else{
@@ -58,7 +75,7 @@ unclassComponent <- function(component){
   # if(length(component[["attribs"]])){
   #   component[["attribs"]] <- lapply(component[["attribs"]], unclass)
   # }
-  unclass(component)
+  list(component = unclass(component), inputs = inputs)
 }
 
 chakraIcons <- function(){

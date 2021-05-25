@@ -343,7 +343,8 @@ chakraMenuItemOption <- function(text, value = text, checked = FALSE, ...){
 chakraMenuDivider <- function(){
   divider <- list(
     name = "MenuDivider",
-    attribs = list()
+    attribs = list(),
+    children = list()
   )
   class(divider) <- c("menudivider", "shiny.tag")
   divider
@@ -472,7 +473,7 @@ chakraAlertDialogInput <- function(
       stop("")
     }
   }
-  footerButtons <- lapply(footerButtons, unclass)
+  #footerButtons <- lapply(footerButtons, unclass)
   if(!isChakraBox(header)){
     stop("")
   }
@@ -481,32 +482,18 @@ chakraAlertDialogInput <- function(
   }
   header[["name"]] <- "AlertDialogHeader"
   body[["name"]] <- "AlertDialogBody"
-  component <- list(
-    name = "Fragment",
-    attribs = list(),
-    children = list(
-      unclass(openButton),
-      list(
-        name = "AlertDialog",
-        attribs = list(),
-        children = list(
-          list(
-            name = "AlertDialogOverlay",
-            attribs = list(),
-            children = list(
-              list(
-                name = "AlertDialogContent",
-                attribs = list(),
-                children = list(
-                  unclass(header),
-                  unclass(body),
-                  list(
-                    name = "AlertDialogFooter",
-                    attribs = list(),
-                    children = footerButtons
-                  )
-                )
-              )
+  component <- React$Fragment(
+    openButton,
+    React$AlertDialog(
+      React$AlertDialogOverlay(
+        React$AlertDialogContent(
+          header,
+          body,
+          asShinyTag(
+            list(
+              name = "AlertDialogFooter",
+              attribs = list(),
+              children = footerButtons
             )
           )
         )

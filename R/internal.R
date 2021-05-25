@@ -21,12 +21,19 @@ isChakraIcon <- function(x){
 
 encode <- function(x){
   if(inherits(x, "shiny.tag")){
-    list(list(tag = unclassComponent(x)))
+    list(x)
   }else if(inherits(x, "html")){
     list(list(html = URLencode(as.character(x))))
+  }else if(is.list(x) && is.null(names(x))){
+    x
   }else{
-    list(URLencode(x))
+    list(x)
   }
+}
+
+asShinyTag <- function(x){
+  class(x) <- "shiny.tag"
+  x
 }
 
 unclassComponent <- function(component){
@@ -34,6 +41,8 @@ unclassComponent <- function(component){
     component[["children"]] <- lapply(component[["children"]], function(child){
       if(inherits(child, "shiny.tag")){
         unclassComponent(child)
+      }else if(is.character(child)){
+        URLencode(child)
       }else{
         child
       }

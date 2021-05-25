@@ -266,7 +266,7 @@ chakraMenuItem <- function(text, value = text, icon = NULL){
 #' @examples
 chakraMenuGroup <- function(title, items, ...){
   box <- chakraBox(text = "", ...)
-  box[["children"]] <- lapply(items, unclass)
+  box[["children"]] <- items
   box[["attribs"]][["title"]] <- title
   box[["name"]] <- "MenuGroup"
   box
@@ -304,7 +304,7 @@ chakraMenuOptionGroup <- function(title, multiple = FALSE, items){
       title = title,
       type = ifelse(multiple, "checkbox", "radio")
     ),
-    children = lapply(items, unclass)
+    children = items
   )
   class(group) <- c("menuoptiongroup", "shiny.tag")
   attr(group, "values") <- values
@@ -532,13 +532,13 @@ chakraMenuInput <- function(inputId, menuButton, menuList, closeOnSelect = TRUE)
     })
     names(values) <- titles
   }
-  menuList[["children"]] <- lapply(content, unclass)
+  menuList[["children"]] <- content
   component <- list(
     name = "Fragment",
     attribs = list(),
     children = list(
-      unclass(menuButton),
-      unclass(menuList)
+      menuButton,
+      menuList
       # list(
       #   element = "MenuList",
       #   props = list(),

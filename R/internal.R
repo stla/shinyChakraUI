@@ -37,9 +37,16 @@ asShinyTag <- function(x){
 }
 
 unclassComponent <- function(component){
+  attribsNames <- names(component[["attribs"]])
+  if(sum(attribsNames == "class") > 1L){
+    component[["attribs"]][["class"]] <-
+      do.call(paste, component[["attribs"]][attribsNames == "class"])
+  }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
-      if(inherits(child, "shiny.tag")){
+      if(is.list(child) && !inherits(child, "shiny.tag")){
+        unlist(child) # this handles actionButton
+      }else if(inherits(child, "shiny.tag")){
         unclassComponent(child)
       }else if(is.character(child)){
         URLencode(child)

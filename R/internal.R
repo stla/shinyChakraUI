@@ -43,7 +43,7 @@ unclassComponent <- function(component, inputs = NULL){
     component[["attribs"]][["class"]] <-
       do.call(paste, attribs[attribsNames == "class"])
   }
-  inputs <- NULL
+  inputs <- Checkboxes <- NULL
   if(
     component[["name"]] == "input" &&
     attribs[["type"]] %in% c("text", "number") &&
@@ -57,6 +57,13 @@ unclassComponent <- function(component, inputs = NULL){
     inputs <- list(list(id = attribs[["id"]], value = attribs[["value"]]))
     component[["attribs"]][["value"]] <- NULL
   }
+  if(
+    component[["name"]] == "Checkbox"
+  ){
+    Checkboxes <- list(attribs[["isChecked"]])
+    names(Checkboxes) <- attribs[["id"]]
+    component[["attribs"]][["isChecked"]] <- NULL
+  }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
       if(is.list(child) && !inherits(child, "shiny.tag")){
@@ -64,6 +71,7 @@ unclassComponent <- function(component, inputs = NULL){
       }else if(inherits(child, "shiny.tag")){
         x <- unclassComponent(child)
         inputs <<- c(inputs, x[["inputs"]])
+        Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)
         x[["component"]]
       }else if(is.character(child)){
         URLencode(child)
@@ -75,7 +83,11 @@ unclassComponent <- function(component, inputs = NULL){
   # if(length(component[["attribs"]])){
   #   component[["attribs"]] <- lapply(component[["attribs"]], unclass)
   # }
-  list(component = unclass(component), inputs = inputs)
+  list(
+    component = unclass(component),
+    inputs = inputs,
+    Checkboxes = Checkboxes
+  )
 }
 
 chakraIcons <- function(){

@@ -34,6 +34,7 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
+  Checkbox
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -210,6 +211,7 @@ const ChakraComponents = {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
+  Checkbox
 };
 
 const formatStringToCamelCase = str => {
@@ -310,7 +312,10 @@ const isTag = value => {
 };
  */
 
-const chakraComponent = (component, patch) => {
+const chakraComponent = (component, patch, checkedItems, checkboxOnChange) => {
+  if(React.isValidElement(component)){
+    return component;
+  }
   if(typeof component === "string"){
     return decodeURI(component);
   }
@@ -323,6 +328,9 @@ const chakraComponent = (component, patch) => {
   let props = component.attribs;
   if(Array.isArray(props) && props.length === 0){
     props = {};
+  }
+  if(component.name === "Checkbox"){
+    props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
   }
   for(const key in props){
     if(isTag(props[key])){
@@ -589,10 +597,47 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
       }
     });  
   }
+  const [checkedItems, setCheckedItems] = React.useState(configuration.Checkboxes);
+  const checkboxOnChange = (e) => {
+    let obj = {};
+    for(let key in checkedItems){
+      if(key === e.currentTarget.id){
+        obj[key] = e.target.checked;
+      }else{
+        obj[key] = checkedItems[key];
+      }
+    }
+    setCheckedItems(obj);
+    Shiny.setInputValue(e.currentTarget.id, e.target.checked);    
+  };
+  // return (
+  //   <React.Fragment>
+  //   <Checkbox
+  //     id={configuration.component.attribs.id}
+  //     isChecked={checkedItems[configuration.component.attribs.id]}
+  //     onChange={(e) => {
+  //       let obj = {};
+  //       for(let key in checkedItems){
+  //         if(key === e.currentTarget.id){
+  //           obj[key] = e.target.checked;
+  //         }else{
+  //           obj[key] = checkedItems[key];
+  //         }
+  //       }
+  //       setCheckedItems(obj);
+  //       Shiny.setInputValue(e.currentTarget.id, e.target.checked);    
+  //     }}
+  //   >
+  //     Check me
+  //   </Checkbox>
+  //   </React.Fragment>
+  // );
   return chakraComponent(
     configuration.component, // if using components then provide them here wrapped in an object
-    {}
-  )
+    {},
+    checkedItems,
+    checkboxOnChange
+  );
 };
 
 reactShinyInput('.chakracomponent', 'shinyChakraUI.chakracomponent', ChakraComponent);

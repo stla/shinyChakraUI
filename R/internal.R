@@ -77,7 +77,7 @@ unclassComponent <- function(component, inputs = NULL){
         x <- unclassComponent(child)
         inputs <<- c(inputs, x[["inputs"]])
         Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)
-        RadioGroups <- c(x[["RadioGroups"]], RadioGroups)
+        RadioGroups <<- c(x[["RadioGroups"]], RadioGroups)
         x[["component"]]
       }else if(is.character(child)){
         URLencode(child)

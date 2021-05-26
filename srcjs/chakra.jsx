@@ -4,7 +4,6 @@ import { unmountComponentAtNode } from "react-dom";
 import {
   useDisclosure,
   ChakraProvider,
-  CSSReset,
   Button,
   IconButton,
   Box,
@@ -101,7 +100,6 @@ import {
   WarningTwoIcon
 } from "@chakra-ui/icons";
 import ReactHtmlParser from "react-html-parser";
-
 //const evalComponent = new Function("React", "component", "return component");
 
 const Fragment = React.Fragment;
@@ -648,7 +646,6 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
   const [radiogroupValues, setRadiogroupValues] = React.useState(configuration.RadioGroups);
   return (
     <ChakraProvider>
-      <CSSReset />
     {
       chakraComponent(
         configuration.component, 

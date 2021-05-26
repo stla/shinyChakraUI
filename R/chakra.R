@@ -33,13 +33,13 @@ chakraComponent <- function(inputId, component){
   createReactShinyInput(
     inputId = inputId,
     class = "chakracomponent",
-    dependencies = htmlDependency(
+    dependencies = append(list(htmlDependency(
       name = "chakra-input",
       version = "1.0.0",
       src = "www/shinyChakraUI/chakra",
       package = "shinyChakraUI",
       script = "chakra.js"
-    ),
+    )), attr(sliderInput("slider", "Slider", 0, 10, 5), "html_dependencies")),
     default = NULL,
     configuration = unclassComponent(component),
     container = tags$div

@@ -345,7 +345,8 @@ const chakraComponent = (component, patch, checkedItems, checkboxOnChange) => {
   }
   let newprops = $.extend(props, patch[component.name]);
   if(!newprops.hasOwnProperty("children") && component.children.length > 0){
-    newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
+    newprops.children = 
+      component.children.map((x) => {return chakraComponent(x, patch, checkedItems, checkboxOnChange);});
   }
   let tag = component.name;
   if(tag[0] === tag[0].toUpperCase()){

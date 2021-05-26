@@ -4,6 +4,7 @@ import { unmountComponentAtNode } from "react-dom";
 import {
   useDisclosure,
   ChakraProvider,
+  CSSReset,
   Button,
   IconButton,
   Box,
@@ -34,7 +35,10 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-  Checkbox
+  Checkbox,
+  Radio,
+  RadioGroup,
+  Stack
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -211,7 +215,10 @@ const ChakraComponents = {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-  Checkbox
+  Checkbox,
+  Radio,
+  RadioGroup,
+  Stack
 };
 
 const formatStringToCamelCase = str => {
@@ -312,7 +319,7 @@ const isTag = value => {
 };
  */
 
-const chakraComponent = (component, patch, checkedItems, checkboxOnChange) => {
+const chakraComponent = (component, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues) => {
   if(React.isValidElement(component)){
     return component;
   }
@@ -332,6 +339,25 @@ const chakraComponent = (component, patch, checkedItems, checkboxOnChange) => {
   if(component.name === "Checkbox"){
     props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
   }
+  if(component.name == "RadioGroup"){
+    props = $.extend(props, 
+      {
+        onChange: (value) => {
+          let obj = {};
+          for(let key in radiogroupValues){
+            if(key === props.id){
+              obj[key] = value;
+            }else{
+              obj[key] = radiogroupValues[key];
+            }
+          }
+          setRadiogroupValues(obj);
+          Shiny.setInputValue(props.id, value);
+        },
+        value: radiogroupValues[props.id]
+      }
+    );
+  }
   for(const key in props){
     if(isTag(props[key])){
       let name = props[key].name; 
@@ -346,7 +372,11 @@ const chakraComponent = (component, patch, checkedItems, checkboxOnChange) => {
   let newprops = $.extend(props, patch[component.name]);
   if(!newprops.hasOwnProperty("children") && component.children.length > 0){
     newprops.children = 
-      component.children.map((x) => {return chakraComponent(x, patch, checkedItems, checkboxOnChange);});
+      component.children.map((x) => {
+        return chakraComponent(
+          x, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+        );
+      });
   }
   let tag = component.name;
   if(tag[0] === tag[0].toUpperCase()){
@@ -587,6 +617,8 @@ const ChakraInput = ({ configuration, value, setValue }) => {
 };
 
 const ChakraComponent = ({ configuration, value, setValue }) => {
+  let patch = {};
+  // input elements
   let inputs = configuration.inputs;
   if(inputs){
     $(document).on('shiny:connected', function() {
@@ -598,6 +630,7 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
       }
     });  
   }
+  // Checkbox elements
   const [checkedItems, setCheckedItems] = React.useState(configuration.Checkboxes);
   const checkboxOnChange = (e) => {
     let obj = {};
@@ -611,33 +644,22 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     setCheckedItems(obj);
     Shiny.setInputValue(e.currentTarget.id, e.target.checked);    
   };
-  // return (
-  //   <React.Fragment>
-  //   <Checkbox
-  //     id={configuration.component.attribs.id}
-  //     isChecked={checkedItems[configuration.component.attribs.id]}
-  //     onChange={(e) => {
-  //       let obj = {};
-  //       for(let key in checkedItems){
-  //         if(key === e.currentTarget.id){
-  //           obj[key] = e.target.checked;
-  //         }else{
-  //           obj[key] = checkedItems[key];
-  //         }
-  //       }
-  //       setCheckedItems(obj);
-  //       Shiny.setInputValue(e.currentTarget.id, e.target.checked);    
-  //     }}
-  //   >
-  //     Check me
-  //   </Checkbox>
-  //   </React.Fragment>
-  // );
-  return chakraComponent(
-    configuration.component, // if using components then provide them here wrapped in an object
-    {},
-    checkedItems,
-    checkboxOnChange
+  // RadioGroup
+  const [radiogroupValues, setRadiogroupValues] = React.useState(configuration.RadioGroups);
+  return (
+    <ChakraProvider>
+      <CSSReset />
+    {
+      chakraComponent(
+        configuration.component, 
+        patch,
+        checkedItems,
+        checkboxOnChange,
+        radiogroupValues,
+        setRadiogroupValues
+      )
+    }
+    </ChakraProvider>
   );
 };
 

@@ -43,7 +43,7 @@ unclassComponent <- function(component, inputs = NULL){
     component[["attribs"]][["class"]] <-
       do.call(paste, attribs[attribsNames == "class"])
   }
-  inputs <- Checkboxes <- NULL
+  inputs <- Checkboxes <- RadioGroups <- NULL
   if(
     component[["name"]] == "input" &&
     attribs[["type"]] %in% c("text", "number") &&
@@ -56,13 +56,18 @@ unclassComponent <- function(component, inputs = NULL){
     # )
     inputs <- list(list(id = attribs[["id"]], value = attribs[["value"]]))
     component[["attribs"]][["value"]] <- NULL
-  }
-  if(
+  }else if(
     component[["name"]] == "Checkbox"
   ){
     Checkboxes <- list(attribs[["isChecked"]])
     names(Checkboxes) <- attribs[["id"]]
     component[["attribs"]][["isChecked"]] <- NULL
+  }else if(
+    component[["name"]] == "RadioGroup"
+  ){
+    RadioGroups <- list(attribs[["value"]])
+    names(RadioGroups) <- attribs[["id"]]
+    component[["attribs"]][["value"]] <- NULL
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
@@ -72,6 +77,7 @@ unclassComponent <- function(component, inputs = NULL){
         x <- unclassComponent(child)
         inputs <<- c(inputs, x[["inputs"]])
         Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)
+        RadioGroups <- c(x[["RadioGroups"]], RadioGroups)
         x[["component"]]
       }else if(is.character(child)){
         URLencode(child)
@@ -86,7 +92,8 @@ unclassComponent <- function(component, inputs = NULL){
   list(
     component = unclass(component),
     inputs = inputs,
-    Checkboxes = Checkboxes
+    Checkboxes = Checkboxes,
+    RadioGroups = RadioGroups
   )
 }
 

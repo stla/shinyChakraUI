@@ -36,15 +36,46 @@ asShinyTag <- function(x){
   x
 }
 
-unclassComponent <- function(component, inputs = NULL){
+isSlider <- function(x){
+  inherits(x, "shiny.tag") &&
+    length(x[["children"]]) == 2L &&
+    identical(x[["children"]][[2]][["attribs"]][["class"]], "js-range-slider")
+}
+
+sliderDependencies <- function(){
+  htmlDependencies(shiny::sliderInput("id", "label", 0, 2, 1))
+  # list(structure(list(name = "ionrangeslider-javascript", version = "2.3.1",
+  #                     src = list(href = "shared/ionrangeslider"), meta = NULL,
+  #                     script = "js/ion.rangeSlider.min.js", stylesheet = NULL,
+  #                     head = NULL, attachment = NULL, package = NULL, all_files = TRUE), class = "html_dependency"),
+  #      structure(list(name = "strftime", version = "0.9.2", src = list(
+  #        href = "shared/strftime"), meta = NULL, script = "strftime-min.js",
+  #        stylesheet = NULL, head = NULL, attachment = NULL, package = NULL,
+  #        all_files = TRUE), class = "html_dependency"), structure(function ()
+  #        {
+  #          if (is_shiny_app()) {
+  #            register_theme_dependency(func)
+  #            return(func(get_current_theme()))
+  #          }
+  #          func(bs_global_get())
+  #        }, class = "shiny.tag.function"))
+}
+
+#' @importFrom htmltools htmlDependencies
+#' @noRd
+unclassComponent <- function(component){
   attribs <- component[["attribs"]]
   attribsNames <- names(attribs)
   if(sum(attribsNames == "class") > 1L){
     component[["attribs"]][["class"]] <-
       do.call(paste, attribs[attribsNames == "class"])
   }
-  inputs <- Checkboxes <- RadioGroups <- NULL
-  if(
+  inputs <- Checkboxes <- RadioGroups <- sliders <- NULL
+  if(isSlider(component)){
+    sliders <- list(list(id = component[["children"]][[2]][["attribs"]][["id"]]))
+    component[["children"]][[2]][["attribs"]][["class"]] <- NULL
+    component <- list(html = URLencode(as.character(component)))
+  }else if(
     component[["name"]] == "input" &&
     attribs[["type"]] %in% c("text", "number") &&
     !is.null(attribs[["value"]])
@@ -71,13 +102,14 @@ unclassComponent <- function(component, inputs = NULL){
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
-      if(is.list(child) && !inherits(child, "shiny.tag")){
+      if(is.list(child) && !inherits(child, "shiny.tag") && is.null(child[["html"]])){
         unlist(child) # this handles actionButton
       }else if(inherits(child, "shiny.tag")){
         x <- unclassComponent(child)
         inputs <<- c(inputs, x[["inputs"]])
         Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)
         RadioGroups <<- c(x[["RadioGroups"]], RadioGroups)
+        sliders <<- c(x[["sliders"]], sliders)
         x[["component"]]
       }else if(is.character(child)){
         URLencode(child)
@@ -93,7 +125,8 @@ unclassComponent <- function(component, inputs = NULL){
     component = unclass(component),
     inputs = inputs,
     Checkboxes = Checkboxes,
-    RadioGroups = RadioGroups
+    RadioGroups = RadioGroups,
+    sliders = sliders
   )
 }
 

@@ -1,5 +1,5 @@
 import { reactShinyInput, hydrate } from 'reactR';
-import React, { useState } from 'react';
+import * as React from 'react';
 import { unmountComponentAtNode } from "react-dom";
 import {
   useDisclosure,
@@ -618,13 +618,24 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
   let patch = {};
   // input elements
   let inputs = configuration.inputs;
-  if(inputs){
+  let sliders = configuration.sliders;
+  if(inputs || sliders){
     $(document).on('shiny:connected', function() {
-      for(let i = 0; i < inputs.length; i++){
-        let id = inputs[i].id;
-        let val = inputs[i].value;
-        Shiny.setInputValue(id, val);
-        $("#" + id).val(val);
+      if(inputs){
+        for(let i = 0; i < inputs.length; i++){
+          let id = inputs[i].id;
+          let val = inputs[i].value;
+          Shiny.setInputValue(id, val);
+          $("#" + id).val(val);
+        }
+      }
+      if(sliders){
+        for(let i = 0; i < sliders.length; i++){
+          let slider = document.getElementById(sliders[i].id);
+          Shiny.inputBindings.bindingNames["shiny.sliderInput"].binding.initialize(slider);
+          $(slider).addClass("js-range-slider");
+        }
+        Shiny.bindAll();
       }
     });  
   }

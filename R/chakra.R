@@ -27,23 +27,24 @@ chakraInput <- function(inputId, configuration, default = NULL) {
 #' <Add Description>
 #'
 #' @importFrom reactR createReactShinyInput
-#' @importFrom htmltools htmlDependency tags
+#' @importFrom htmltools htmlDependency tags attachDependencies
 #' @export
 chakraComponent <- function(inputId, component){
-  createReactShinyInput(
+  configuration <- unclassComponent(component)
+  attachDependencies(createReactShinyInput(
     inputId = inputId,
     class = "chakracomponent",
-    dependencies = append(list(htmlDependency(
+    dependencies = htmlDependency(
       name = "chakra-input",
       version = "1.0.0",
       src = "www/shinyChakraUI/chakra",
       package = "shinyChakraUI",
       script = "chakra.js"
-    )), attr(sliderInput("slider", "Slider", 0, 10, 5), "html_dependencies")),
+    ),
     default = NULL,
-    configuration = unclassComponent(component),
+    configuration = configuration,
     container = tags$div
-  )
+  ), if(!is.null(configuration[["sliders"]])) sliderDependencies())
 }
 
 #' Title

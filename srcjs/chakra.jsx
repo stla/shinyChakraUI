@@ -100,6 +100,7 @@ import {
   WarningTwoIcon
 } from "@chakra-ui/icons";
 import ReactHtmlParser from "react-html-parser";
+import ScriptTag from "react-script-tag";
 //const evalComponent = new Function("React", "component", "return component");
 
 const Fragment = React.Fragment;
@@ -114,6 +115,7 @@ const UnmountingIconButton = IconButton;
 const DisableIconButton = IconButton;
 
 const ChakraComponents = {
+  ScriptTag,
   Fragment,
   AddIcon,
   ArrowBackIcon,

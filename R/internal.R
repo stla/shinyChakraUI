@@ -61,20 +61,61 @@ sliderDependencies <- function(){
   #        }, class = "shiny.tag.function"))
 }
 
+evalHtmlDependencies <- function(x){
+  lapply(x, function(dep){
+    if(inherits(dep, "shiny.tag.function")){
+      dep()
+    }else{
+      dep
+    }
+  })
+}
+
 #' @importFrom htmltools htmlDependencies
 #' @noRd
 unclassComponent <- function(component){
+  if(inherits(component, "shiny.tag.list")){
+    component <- do.call(React$Fragment, component)
+  }
   attribs <- component[["attribs"]]
   attribsNames <- names(attribs)
   if(sum(attribsNames == "class") > 1L){
     component[["attribs"]][["class"]] <-
       do.call(paste, attribs[attribsNames == "class"])
   }
-  inputs <- Checkboxes <- RadioGroups <- sliders <- NULL
+  inputs <- Checkboxes <- RadioGroups <- dependencies <- NULL
   if(isSlider(component)){
-    sliders <- list(list(id = component[["children"]][[2]][["attribs"]][["id"]]))
-    component[["children"]][[2]][["attribs"]][["class"]] <- NULL
-    component <- list(html = URLencode(as.character(component)))
+    dependencies <- evalHtmlDependencies(htmlDependencies(component))
+    # sliders <- list(list(id = component[["children"]][[2]][["attribs"]][["id"]]))
+    # component[["children"]][[2]][["attribs"]][["class"]] <- NULL
+    id <- component[["children"]][[2]][["attribs"]][["id"]]
+    script <- sprintf(
+      "Shiny.inputBindings.bindingNames['shiny.sliderInput'].binding.initialize(document.getElementById('%s'));",
+      id
+    )
+    component <- React$Fragment(
+      list(html = URLencode(as.character(component))),
+      tags$script(HTML(script))
+    )
+  }else if(
+    inherits(component, "shiny.tag") && !is.null(htmlDependencies(component))
+  ){
+    dependencies <- evalHtmlDependencies(htmlDependencies(component))
+    depnames <- vapply(dependencies, `[[`, FUN.VALUE = character(1L), "name")
+    if("selectize" %in% depnames){
+      id <- component[["children"]][[2L]][["children"]][[1L]][["attribs"]][["id"]]
+      script <- sprintf(
+        "Shiny.inputBindings.bindingNames['shiny.selectInput'].binding.initialize(document.getElementById('%s'));",
+        id
+      )
+      htmltools::htmlDependencies(component) <- NULL
+      component <- React$Fragment(
+        component,
+        tags$script(HTML(script))
+      )
+    }else{
+      component <- list(html = URLencode(as.character(component)))
+    }
   }else if(
     component[["name"]] == "input" &&
     attribs[["type"]] %in% c("text", "number") &&
@@ -99,6 +140,13 @@ unclassComponent <- function(component){
     RadioGroups <- list(attribs[["value"]])
     names(RadioGroups) <- attribs[["id"]]
     component[["attribs"]][["value"]] <- NULL
+  }else if(
+    component[["name"]] == "script"
+  ){
+    component[["name"]] <- "ScriptTag"
+    component[["attribs"]][["dangerouslySetInnerHTML"]] <-
+      list("__html" = as.character(component[["children"]][[1L]]))
+    component[["children"]] <- list()
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
@@ -109,8 +157,10 @@ unclassComponent <- function(component){
         inputs <<- c(inputs, x[["inputs"]])
         Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)
         RadioGroups <<- c(x[["RadioGroups"]], RadioGroups)
-        sliders <<- c(x[["sliders"]], sliders)
+        dependencies <<- c(x[["dependencies"]], dependencies)
         x[["component"]]
+      }else if(inherits(child, "html")){
+        list(html = URLencode(as.character(child)))
       }else if(is.character(child)){
         URLencode(child)
       }else{
@@ -126,7 +176,7 @@ unclassComponent <- function(component){
     inputs = inputs,
     Checkboxes = Checkboxes,
     RadioGroups = RadioGroups,
-    sliders = sliders
+    dependencies = dependencies
   )
 }
 

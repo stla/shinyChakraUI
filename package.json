@@ -5,9 +5,11 @@
     "@chakra-ui/react": "^1.0.0",
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
+    "babel-runtime": "^6.26.0",
     "framer-motion": "^4.0.0",
     "react-html-parser": "^2.0.0",
-    "react-icons": "^4.0.0"
+    "react-icons": "^4.0.0",
+    "react-script-tag": "^1.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",

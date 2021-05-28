@@ -31,6 +31,8 @@ chakraInput <- function(inputId, configuration, default = NULL) {
 #' @export
 chakraComponent <- function(inputId, component){
   configuration <- unclassComponent(component)
+  dependencies <- configuration[["dependencies"]]
+  configuration[["dependencies"]] <- NULL
   attachDependencies(createReactShinyInput(
     inputId = inputId,
     class = "chakracomponent",
@@ -44,7 +46,7 @@ chakraComponent <- function(inputId, component){
     default = NULL,
     configuration = configuration,
     container = tags$div
-  ), if(!is.null(configuration[["sliders"]])) sliderDependencies())
+  ), dependencies)
 }
 
 #' Title

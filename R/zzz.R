@@ -3,10 +3,14 @@
 .onLoad <- function(...){
 
   shiny::registerInputHandler("shinyChakraUI.widget", function(data, ...){
-    if(data[["widget"]] == "menuWithGroups"){
-      lapply(data[["value"]], unlist)
+    widget <- data[["widget"]]
+    value <- data[["value"]]
+    if(widget == "menuWithGroups"){
+      lapply(value, unlist)
+    }else if(widget == "checkboxWithChildren"){
+      unlist(value)
     }else{
-      data[["value"]]
+      value
     }
   }, force = TRUE)
 

@@ -19,6 +19,11 @@ isChakraIcon <- function(x){
   inherits(x, "icon") || x[["name"]] == "Icon"
 }
 
+isChakraCheckbox <- function(x){
+  inherits(x, "shiny.tag") && x[["name"]] == "Checkbox"
+}
+
+
 encode <- function(x){
   if(inherits(x, "shiny.tag")){
     list(x)
@@ -79,6 +84,24 @@ unclassComponent <- function(component){
   }
   attribs <- component[["attribs"]]
   attribsNames <- names(attribs)
+  if(
+    "value" %in% attribsNames &&
+    is.character(value <- attribs[["value"]])
+  ){
+    component[["attribs"]][["value"]] <- attribs[["value"]] <- URLencode(value)
+  }
+  if("title" %in% attribsNames){
+    component[["attribs"]][["title"]] <- URLencode(attribs[["title"]])
+  }
+  if(component[["name"]] == "MenuItem"){
+    if(!is.element("value", attribsNames)){
+      stop(
+        "`MenuItem` requires a `value` attribute.", call. = FALSE
+      )
+    }
+    component[["attribs"]][["data-val"]] <- attribs[["value"]]
+    component[["attribs"]][["value"]] <- NULL
+  }
   if(sum(attribsNames == "class") > 1L){
     component[["attribs"]][["class"]] <-
       do.call(paste, attribs[attribsNames == "class"])
@@ -127,19 +150,34 @@ unclassComponent <- function(component){
     #   call. = FALSE
     # )
     inputs <- list(list(id = attribs[["id"]], value = attribs[["value"]]))
+    script <- sprintf(
+      '$("#%s").val("%s");', attribs[["id"]], URLdecode(attribs[["value"]])
+    )
     component[["attribs"]][["value"]] <- NULL
+    component <- React$Fragment(
+      component,
+      tags$script(HTML(script))
+    )
   }else if(
     component[["name"]] == "Checkbox"
   ){
     Checkboxes <- list(attribs[["isChecked"]])
     names(Checkboxes) <- attribs[["id"]]
-    component[["attribs"]][["isChecked"]] <- NULL
+    #component[["attribs"]][["isChecked"]] <- NULL
   }else if(
-    component[["name"]] == "RadioGroup"
+    component[["name"]] == "RadioGroup" && !is.null(attribs[["value"]])
   ){
+    script <- sprintf(
+      "setTimeout(function(){Shiny.setInputValue('%s', '%s')});",
+      attribs[["id"]], URLdecode(attribs[["value"]])
+    )
     RadioGroups <- list(attribs[["value"]])
     names(RadioGroups) <- attribs[["id"]]
     component[["attribs"]][["value"]] <- NULL
+    component <- React$Fragment(
+      component,
+      tags$script(HTML(script))
+    )
   }else if(
     component[["name"]] == "script"
   ){
@@ -173,7 +211,7 @@ unclassComponent <- function(component){
   # }
   list(
     component = unclass(component),
-    inputs = inputs,
+    inputs = NULL,
     Checkboxes = Checkboxes,
     RadioGroups = RadioGroups,
     dependencies = dependencies

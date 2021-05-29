@@ -221,6 +221,197 @@ const ChakraComponents = {
   Stack
 };
 
+const getMenuOptionGroupSelections = menuoptiongroup => {
+  let type = menuoptiongroup.attribs.type;
+  let selections = [];
+  let menuitemoptions = menuoptiongroup.children;
+  for(let i = 0; i < menuitemoptions.length; i++){
+    let attribs = menuitemoptions[i].attribs;
+    if(attribs.isChecked){
+      if(type === "radio"){
+        return attribs.value;
+      }
+      selections.push(attribs.value);
+    }
+  }
+  return selections.length ? selections : null;
+};
+
+const getMenuOptionGroups = menulist => {
+  let menuoptiongroups = [];
+  let children = menulist.children;
+  for(let i = 0; i < children.length; i++){
+    let item = children[i];
+    if(item.name === "MenuOptionGroup"){
+      menuoptiongroups.push(item);
+    }
+  }
+  return menuoptiongroups.length ? menuoptiongroups : null;
+};
+
+const getMenuListSelection = menulist => {
+  let menuoptiongroups = getMenuOptionGroups(menulist);
+  if(menuoptiongroups === null){
+    return null;
+  }
+  let selection = {};
+  for(let i = 0; i < menuoptiongroups.length; i++){
+    let menuoptiongroup = menuoptiongroups[i];
+    menuoptiongroup.attribs.title = decodeURI(menuoptiongroup.attribs.title);
+    selection[menuoptiongroup.attribs.title] = getMenuOptionGroupSelections(menuoptiongroup);
+  }
+  return selection;
+};
+
+const getMenuList = menu => {
+  let children = menu.children;
+  for(let i = 0; i < children.length; i++){
+    let item = children[i];
+    if(item.name === "MenuList"){
+      return item;
+    }
+  }
+};
+
+const getMenuSelection = menu => {
+  return getMenuListSelection(getMenuList(menu));
+};
+
+const makeMenuComponent = menu => {
+  let selected = getMenuSelection(menu);
+  if(selected === null){
+    return ;
+  }
+  const [value, setValue] = React.useState(selected);
+  let menuoptiongroups = getMenuOptionGroups(getMenuList(menu));
+  for(let i = 0; i < menuoptiongroups.length; i++){
+    let groupprops = menuoptiongroups[i].attribs;
+    let grouptitle = groupprops.title;
+    if(selected[grouptitle]){
+      groupprops.defaultValue = selected[grouptitle];
+    }
+    groupprops.onChange = (selection) => {
+      value[grouptitle] = Array.isArray(selection) ? selection.map(decodeURI) : decodeURI(selection);
+      setValue(value);
+      Shiny.setInputValue(
+        menu.attribs.id + ":shinyChakraUI.widget", {value: value, widget: "menuWithGroups"}
+      );
+    };
+  }
+};
+
+const zip = (a, b) => a.map((k, i) => [k, b[i]]);
+
+const makeCheckboxWithChildren = div => {
+  let childCheckboxes = JSON.parse(JSON.stringify(div.children[1].children));
+  let n = childCheckboxes.length;
+  let state = [];
+  for(let i = 0; i < n; i++){
+    let attribs = childCheckboxes[i].attribs;
+    if(Array.isArray(attribs) && attribs.length === 0){
+      childCheckboxes[i].attribs = {};
+    }
+    state.push(attribs.isChecked === true);
+  }
+  const [xcheckedItems, xsetCheckedItems] = React.useState(state);
+  const allChecked = xcheckedItems.every(Boolean);
+  const isIndeterminate = xcheckedItems.some(Boolean) && !allChecked;
+  const checkedState = ([0,1]).map(i => React.useState(state[i]));
+  let inputId = div.attribs.id + ":shinyChakraUI.widget";
+  let parentCheckbox = div.children[0];
+  div.children[0] = <Checkbox
+    isChecked = {allChecked}
+    isIndeterminate = {isIndeterminate}
+    onChange = {(e) => {
+      let state = new Array(n);
+      let checked = e.target.checked;
+      console.log("checked", checked);
+      for(let i = 0; i < n; i++){
+        state[i] = checked;
+        checkedState[i][1](checked);
+      }
+      console.log("state", state);
+      xsetCheckedItems(state);
+      Shiny.setInputValue(inputId, {value: state, widget: "checkboxWithChildren"});
+    }}
+    >
+      Parent checkbox
+    </Checkbox>
+
+  // let attribs = parentCheckbox.attribs;
+  // if(Array.isArray(attribs) && attribs.length === 0){
+  //   parentCheckbox.attribs = {};
+  //   attribs = parentCheckbox.attribs;
+  // }
+  // attribs.isChecked = allChecked;
+  // attribs.isIndeterminate = isIndeterminate;
+  // attribs.onChange = (e) => {
+  //   let state = new Array(n);
+  //   let checked = e.target.checked;
+  //   console.log("checked", checked);
+  //   for(let i = 0; i < n; i++){
+  //     state[i] = checked;
+  //   }
+  //   console.log("state", state);
+  //   xsetCheckedItems(state);
+  //   Shiny.setInputValue(inputId, {value: state, widget: "checkboxWithChildren"});
+  // };
+  // for(let i = 0; i < n; i++){
+  //   let checkbox = childCheckboxes[i];
+  //   checkbox.attribs.isChecked = xcheckedItems[i];
+  //   checkbox.attribs.onChange = (e) => {
+  //     console.log("i", i);
+  //     xcheckedItems[i] = e.target.checked;
+  //     xsetCheckedItems(xcheckedItems);
+  //     Shiny.setInputValue(inputId, {value: xcheckedItems, widget: "checkboxWithChildren"});
+  //   };
+  // }
+  //const [index, setindex] = React.useState(0);
+  //const isChecked = xcheckedItems[index];
+  //let zipped = zip(childCheckboxes, xcheckedItems);
+  // const [attribs, setattribs] = React.useState(
+  //   ([0,1]).map(i => {
+  //     return {
+
+  //     };
+  //   })
+  // );
+  //childCheckboxes[0].attribs.isChecked = xcheckedItems[0];
+  div.children[1].children = [{
+    name: "Fragment",
+    attribs: {},
+    children: ([0,1]).map(i => {
+      //setindex(i);
+      let [isChecked, setIsChecked] = checkedState[i];
+      //const [isChecked, setIsChecked] = React.useState(xcheckedItems[i]);
+      return $.extend(
+        childCheckboxes[i], 
+        {attribs: $.extend(
+          childCheckboxes[i].attribs,
+          {
+//            "data-index": i,
+//            "data-checked": xcheckedItems,
+            isChecked: isChecked,
+            onChange: (e) => {
+              //setindex(i);
+              setIsChecked(e.target.checked);
+              console.log("i", i);
+              xcheckedItems[i] = e.target.checked;
+              xsetCheckedItems(xcheckedItems);
+              Shiny.setInputValue(inputId, {value: xcheckedItems, widget: "checkboxWithChildren"});
+            }
+          }
+        )}
+      );
+    })
+  }];
+  let code = "setTimeout(function(){Shiny.setInputValue('" + 
+    inputId + "', " +   
+    JSON.stringify({value: state, widget: "checkboxWithChildren"}) + 
+    ")})";
+  return code;
+};
+
 const formatStringToCamelCase = str => {
   const splitted = str.split("-");
   if (splitted.length === 1) return splitted[0];
@@ -320,6 +511,8 @@ const isTag = value => {
  */
 
 const chakraComponent = (component, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues) => {
+  console.log("XXXXXXXXXXX");
+  console.log(component);
   if(React.isValidElement(component)){
     return component;
   }
@@ -336,8 +529,62 @@ const chakraComponent = (component, patch, checkedItems, checkboxOnChange, radio
   if(Array.isArray(props) && props.length === 0){
     props = {};
   }
+  if(props.title){
+    props.title = decodeURI(props.title);
+  }
+  if(typeof props.value === "string"){
+    props.value = decodeURI(props.value);
+  }
+  if(typeof props["data-val"] === "string"){
+    props["data-val"] = decodeURI(props["data-val"]);
+  }
+  if(component.name === "Menu" && patch.process){
+    let selected = getMenuSelection(component);
+    if(selected){
+      makeMenuComponent(component);
+      patch.process = false;
+      let code = "setTimeout(function(){Shiny.setInputValue('" + 
+        component.attribs.id + 
+        ":shinyChakraUI.widget', {value: " + 
+        JSON.stringify(selected) + 
+        ", widget: 'menuWithGroups'})})";
+      component = {
+        name: "Fragment",
+        attribs: {},
+        children: [
+          component,
+          <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
+        ]
+      };
+    }else{
+      patch = $.extend(patch, {MenuItem: {
+        onClick: (e) => {
+          Shiny.setInputValue(component.attribs.id, e.currentTarget.dataset.val);
+        }
+      }});
+    }
+  }
+  if(props.class === "checkboxWithChildren"){
+    let code = makeCheckboxWithChildren(component);
+    props.className = "checkboxWithChildren";
+    delete props.class;
+    // let componentcopy = {
+    //   name: component.name,
+    //   attribs: component.attribs,
+    //   children: [component.children[0], component.children[1]]
+    // };
+    component = {
+      name: "Fragment",
+      attribs: {},
+      children: [
+        component,
+        <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
+      ]
+    };
+  }
   if(component.name === "Checkbox"){
-    props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
+    //props = $.extend(props, {isChecked: props["data-checked"][props["data-index"]]});
+    //props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
   }
   if(component.name == "RadioGroup"){
     props = $.extend(props, 
@@ -370,13 +617,24 @@ const chakraComponent = (component, patch, checkedItems, checkboxOnChange, radio
     }
   }
   let newprops = $.extend(props, patch[component.name]);
-  if(!newprops.hasOwnProperty("children") && component.children.length > 0){
-    newprops.children = 
-      component.children.map((x) => {
-        return chakraComponent(
-          x, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+  let nchildren = Array.isArray(component.children) ? component.children.length : 0;
+  if(!newprops.hasOwnProperty("children") && nchildren > 0){
+    let newpropsChildren = new Array(nchildren);
+    for(let i = 0; i < nchildren; i++){
+      if(React.isValidElement(component.children[i])){
+        newpropsChildren[i] = component.children[i];
+      }else{
+        newpropsChildren[i] = chakraComponent(
+          component.children[i], patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
         );
-      });
+      }
+    }
+    newprops.children = newpropsChildren;
+      // component.children.map((x) => {
+      //   return chakraComponent(
+      //     x, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+      //   );
+      // });
   }
   let tag = component.name;
   if(tag[0] === tag[0].toUpperCase()){
@@ -617,28 +875,22 @@ const ChakraInput = ({ configuration, value, setValue }) => {
 };
 
 const ChakraComponent = ({ configuration, value, setValue }) => {
-  let patch = {};
+  let patch = {
+    MenuButton: {
+      as: Button
+    },
+    process: true
+  };
   // input elements
   let inputs = configuration.inputs;
-  let sliders = configuration.sliders;
-  if(inputs || sliders){
+  if(inputs){
     $(document).on('shiny:connected', function() {
-      if(inputs){
         for(let i = 0; i < inputs.length; i++){
           let id = inputs[i].id;
           let val = inputs[i].value;
           Shiny.setInputValue(id, val);
           $("#" + id).val(val);
         }
-      }
-      if(sliders){
-        for(let i = 0; i < sliders.length; i++){
-          let slider = document.getElementById(sliders[i].id);
-          Shiny.inputBindings.bindingNames["shiny.sliderInput"].binding.initialize(slider);
-          $(slider).addClass("js-range-slider");
-        }
-        Shiny.bindAll();
-      }
     });  
   }
   // Checkbox elements
@@ -656,20 +908,26 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     Shiny.setInputValue(e.currentTarget.id, e.target.checked);    
   };
   // RadioGroup
-  const [radiogroupValues, setRadiogroupValues] = React.useState(configuration.RadioGroups);
+  let RadioGroups = configuration.RadioGroups; 
+  if(RadioGroups){
+    RadioGroups = Object.fromEntries(
+      Object.entries(RadioGroups).map(entry => {return [entry[0], decodeURI(entry[1])];})
+    );
+  }
+  const [radiogroupValues, setRadiogroupValues] = React.useState(RadioGroups);
   return (
-    <ChakraProvider>
-    {
+    // <ChakraProvider>
+    // {
       chakraComponent(
-        configuration.component, 
+        JSON.parse(JSON.stringify(configuration.component)),
         patch,
         checkedItems,
         checkboxOnChange,
         radiogroupValues,
         setRadiogroupValues
       )
-    }
-    </ChakraProvider>
+    // }
+    // </ChakraProvider>
   );
 };
 

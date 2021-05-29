@@ -30,7 +30,7 @@ chakraInput <- function(inputId, configuration, default = NULL) {
 #' @importFrom htmltools htmlDependency tags attachDependencies
 #' @export
 chakraComponent <- function(inputId, component){
-  configuration <- unclassComponent(component)
+  configuration <- unclassComponent(React$ChakraProvider(component))
   dependencies <- configuration[["dependencies"]]
   configuration[["dependencies"]] <- NULL
   attachDependencies(createReactShinyInput(
@@ -662,6 +662,52 @@ chakraDrawerInput <- function(
         widget = "drawer",
         component = unclassComponent(component)
       )
+  )
+}
+
+#' Title
+#'
+#' @param inputId
+#' @param parentCheckbox
+#' @param ...
+#' @param stackAttributes
+#'
+#' @return
+#' @export
+#' @importFrom htmltools tags
+#'
+#' @examples
+chakraCheckboxWithChildren <- function(
+  inputId, parentCheckbox, ..., stackAttributes = list(pl=6, mt=1, spacing=1)
+){
+  stopifnot(isChakraCheckbox(parentCheckbox))
+  if(!isNamedList(stackAttributes)){
+    stop(
+      "Invalid `stackAttributes` argument; it must be a named list.",
+      call. = TRUE
+    )
+  }
+  checkboxes <- list(...)
+  if(
+    length(checkboxes) == 0L ||
+    !all(vapply(checkboxes, isChakraCheckbox, logical(1L)))
+  ){
+    stop(
+      "You must provide some checkboxes in the `...` argument.",
+      call. = TRUE
+    )
+  }
+  tags$div(
+    id = inputId,
+    class = "checkboxWithChildren",
+    parentCheckbox,
+    asShinyTag(
+      list(
+        name = "Stack",
+        attribs = stackAttributes,
+        children = checkboxes
+      )
+    )
   )
 }
 

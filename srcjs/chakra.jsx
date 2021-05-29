@@ -601,6 +601,9 @@ const chakraComponent = (
     //props = $.extend(props, {isChecked: props["data-checked"][props["data-index"]]});
     props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
   }else if(component.name === "CheckboxGroup"){
+    if(props.defaultValue){
+      props.defaultValue = props.defaultValue.map(decodeURI);
+    }
     props = $.extend(props, 
       {onChange: value => {
         Shiny.setInputValue(props.id, value);

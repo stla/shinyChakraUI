@@ -180,9 +180,10 @@ unclassComponent <- function(component){
       values <- as.list(x[grep("value$", names(x))])
       defaultValue <- intersect(defaultValue, values)
       if(length(defaultValue)){
-        component[["attribs"]][["defaultValue"]] <- defaultValue
+        component[["attribs"]][["defaultValue"]] <-
+          defaultValue <- lapply(defaultValue, URLencode)
         script <- sprintf(
-          "setTimeout(function(){Shiny.setInputValue('%s', [%s])});",
+          "setTimeout(function(){Shiny.setInputValue('%s', [%s].map(decodeURI))});",
           attribs[["id"]], toString(paste0("'", defaultValue, "'"))
         )
         attr(component, "processed") <- TRUE

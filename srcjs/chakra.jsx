@@ -35,9 +35,11 @@ import {
   DrawerContent,
   DrawerCloseButton,
   Checkbox,
+  CheckboxGroup,
   Radio,
   RadioGroup,
-  Stack
+  Stack,
+  HStack
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -216,9 +218,11 @@ const ChakraComponents = {
   DrawerContent,
   DrawerCloseButton,
   Checkbox,
+  CheckboxGroup,
   Radio,
   RadioGroup,
-  Stack
+  Stack,
+  HStack
 };
 
 const getMenuOptionGroupSelections = menuoptiongroup => {
@@ -306,7 +310,9 @@ const makeCheckboxWithChildren = div => {
   let childCheckboxes = JSON.parse(JSON.stringify(div.children[1].children));
   let n = childCheckboxes.length;
   let state = [];
+  let indices = [];
   for(let i = 0; i < n; i++){
+    indices.push(i);
     let attribs = childCheckboxes[i].attribs;
     if(Array.isArray(attribs) && attribs.length === 0){
       childCheckboxes[i].attribs = {};
@@ -316,46 +322,48 @@ const makeCheckboxWithChildren = div => {
   const [xcheckedItems, xsetCheckedItems] = React.useState(state);
   const allChecked = xcheckedItems.every(Boolean);
   const isIndeterminate = xcheckedItems.some(Boolean) && !allChecked;
-  const checkedState = ([0,1]).map(i => React.useState(state[i]));
+  const checkedState = state.map(x => React.useState(x));
   let inputId = div.attribs.id + ":shinyChakraUI.widget";
   let parentCheckbox = div.children[0];
-  div.children[0] = <Checkbox
-    isChecked = {allChecked}
-    isIndeterminate = {isIndeterminate}
-    onChange = {(e) => {
-      let state = new Array(n);
-      let checked = e.target.checked;
-      console.log("checked", checked);
-      for(let i = 0; i < n; i++){
-        state[i] = checked;
-        checkedState[i][1](checked);
-      }
-      console.log("state", state);
-      xsetCheckedItems(state);
-      Shiny.setInputValue(inputId, {value: state, widget: "checkboxWithChildren"});
-    }}
-    >
-      Parent checkbox
-    </Checkbox>
+  // div.children[0] = <Checkbox
+  //   isChecked = {allChecked}
+  //   isIndeterminate = {isIndeterminate}
+  //   onChange = {(e) => {
+  //     let state = new Array(n);
+  //     let checked = e.target.checked;
+  //     console.log("checked", checked);
+  //     for(let i = 0; i < n; i++){
+  //       state[i] = checked;
+  //       checkedState[i][1](checked);
+  //     }
+  //     console.log("state", state);
+  //     xsetCheckedItems(state);
+  //     Shiny.setInputValue(inputId, {value: state, widget: "checkboxWithChildren"});
+  //   }}
+  //   >
+  //     Parent checkbox
+  //   </Checkbox>
 
-  // let attribs = parentCheckbox.attribs;
-  // if(Array.isArray(attribs) && attribs.length === 0){
-  //   parentCheckbox.attribs = {};
-  //   attribs = parentCheckbox.attribs;
-  // }
-  // attribs.isChecked = allChecked;
-  // attribs.isIndeterminate = isIndeterminate;
-  // attribs.onChange = (e) => {
-  //   let state = new Array(n);
-  //   let checked = e.target.checked;
-  //   console.log("checked", checked);
-  //   for(let i = 0; i < n; i++){
-  //     state[i] = checked;
-  //   }
-  //   console.log("state", state);
-  //   xsetCheckedItems(state);
-  //   Shiny.setInputValue(inputId, {value: state, widget: "checkboxWithChildren"});
-  // };
+  let attribs = parentCheckbox.attribs;
+  if(Array.isArray(attribs) && attribs.length === 0){
+    parentCheckbox.attribs = {};
+    attribs = parentCheckbox.attribs;
+  }
+  attribs.className = "parentCheckbox";
+  attribs.isChecked = allChecked;
+  attribs.isIndeterminate = isIndeterminate;
+  attribs.onChange = (e) => {
+    let state = new Array(n);
+    let checked = e.target.checked;
+    console.log("checked", checked);
+    for(let i = 0; i < n; i++){
+      state[i] = checked;
+      checkedState[i][1](checked);
+    }
+    console.log("state", state);
+    xsetCheckedItems(state);
+    Shiny.setInputValue(inputId, {value: state, widget: "checkboxWithChildren"});
+  };
   // for(let i = 0; i < n; i++){
   //   let checkbox = childCheckboxes[i];
   //   checkbox.attribs.isChecked = xcheckedItems[i];
@@ -380,7 +388,7 @@ const makeCheckboxWithChildren = div => {
   div.children[1].children = [{
     name: "Fragment",
     attribs: {},
-    children: ([0,1]).map(i => {
+    children: indices.map(i => {
       //setindex(i);
       let [isChecked, setIsChecked] = checkedState[i];
       //const [isChecked, setIsChecked] = React.useState(xcheckedItems[i]);
@@ -391,6 +399,7 @@ const makeCheckboxWithChildren = div => {
           {
 //            "data-index": i,
 //            "data-checked": xcheckedItems,
+            className: "childrenCheckbox",
             isChecked: isChecked,
             onChange: (e) => {
               //setindex(i);
@@ -510,7 +519,9 @@ const isTag = value => {
 };
  */
 
-const chakraComponent = (component, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues) => {
+const chakraComponent = (
+  component, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+) => {
   console.log("XXXXXXXXXXX");
   console.log(component);
   if(React.isValidElement(component)){
@@ -582,11 +593,20 @@ const chakraComponent = (component, patch, checkedItems, checkboxOnChange, radio
       ]
     };
   }
-  if(component.name === "Checkbox"){
+  if(
+    component.name === "Checkbox" && 
+    props.id !== undefined &&
+    !["parentCheckbox", "childrenCheckbox"].includes(props.className)
+  ){
     //props = $.extend(props, {isChecked: props["data-checked"][props["data-index"]]});
-    //props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
-  }
-  if(component.name == "RadioGroup"){
+    props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
+  }else if(component.name === "CheckboxGroup"){
+    props = $.extend(props, 
+      {onChange: value => {
+        Shiny.setInputValue(props.id, value);
+      }}
+    );
+  }else if(component.name == "RadioGroup"){
     props = $.extend(props, 
       {
         onChange: (value) => {

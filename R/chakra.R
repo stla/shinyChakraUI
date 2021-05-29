@@ -29,8 +29,16 @@ chakraInput <- function(inputId, configuration, default = NULL) {
 #' @importFrom reactR createReactShinyInput
 #' @importFrom htmltools htmlDependency tags attachDependencies
 #' @export
-chakraComponent <- function(inputId, component){
-  configuration <- unclassComponent(React$ChakraProvider(component))
+chakraComponent <- function(inputId, ...){
+  component <- list(...)
+  if(length(names(component))){
+    stop(
+      "The arguments given in `...` must be unnamed.",
+      call. = TRUE
+    )
+  }
+  configuration <-
+    unclassComponent(React$ChakraProvider(do.call(React$Fragment, component)))
   dependencies <- configuration[["dependencies"]]
   configuration[["dependencies"]] <- NULL
   attachDependencies(createReactShinyInput(

@@ -159,11 +159,39 @@ unclassComponent <- function(component){
       tags$script(HTML(script))
     )
   }else if(
-    component[["name"]] == "Checkbox"
+    component[["name"]] == "Checkbox" && !is.null(attribs[["id"]])
   ){
-    Checkboxes <- list(attribs[["isChecked"]])
+    Checkboxes <- list(isTRUE(attribs[["isChecked"]]))
     names(Checkboxes) <- attribs[["id"]]
     #component[["attribs"]][["isChecked"]] <- NULL
+  }else if(
+    component[["name"]] == "CheckboxGroup" &&
+    is.null(attr(component, "processed"))
+  ){
+    if(is.null(attribs[["id"]])){
+      stop(
+        "Please provide an `id` attribute for the `CheckboxGroup`.",
+        call. = FALSE
+      )
+    }
+    if(!is.null(defaultValue <- attribs[["defaultValue"]])){
+      defaultValue <- as.list(defaultValue)
+      x <- unlist(component[["children"]])
+      values <- as.list(x[grep("value$", names(x))])
+      defaultValue <- intersect(defaultValue, values)
+      if(length(defaultValue)){
+        component[["attribs"]][["defaultValue"]] <- defaultValue
+        script <- sprintf(
+          "setTimeout(function(){Shiny.setInputValue('%s', [%s])});",
+          attribs[["id"]], toString(paste0("'", defaultValue, "'"))
+        )
+        attr(component, "processed") <- TRUE
+        component <- React$Fragment(
+          component,
+          tags$script(HTML(script))
+        )
+      }
+    }
   }else if(
     component[["name"]] == "RadioGroup" && !is.null(attribs[["value"]])
   ){
@@ -188,7 +216,11 @@ unclassComponent <- function(component){
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
-      if(is.list(child) && !inherits(child, "shiny.tag") && is.null(child[["html"]])){
+      if(
+        is.list(child) &&
+        !inherits(child, "shiny.tag") &&
+        is.null(child[["html"]])
+      ){
         unlist(child) # this handles actionButton
       }else if(inherits(child, "shiny.tag")){
         x <- unclassComponent(child)

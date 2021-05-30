@@ -76,6 +76,20 @@ evalHtmlDependencies <- function(x){
   })
 }
 
+makeScriptTag <- function(script){
+  if(inherits(script, "shiny.tag")){
+    script[["name"]] <- "ScriptTag"
+    script[["attribs"]][["dangerouslySetInnerHTML"]] <-
+      list("__html" = URLencode(script[["children"]][[1L]]))
+    script[["children"]] <- list()
+    script
+  }else{
+    React$ScriptTag(
+      dangerouslySetInnerHTML = list("__html" = URLencode(script))
+    )
+  }
+}
+
 #' @importFrom htmltools htmlDependencies
 #' @noRd
 unclassComponent <- function(component){
@@ -101,12 +115,21 @@ unclassComponent <- function(component){
     }
     component[["attribs"]][["data-val"]] <- attribs[["value"]]
     component[["attribs"]][["value"]] <- NULL
+    attribs <- component[["attribs"]]
+    attribsNames <- names(attribs)
   }
   if(sum(attribsNames == "class") > 1L){
+    component[["attribs"]][which(attribsNames == "class")] <- NULL
     component[["attribs"]][["class"]] <-
       do.call(paste, attribs[attribsNames == "class"])
+    attribs <- component[["attribs"]]
+    attribsNames <- names(attribs)
   }
-  inputs <- Checkboxes <- RadioGroups <- dependencies <- NULL
+  Checkboxes <- RadioGroups <- dependencies <- NULL
+  shinyOutput <- FALSE
+  if("class" %in% attribsNames && grepl("-output", attribs[["class"]])){
+    shinyOutput <- TRUE
+  }
   if(isSlider(component)){
     dependencies <- evalHtmlDependencies(htmlDependencies(component))
     # sliders <- list(list(id = component[["children"]][[2]][["attribs"]][["id"]]))
@@ -118,7 +141,7 @@ unclassComponent <- function(component){
     )
     component <- React$Fragment(
       list(html = URLencode(as.character(component))),
-      tags$script(HTML(script))
+      tags$script(script)
     )
   }else if(
     inherits(component, "shiny.tag") && !is.null(htmlDependencies(component))
@@ -133,8 +156,7 @@ unclassComponent <- function(component){
       )
       htmltools::htmlDependencies(component) <- NULL
       component <- React$Fragment(
-        component,
-        tags$script(HTML(script))
+        component, tags$script(script)
       )
     }else{
       component <- list(html = URLencode(as.character(component)))
@@ -149,14 +171,13 @@ unclassComponent <- function(component){
     #   sprintf("deleting value of input element \"%s\".", attribs[["id"]]),
     #   call. = FALSE
     # )
-    inputs <- list(list(id = attribs[["id"]], value = attribs[["value"]]))
+    # inputs <- list(list(id = attribs[["id"]], value = attribs[["value"]]))
     script <- sprintf(
       '$("#%s").val("%s");', attribs[["id"]], URLdecode(attribs[["value"]])
     )
     component[["attribs"]][["value"]] <- NULL
     component <- React$Fragment(
-      component,
-      tags$script(HTML(script))
+      component, tags$script(script)
     )
   }else if(
     component[["name"]] == "Checkbox" && !is.null(attribs[["id"]])
@@ -188,8 +209,7 @@ unclassComponent <- function(component){
         )
         attr(component, "processed") <- TRUE
         component <- React$Fragment(
-          component,
-          tags$script(HTML(script))
+          component, tags$script(script)
         )
       }
     }
@@ -204,16 +224,12 @@ unclassComponent <- function(component){
     names(RadioGroups) <- attribs[["id"]]
     component[["attribs"]][["value"]] <- NULL
     component <- React$Fragment(
-      component,
-      tags$script(HTML(script))
+      component, tags$script(script)
     )
   }else if(
     component[["name"]] == "script"
   ){
-    component[["name"]] <- "ScriptTag"
-    component[["attribs"]][["dangerouslySetInnerHTML"]] <-
-      list("__html" = as.character(component[["children"]][[1L]]))
-    component[["children"]] <- list()
+    component <- makeScriptTag(component)
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
@@ -225,7 +241,8 @@ unclassComponent <- function(component){
         unlist(child) # this handles actionButton
       }else if(inherits(child, "shiny.tag")){
         x <- unclassComponent(child)
-        inputs <<- c(inputs, x[["inputs"]])
+        #inputs <<- c(inputs, x[["inputs"]])
+        shinyOutput <<- x[["shinyOutput"]] || shinyOutput
         Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)
         RadioGroups <<- c(x[["RadioGroups"]], RadioGroups)
         dependencies <<- c(x[["dependencies"]], dependencies)
@@ -244,7 +261,7 @@ unclassComponent <- function(component){
   # }
   list(
     component = unclass(component),
-    inputs = NULL,
+    shinyOutput = shinyOutput,
     Checkboxes = Checkboxes,
     RadioGroups = RadioGroups,
     dependencies = dependencies

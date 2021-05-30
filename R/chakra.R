@@ -39,6 +39,13 @@ chakraComponent <- function(inputId, ...){
   }
   configuration <-
     unclassComponent(React$ChakraProvider(do.call(React$Fragment, component)))
+  if(configuration[["shinyOutput"]]){
+    configuration[["component"]][["children"]] <- c(
+      configuration[["component"]][["children"]],
+      list(unclass(makeScriptTag("setTimeout(function(){Shiny.bindAll()})")))
+    )
+    print(configuration[["component"]])
+  }
   dependencies <- configuration[["dependencies"]]
   configuration[["dependencies"]] <- NULL
   attachDependencies(createReactShinyInput(

@@ -609,7 +609,7 @@ const chakraComponent = (
         Shiny.setInputValue(props.id, value);
       }}
     );
-  }else if(component.name == "RadioGroup"){
+  }else if(component.name === "RadioGroup"){
     props = $.extend(props, 
       {
         onChange: (value) => {
@@ -627,6 +627,9 @@ const chakraComponent = (
         value: radiogroupValues[props.id]
       }
     );
+  }else if(component.name === "ScriptTag" && component.decoded !== true){
+    props.dangerouslySetInnerHTML.__html = decodeURI(props.dangerouslySetInnerHTML.__html);
+    component.decoded = true;
   }
   for(const key in props){
     if(isTag(props[key])){
@@ -661,6 +664,10 @@ const chakraComponent = (
   }
   let tag = component.name;
   if(tag[0] === tag[0].toUpperCase()){
+    if(tag === "ScriptTag"){
+      console.log(component);
+      console.log(newprops);
+    }
     return React.createElement(ChakraComponents[tag], newprops);
   }else{
     fixTagAttribs(newprops);
@@ -905,17 +912,17 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     process: true
   };
   // input elements
-  let inputs = configuration.inputs;
-  if(inputs){
-    $(document).on('shiny:connected', function() {
-        for(let i = 0; i < inputs.length; i++){
-          let id = inputs[i].id;
-          let val = inputs[i].value;
-          Shiny.setInputValue(id, val);
-          $("#" + id).val(val);
-        }
-    });  
-  }
+  // let inputs = configuration.inputs;
+  // if(inputs){
+  //   $(document).on('shiny:connected', function() {
+  //       for(let i = 0; i < inputs.length; i++){
+  //         let id = inputs[i].id;
+  //         let val = inputs[i].value;
+  //         Shiny.setInputValue(id, val);
+  //         $("#" + id).val(val);
+  //       }
+  //   });  
+  // }
   // Checkbox elements
   const [checkedItems, setCheckedItems] = React.useState(configuration.Checkboxes);
   const checkboxOnChange = (e) => {

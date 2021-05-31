@@ -2,6 +2,34 @@
 #'
 #' <Add Description>
 #'
+#' @importFrom htmltools htmlDependency tags attachDependencies
+#' @export
+chakraPage <- function(...){
+  attachDependencies(
+    tags$div(class = "container-fluid", ...),
+    list(
+      htmlDependency(
+        name = "bootstrap",
+        version = "3.4.1",
+        src = "www/shared/bootstrap/js",
+        script = "bootstrap.min.js",
+        package = "shiny"
+      ),
+      htmlDependency(
+        name = "chakra.css",
+        version = "1.0.0",
+        src = "www/css",
+        stylesheet = "chakra.css",
+        package = "shinyChakraUI"
+      )
+    )
+  )
+}
+
+#' <Add Title>
+#'
+#' <Add Description>
+#'
 #' @importFrom reactR createReactShinyInput
 #' @importFrom htmltools htmlDependency tags
 #' @noRd

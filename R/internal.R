@@ -104,6 +104,9 @@ unclassComponent <- function(component){
   ){
     component[["attribs"]][["value"]] <- attribs[["value"]] <- URLencode(value)
   }
+  if("onClick" %in% attribsNames){
+    component[["attribs"]][["onClick"]] <- URLencode(attribs[["onClick"]])
+  }
   if("title" %in% attribsNames){
     component[["attribs"]][["title"]] <- URLencode(attribs[["title"]])
   }

@@ -561,6 +561,9 @@ const chakraComponent = (
   if(typeof props["data-val"] === "string"){
     props["data-val"] = decodeURI(props["data-val"]);
   }
+  if(typeof props.onClick === "string"){
+    props.onClick = eval(decodeURI(props.onClick));
+  }
   if(component.name === "Menu" && patch.process){
     let selected = getMenuSelection(component);
     if(selected){

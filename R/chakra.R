@@ -542,7 +542,7 @@ chakraAlertDialog <- function(
   openButton,
   header,
   body,
-  footerButtons = chakraButton("Cancel", action = "cancel", value = "cancel")
+  footerButtons = React$Button("Cancel", action = "cancel", value = "cancel")
 ){
   stopifnot(isChakraButton(openButton))
   openButton[["attribs"]][["action"]] <- "open"

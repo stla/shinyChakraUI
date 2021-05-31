@@ -697,6 +697,25 @@ const chakraComponent = (
         ":shinyChakraUI.widget', {value: " + 
         JSON.stringify(selected) + 
         ", widget: 'menuWithGroups'})})";
+      let menubutton = component.children[0];
+      if(menubutton.attribs.text){
+        let buttonprops = menubutton.attribs;
+        let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
+        let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
+        delete buttonprops.text;
+        let menulist = chakraComponent(component.children[1], {});
+        component = 
+            <Menu {...props}>
+              {({ isOpen }) => (
+                <React.Fragment>
+                  <MenuButton isActive={isOpen} as={Button} {...buttonprops}>
+                    {isOpen ? textWhenOpen : textWhenClose}
+                  </MenuButton>
+                  {menulist}
+                </React.Fragment>
+              )}
+            </Menu>;    
+      }
       component = {
         name: "Fragment",
         attribs: {},
@@ -711,6 +730,26 @@ const chakraComponent = (
           Shiny.setInputValue(component.attribs.id, e.currentTarget.dataset.val);
         }
       }});
+      let menubutton = component.children[0];
+      if(menubutton.attribs.text){
+        let buttonprops = menubutton.attribs;
+        let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
+        let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
+        delete buttonprops.text;
+        let menulist = chakraComponent(component.children[1], patch);
+        component = 
+            <Menu {...props}>
+              {({ isOpen }) => (
+                <React.Fragment>
+                  <MenuButton isActive={isOpen} as={Button} {...buttonprops}>
+                    {isOpen ? textWhenOpen : textWhenClose}
+                  </MenuButton>
+                  {menulist}
+                </React.Fragment>
+              )}
+            </Menu>;
+        return component;  
+      }
     }
   }
   if(props.class === "checkboxWithChildren"){

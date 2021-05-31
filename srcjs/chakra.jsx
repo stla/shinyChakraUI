@@ -53,7 +53,12 @@ import {
   PopoverBody,
   PopoverFooter,
   PopoverArrow,
-  PopoverCloseButton
+  PopoverCloseButton,
+  Tabs, 
+  TabList, 
+  TabPanels, 
+  Tab, 
+  TabPanel
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -256,7 +261,12 @@ const ChakraComponents = {
   PopoverBody,
   PopoverFooter,
   PopoverArrow,
-  PopoverCloseButton
+  PopoverCloseButton,
+  Tabs, 
+  TabList, 
+  TabPanels, 
+  Tab, 
+  TabPanel
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -340,7 +350,7 @@ const makeMenuComponent = menu => {
   }
 };
 
-const zip = (a, b) => a.map((k, i) => [k, b[i]]);
+//const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 const makeCheckboxWithChildren = div => {
   let childCheckboxes = JSON.parse(JSON.stringify(div.children[1].children));
@@ -792,6 +802,8 @@ const chakraComponent = (
         }
       }
     };  
+  }else if(component.name === "Tabs" && props.id){
+    props.onChange = index => Shiny.setInputValue(props.id, index);
   }
   if(props.class === "checkboxWithChildren"){
     let code = makeCheckboxWithChildren(component);

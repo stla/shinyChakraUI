@@ -360,6 +360,19 @@ unclassComponent <- function(component){
     component <- React$Fragment(
       component, makeScriptTag(script)
     )
+  }else if(
+    component[["name"]] == "Tabs" &&
+    is.null(attr(component, "processed")) &&
+    all(c("id", "defaultIndex") %in% attribsNames)
+  ){
+    attr(component, "processed") <- TRUE
+    script <- sprintf(
+      "setTimeout(function(){Shiny.setInputValue('%s', %s)})",
+      attribs[["id"]], attribs[["defaultIndex"]]
+    )
+    component <- React$Fragment(
+      component, makeScriptTag(script)
+    )
   }else if(component[["name"]] == "Menu"){
     children <- vapply(component[["children"]], `[[`, character(1L), "name")
     if(!identical(children, c("MenuButton", "MenuList"))){

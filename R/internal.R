@@ -326,6 +326,17 @@ unclassComponent <- function(component){
         )
       }
     }
+  }else if(component[["name"]] == "MenuButton" && "text" %in% attribsNames){
+    text <- attribs[["text"]]
+    check <- is.list(text) &&
+      identical(sort(names(text)), c("textWhenClose", "textWhenOpen"))
+    if(!check){
+      stop(
+        "Invalid `text` attribute of `MenuButton`.",
+        call. = TRUE
+      )
+    }
+    component[["attribs"]][["text"]] <- lapply(text, URLencode)
   }else if(
     component[["name"]] == "Input" &&
     is.null(attr(component, "processed"))

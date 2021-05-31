@@ -151,6 +151,12 @@ unclassComponent <- function(component){
   component[["attribs"]] <- lapply(component[["attribs"]], unclass)
   attribs <- component[["attribs"]]
   attribsNames <- names(attribs)
+  if(isReactComponent(component) && "class" %in% attribsNames){
+    component[["attribs"]][["className"]] <- attribs[["class"]]
+    component[["attribs"]][["class"]] <- NULL
+    attribs <- component[["attribs"]]
+    attribsNames <- names(attribs)
+  }
   if(
     component[["name"]] %in% c("Button", "IconButton") &&
     "className" %in% attribsNames &&

@@ -101,6 +101,48 @@ unclassComponent <- function(component){
   if(inherits(component, "shiny.tag.list")){
     component <- do.call(React$Fragment, component)
   }
+  if(!isChakraIcon(component) && grepl("Icon$", component[["name"]])){
+    if(!is.element(component[["name"]], paste0(chakraIcons(), "Icon"))){
+      stop(
+        sprintf("Invalid icon '%s'.", component[["name"]]),
+        call. = FALSE
+      )
+    }
+  }
+  if(
+    "icon" %in% names(component[["attribs"]]) &&
+    !isChakraIcon(icon <- component[["attribs"]][["icon"]])
+  ){
+    if(!isReactComponent(icon)){
+      stop(
+        sprintf("Invalid `icon` attribute in component '%s'.", component[["name"]]),
+        call. = FALSE
+      )
+    }
+    if(!grepl("Icon$", icon[["name"]])){
+      stop(
+        sprintf("Invalid `icon` attribute in component '%s'.", component[["name"]]),
+        call. = FALSE
+      )
+    }
+    if(!is.element(icon[["name"]], paste0(chakraIcons(), "Icon"))){
+      stop(
+        sprintf("Invalid `icon` attribute in component '%s'.", component[["name"]]),
+        sprintf("'%s' is not the name of a chakra icon.", icon[["name"]]),
+        call. = FALSE
+      )
+    }
+  }
+  for(attrib in component[["attribs"]]){
+    if(isReactComponent(attrib) && grepl("Icon$", attrib[["name"]])){
+      if(!is.element(attrib[["name"]], paste0(chakraIcons(), "Icon"))){
+        stop(
+          sprintf("Invalid icon '%s'.", attrib[["name"]]),
+          call. = FALSE
+        )
+      }
+    }
+  }
   component[["attribs"]] <- lapply(component[["attribs"]], unclass)
   attribs <- component[["attribs"]]
   attribsNames <- names(attribs)

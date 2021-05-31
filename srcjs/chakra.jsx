@@ -122,6 +122,7 @@ const CancelIconButton = IconButton;
 const OpenIconButton = IconButton;
 const UnmountingIconButton = IconButton;
 const DisableIconButton = IconButton;
+const RemoveIconButton = IconButton;
 
 const ChakraComponents = {
   ScriptTag,
@@ -191,12 +192,13 @@ const ChakraComponents = {
   CloseButton,
   UnmountingButton,
   DisableButton,
+  RemoveButton,
   IconButton,
   CancelIconButton,
   OpenIconButton,
   UnmountingIconButton,
   DisableIconButton,
-  RemoveButton,
+  RemoveIconButton,
   Box,
   Alert,
   AlertIcon,
@@ -633,6 +635,14 @@ const chakraComponent = (
       CancelIconButton: {
         ref: cancelRef,
         onClick: onCloseButton
+      },
+      RemoveIconButton: {
+        onClick: (e) => {
+          let value = e.currentTarget.dataset.val;
+          if(value) setShinyValue(decodeURI(value));
+          setIsOpen(false);
+          $("#" + props.id).remove();
+        }
       },
       // UnmountingIconButton: {
       //   onClick: (e) => {

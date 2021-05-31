@@ -98,13 +98,20 @@ unclassComponent <- function(component){
   }
   attribs <- component[["attribs"]]
   attribsNames <- names(attribs)
-  if(component[["name"]] == "Button" && "value" %in% attribsNames){
+  if(
+    component[["name"]] %in% c("Button", "IconButton") &&
+    "value" %in% attribsNames
+  ){
     component[["attribs"]][["data-val"]] <- URLencode(attribs[["value"]])
     component[["attribs"]][["value"]] <- NULL
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
   }
-  if(component[["name"]] == "Button" && "action" %in% attribsNames){
+  if(
+    component[["name"]] %in% c("Button", "IconButton") &&
+    "action" %in% attribsNames
+  ){
+    iconbutton <- component[["name"]] == "IconButton"
     component[["name"]] <- switch(
       attribs[["action"]],
       none = "Button",
@@ -114,6 +121,8 @@ unclassComponent <- function(component){
       close = "CloseButton",
       remove = "RemoveButton"
     )
+    if(iconbutton)
+      component[["name"]] <- sub("Button", "IconButton", component[["name"]])
     component[["attribs"]][["action"]] <- NULL
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)

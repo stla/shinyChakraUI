@@ -531,6 +531,64 @@ chakraAlertDialogInput <- function(
 #' Title
 #'
 #' @param inputId
+#'
+#' @return
+#' @export
+#'
+#' @examples
+chakraAlertDialog <- function(
+  inputId,
+  options = chakraAlertDialogOptions(),
+  openButton,
+  header,
+  body,
+  footerButtons = chakraButton("Cancel", action = "cancel", value = "cancel")
+){
+  stopifnot(isChakraButton(openButton))
+  openButton[["name"]] <- "OpenButton"
+  if(isChakraButton(footerButtons)){
+    footerButtons <- list(footerButtons)
+  }else{
+    isListOfButtons <-
+      all(vapply(footerButtons, isChakraButton, FUN.VALUE = logical(1L)))
+    if(!isListOfButtons){
+      stop("")
+    }
+  }
+  if(header[["name"]] != "AlertDialogHeader"){
+    stop("")
+  }
+  if(body[["name"]] != "AlertDialogBody"){
+    stop("")
+  }
+  component <- tags$div(
+    id = inputId,
+    React$Fragment(
+      openButton,
+      React$AlertDialog(
+        React$AlertDialogOverlay(
+          React$AlertDialogContent(
+            header,
+            body,
+            asShinyTag(
+              list(
+                name = "AlertDialogFooter",
+                attribs = list(),
+                children = footerButtons
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+  component[["widget"]] <- "alertdialog"
+  component
+}
+
+#' Title
+#'
+#' @param inputId
 #' @param menuButton
 #'
 #' @return

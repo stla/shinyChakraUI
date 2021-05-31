@@ -117,6 +117,7 @@ const OpenButton = Button;
 const CloseButton = Button;
 const UnmountingButton = Button;
 const DisableButton = Button;
+const RemoveButton = Button;
 const CancelIconButton = IconButton;
 const OpenIconButton = IconButton;
 const UnmountingIconButton = IconButton;
@@ -195,6 +196,7 @@ const ChakraComponents = {
   OpenIconButton,
   UnmountingIconButton,
   DisableIconButton,
+  RemoveButton,
   Box,
   Alert,
   AlertIcon,
@@ -563,6 +565,90 @@ const chakraComponent = (
   }
   if(typeof props.onClick === "string"){
     props.onClick = eval(decodeURI(props.onClick));
+  }
+  if(component.widget === "alertdialog"){
+    delete component.widget;
+    const [isOpen, setIsOpen] = React.useState(false);
+    const [disabled, setDisabled] = React.useState(false);
+    const setShinyValue = value => Shiny.setInputValue(props.id, value);
+    const onClose = () => {
+      setIsOpen(false);
+    };
+    const onCloseButton = (e) => {
+      let value = e.currentTarget.dataset.val;
+      if(value) setShinyValue(decodeURI(value));
+      setIsOpen(false);
+    };
+    const cancelRef = React.useRef();
+    patch = {
+      Button: {
+        onClick: onCloseButton
+      },
+      OpenButton: {
+        onClick: () => {setIsOpen(true);},
+        isDisabled: disabled
+      },
+      DisableButton: {
+        onClick: (e) => {
+          let value = e.currentTarget.dataset.val;
+          if(value) setShinyValue(decodeURI(value));
+          setDisabled(true);
+          setIsOpen(false);
+        }
+      },
+      CancelButton: {
+        ref: cancelRef,
+        onClick: onCloseButton
+      },
+      RemoveButton: {
+        onClick: (e) => {
+          let value = e.currentTarget.dataset.val;
+          if(value) setShinyValue(decodeURI(value));
+          setIsOpen(false);
+          $("#" + props.id).remove();
+        }
+      },
+      // UnmountingButton: {
+      //   onClick: (e) => {
+      //     let value = e.currentTarget.dataset.val;
+      //     if(value) setShinyValue(decodeURI(value));
+      //     unmountComponentAtNode(document.getElementById(props.id));
+      //   }
+      // },
+      IconButton: {
+        onClick: onCloseButton
+      },
+      OpenIconButton: {
+        onClick: () => {setIsOpen(true);},
+        isDisabled: disabled
+      },
+      DisableIconButton: {
+        onClick: (e) => {
+          let value = e.currentTarget.dataset.val;
+          if(value) setShinyValue(decodeURI(value));
+          setDisabled(true);
+          setIsOpen(false);
+        }
+      },
+      CancelIconButton: {
+        ref: cancelRef,
+        onClick: onCloseButton
+      },
+      // UnmountingIconButton: {
+      //   onClick: (e) => {
+      //     let value = e.currentTarget.dataset.val;
+      //     if(value) setShinyValue(decodeURI(value));
+      //     unmountComponentAtNode(document.getElementById(props.id));
+      //   }
+      // },
+      AlertDialog: {
+        isOpen: isOpen,
+        leastDestructiveRef: cancelRef,
+        onClose: onClose,
+        onEsc: () => {setShinyValue("esc");}
+      }
+    };
+    //component = chakraComponent(component, thispatch);
   }
   if(component.name === "Menu" && patch.process){
     let selected = getMenuSelection(component);

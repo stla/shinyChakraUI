@@ -118,6 +118,13 @@ unclassComponent <- function(component){
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
   }
+  if(!is.null(attribs[["children"]])){
+    component[["children"]] <-
+      c(component[["children"]], list(attribs[["children"]]))
+    component[["attribs"]][["children"]] <- NULL
+    attribs <- component[["attribs"]]
+    attribsNames <- names(attribs)
+  }
   if(sum(attribsNames == "class") > 1L){
     component[["attribs"]][which(attribsNames == "class")] <- NULL
     component[["attribs"]][["class"]] <-

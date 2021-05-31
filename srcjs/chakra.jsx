@@ -40,7 +40,12 @@ import {
   RadioGroup,
   Stack,
   HStack,
-  Input
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  InputRightAddon,
+  InputLeftElement,
+  InputRightElement
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -224,7 +229,12 @@ const ChakraComponents = {
   RadioGroup,
   Stack,
   HStack,
-  Input
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  InputRightAddon,
+  InputLeftElement,
+  InputRightElement
 };
 
 const getMenuOptionGroupSelections = menuoptiongroup => {

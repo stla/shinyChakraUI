@@ -45,7 +45,15 @@ import {
   InputLeftAddon,
   InputRightAddon,
   InputLeftElement,
-  InputRightElement
+  InputRightElement,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -240,7 +248,15 @@ const ChakraComponents = {
   InputLeftAddon,
   InputRightAddon,
   InputLeftElement,
-  InputRightElement
+  InputRightElement,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -696,8 +712,7 @@ const chakraComponent = (
         }
       }
     };  
-  }
-  if(component.name === "Menu" && patch.process){
+  }else if(component.name === "Menu" && patch.process){
     let selected = getMenuSelection(component);
     if(selected){
       makeMenuComponent(component);
@@ -767,6 +782,16 @@ const chakraComponent = (
         return component;  
       }
     }
+  }else if(component.name === "Popover" && props.id){
+    const setShinyValue = (value) => Shiny.setInputValue(props.id, value);
+    patch = {
+      Button: {
+        onClick: (e) => {
+          let value = e.currentTarget.dataset.val;
+          if(value) setShinyValue(decodeURI(value));
+        }
+      }
+    };  
   }
   if(props.class === "checkboxWithChildren"){
     let code = makeCheckboxWithChildren(component);

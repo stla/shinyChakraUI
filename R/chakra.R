@@ -560,6 +560,8 @@ chakraAlertDialog <- function(
       stop("")
     }
   }
+  stopifnot(isReactComponent(header))
+  stopifnot(isReactComponent(body))
   if(header[["name"]] != "AlertDialogHeader"){
     stop("")
   }
@@ -715,6 +717,9 @@ chakraDrawer <- function(
 ){
   stopifnot(isChakraButton(openButton))
   openButton[["attribs"]][["action"]] <- "open"
+  stopifnot(isReactComponent(header))
+  stopifnot(isReactComponent(body))
+  stopifnot(isReactComponent(footer))
   if(header[["name"]] != "DrawerHeader"){
     stop("")
   }

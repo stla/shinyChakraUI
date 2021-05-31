@@ -25,6 +25,9 @@ isChakraCheckbox <- function(x){
   inherits(x, "shiny.tag") && x[["name"]] == "Checkbox"
 }
 
+isReactComponent <- function(x){
+  inherits(x, "reactR_component")
+}
 
 encode <- function(x){
   if(inherits(x, "shiny.tag")){

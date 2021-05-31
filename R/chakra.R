@@ -545,7 +545,12 @@ chakraAlertDialog <- function(
   footerButtons = chakraButton("Cancel", action = "cancel", value = "cancel")
 ){
   stopifnot(isChakraButton(openButton))
-  openButton[["name"]] <- "OpenButton"
+  openButton[["attribs"]][["action"]] <- "open"
+  # openButton[["name"]] <- switch(
+  #   openButton[["name"]],
+  #   Button = "OpenButton",
+  #   IconButton = "OpenIconButton"
+  # )
   if(isChakraButton(footerButtons)){
     footerButtons <- list(footerButtons)
   }else{

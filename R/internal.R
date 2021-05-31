@@ -12,7 +12,9 @@ isChakraBox <- function(x){
 }
 
 isChakraButton <- function(x){
-  inherits(x, "button") || identical(x[["name"]], "Button")
+  inherits(x, "button") ||
+    identical(x[["name"]], "Button") ||
+    identical(x[["name"]], "IconButton")
 }
 
 isChakraIcon <- function(x){
@@ -115,6 +117,7 @@ unclassComponent <- function(component){
     component[["name"]] <- switch(
       attribs[["action"]],
       none = "Button",
+      open = "OpenButton",
       cancel = "CancelButton",
       disable = "DisableButton",
       unmount = "UnmountingButton",

@@ -695,6 +695,59 @@ chakraDrawerOptions <- function(
   ))
 }
 
+#' Title
+#'
+#' @param inputId
+#' @param openButton
+#' @param options
+#' @param closeButton
+#' @param header
+#' @param body
+#' @param footer
+#'
+#' @return
+#' @export
+#'
+#' @examples
+chakraDrawer <- function(
+  inputId, openButton, options = chakraDrawerOptions(),
+  closeButton = TRUE, header, body, footer
+){
+  stopifnot(isChakraButton(openButton))
+  openButton[["attribs"]][["action"]] <- "open"
+  if(header[["name"]] != "DrawerHeader"){
+    stop("")
+  }
+  if(body[["name"]] != "DrawerBody"){
+    stop("")
+  }
+  if(footer[["name"]] != "DrawerFooter"){
+    stop("")
+  }
+  drawer <- list(
+    name = "Drawer",
+    attribs = options,
+    children = list(
+      React$DrawerOverlay(),
+      React$DrawerContent(
+        if(closeButton) React$DrawerCloseButton(),
+        header,
+        body,
+        footer
+      )
+    )
+  )
+  class(drawer) <- "shiny.tag"
+  component <- tags$div(
+    id = inputId,
+    React$Fragment(
+      openButton,
+      drawer
+    )
+  )
+  component[["widget"]] <- "drawer"
+  component
+}
 
 #' Title
 #'

@@ -114,12 +114,13 @@ import ScriptTag from "react-script-tag";
 const Fragment = React.Fragment;
 const CancelButton = Button;
 const OpenButton = Button;
-const CloseButton = Button;
+const ClosingButton = Button;
 const UnmountingButton = Button;
 const DisableButton = Button;
 const RemoveButton = Button;
 const CancelIconButton = IconButton;
 const OpenIconButton = IconButton;
+const ClosingIconButton = IconButton;
 const UnmountingIconButton = IconButton;
 const DisableIconButton = IconButton;
 const RemoveIconButton = IconButton;
@@ -189,13 +190,14 @@ const ChakraComponents = {
   Button,
   CancelButton,
   OpenButton,
-  CloseButton,
+  ClosingButton,
   UnmountingButton,
   DisableButton,
   RemoveButton,
   IconButton,
   CancelIconButton,
   OpenIconButton,
+  ClosingIconButton,
   UnmountingIconButton,
   DisableIconButton,
   RemoveIconButton,
@@ -659,6 +661,31 @@ const chakraComponent = (
       }
     };
     //component = chakraComponent(component, thispatch);
+  }else if(component.widget === "drawer"){
+    delete component.widget;
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const btnRef = React.useRef();
+    const setShinyValue = (value) => Shiny.setInputValue(props.id, value);
+    patch = {
+      OpenButton: {
+        ref: btnRef,
+        onClick: onOpen
+      },
+      Drawer: {
+        isOpen: isOpen,
+        onClose: onClose,
+        finalFocusRef: btnRef
+      },
+      ClosingButton: {
+        onClick: onClose
+      },
+      Button: {
+        onClick: (e) => {
+          let value = e.currentTarget.dataset.val;
+          if(value) setShinyValue(decodeURI(value));
+        }
+      }
+    };  
   }
   if(component.name === "Menu" && patch.process){
     let selected = getMenuSelection(component);

@@ -121,8 +121,9 @@ unclassComponent <- function(component){
       cancel = "CancelButton",
       disable = "DisableButton",
       unmount = "UnmountingButton",
-      close = "CloseButton",
-      remove = "RemoveButton"
+      close = "ClosingButton",
+      remove = "RemoveButton",
+      "Button"
     )
     if(iconbutton)
       component[["name"]] <- sub("Button", "IconButton", component[["name"]])

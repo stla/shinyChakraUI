@@ -727,7 +727,7 @@ const chakraComponent = (
     }else{
       patch = $.extend(patch, {MenuItem: {
         onClick: (e) => {
-          Shiny.setInputValue(component.attribs.id, e.currentTarget.dataset.val);
+          Shiny.setInputValue(props.id, e.currentTarget.dataset.val);
         }
       }});
       let menubutton = component.children[0];

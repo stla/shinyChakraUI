@@ -317,14 +317,18 @@ unclassComponent <- function(component){
       )
     }
     if(!is.element("id", attribsNames)){
-      menulist <- component[["children"]][[2L]]
-      children <- vapply(menulist[["children"]], `[[`, character(1L), "name")
-      if("MenuOptionGroup" %in% children){
-        stop(
-          "A `Menu` component containing `MenuOptionGroup` components must have an `id` attribute.",
-          call. = FALSE
-        )
-      }
+      stop(
+        "A `Menu` component must have an `id` attribute.",
+        call. = FALSE
+      )
+      # menulist <- component[["children"]][[2L]]
+      # children <- vapply(menulist[["children"]], `[[`, character(1L), "name")
+      # if("MenuOptionGroup" %in% children){
+      #   stop(
+      #     "A `Menu` component containing `MenuOptionGroup` components must have an `id` attribute.",
+      #     call. = FALSE
+      #   )
+      # }
     }
   }else if(component[["name"]] == "MenuButton" && "text" %in% attribsNames){
     text <- attribs[["text"]]

@@ -143,6 +143,11 @@ unclassComponent <- function(component){
       }
     }
   }
+  if(!is.null(component[["attribs"]][["children"]])){
+    component[["children"]] <-
+      c(component[["children"]], list(component[["attribs"]][["children"]]))
+    component[["attribs"]][["children"]] <- NULL
+  }
   component[["attribs"]] <- lapply(component[["attribs"]], unclass)
   attribs <- component[["attribs"]]
   attribsNames <- names(attribs)
@@ -153,7 +158,7 @@ unclassComponent <- function(component){
   ){
     if(!is.element("id", attribsNames)){
       stop(
-        "Buttons with 'action-button' class must have an `id` attribue.",
+        "Buttons with 'action-button' class must have an `id` attribute.",
         call. = FALSE
       )
     }
@@ -208,13 +213,6 @@ unclassComponent <- function(component){
     }
     component[["attribs"]][["data-val"]] <- attribs[["value"]]
     component[["attribs"]][["value"]] <- NULL
-    attribs <- component[["attribs"]]
-    attribsNames <- names(attribs)
-  }
-  if(!is.null(attribs[["children"]])){
-    component[["children"]] <-
-      c(component[["children"]], list(attribs[["children"]]))
-    component[["attribs"]][["children"]] <- NULL
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
   }

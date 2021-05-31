@@ -1,3 +1,11 @@
+button.btn {
+  border-width: 1px;
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+h4.modal-title {
+  font-size: 18px;
+}
 .container-fluid {
   padding-right: 15px;
   padding-left: 15px;

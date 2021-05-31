@@ -141,7 +141,7 @@ unclassComponent <- function(component){
     )
     component <- React$Fragment(
       list(html = URLencode(as.character(component))),
-      tags$script(script)
+      makeScriptTag(script)
     )
   }else if(
     inherits(component, "shiny.tag") && !is.null(htmlDependencies(component))
@@ -156,7 +156,7 @@ unclassComponent <- function(component){
       )
       htmltools::htmlDependencies(component) <- NULL
       component <- React$Fragment(
-        component, tags$script(script)
+        component, makeScriptTag(script)
       )
     }else{
       component <- list(html = URLencode(as.character(component)))
@@ -177,7 +177,7 @@ unclassComponent <- function(component){
     )
     component[["attribs"]][["value"]] <- NULL
     component <- React$Fragment(
-      component, tags$script(script)
+      component, makeScriptTag(script)
     )
   }else if(
     component[["name"]] == "Checkbox" && !is.null(attribs[["id"]])
@@ -209,7 +209,7 @@ unclassComponent <- function(component){
         )
         attr(component, "processed") <- TRUE
         component <- React$Fragment(
-          component, tags$script(script)
+          component, makeScriptTag(script)
         )
       }
     }
@@ -224,12 +224,36 @@ unclassComponent <- function(component){
     names(RadioGroups) <- attribs[["id"]]
     component[["attribs"]][["value"]] <- NULL
     component <- React$Fragment(
-      component, tags$script(script)
+      component, makeScriptTag(script)
     )
   }else if(
     component[["name"]] == "script"
   ){
     component <- makeScriptTag(component)
+  }else if(
+    component[["name"]] == "Input" &&
+    is.null(attr(component, "processed"))
+  ){
+    if(is.null(attribs[["id"]])){
+      stop(
+        "Please provide an `id` attribute to `Input` components.",
+        call. = FALSE
+      )
+    }
+    attr(component, "processed") <- TRUE
+    if(is.null(attribs[["value"]])){
+      value <- ""
+      component[["attribs"]][["value"]] <- ""
+    }else{
+      value <- URLdecode(attribs[["value"]])
+    }
+    script <- sprintf(
+      "setTimeout(function(){Shiny.setInputValue('%s', '%s')});",
+      attribs[["id"]], value
+    )
+    component <- React$Fragment(
+      component, makeScriptTag(script)
+    )
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){

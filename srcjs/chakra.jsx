@@ -39,7 +39,8 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  HStack
+  HStack,
+  Input
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -222,7 +223,8 @@ const ChakraComponents = {
   Radio,
   RadioGroup,
   Stack,
-  HStack
+  HStack,
+  Input
 };
 
 const getMenuOptionGroupSelections = menuoptiongroup => {
@@ -630,6 +632,13 @@ const chakraComponent = (
   }else if(component.name === "ScriptTag" && component.decoded !== true){
     props.dangerouslySetInnerHTML.__html = decodeURI(props.dangerouslySetInnerHTML.__html);
     component.decoded = true;
+  }else if(component.name === "Input"){
+    const [value, setValue] = React.useState(props.value);
+    props.value = value;
+    props.onChange = (event) => {
+      setValue(event.target.value);
+      Shiny.setInputValue(props.id, event.target.value);
+    };
   }
   for(const key in props){
     if(isTag(props[key])){

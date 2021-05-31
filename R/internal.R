@@ -148,6 +148,17 @@ unclassComponent <- function(component){
   attribsNames <- names(attribs)
   if(
     component[["name"]] %in% c("Button", "IconButton") &&
+    "className" %in% attribsNames &&
+    grepl("action-button", attribs[["className"]])
+  ){
+    if(!is.element("id", attribsNames)){
+      stop(
+        "Buttons with 'action-button' class must have an `id` attribue.",
+        call. = FALSE
+      )
+    }
+  }else if(
+    component[["name"]] %in% c("Button", "IconButton") &&
     "value" %in% attribsNames
   ){
     component[["attribs"]][["data-val"]] <- URLencode(attribs[["value"]])

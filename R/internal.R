@@ -308,6 +308,24 @@ unclassComponent <- function(component){
     component <- React$Fragment(
       component, makeScriptTag(script)
     )
+  }else if(component[["name"]] == "Menu"){
+    children <- vapply(component[["children"]], `[[`, character(1L), "name")
+    if(!identical(children, c("MenuButton", "MenuList"))){
+      stop(
+        "Invalid `Menu` component.",
+        call. = TRUE
+      )
+    }
+    if(!is.element("id", attribsNames)){
+      menulist <- component[["children"]][[2L]]
+      children <- vapply(menulist[["children"]], `[[`, character(1L), "name")
+      if("MenuOptionGroup" %in% children){
+        stop(
+          "A `Menu` component containing `MenuOptionGroup` components must have an `id` attribute.",
+          call. = FALSE
+        )
+      }
+    }
   }else if(
     component[["name"]] == "Input" &&
     is.null(attr(component, "processed"))

@@ -363,12 +363,14 @@ unclassComponent <- function(component){
   }else if(
     component[["name"]] == "Tabs" &&
     is.null(attr(component, "processed")) &&
-    all(c("id", "defaultIndex") %in% attribsNames)
+    "id" %in% attribsNames
   ){
     attr(component, "processed") <- TRUE
+    index <-
+      ifelse("defaultIndex" %in% attribsNames, attribs[["defaultIndex"]], 0)
     script <- sprintf(
       "setTimeout(function(){Shiny.setInputValue('%s', %s)})",
-      attribs[["id"]], attribs[["defaultIndex"]]
+      attribs[["id"]], index
     )
     component <- React$Fragment(
       component, makeScriptTag(script)

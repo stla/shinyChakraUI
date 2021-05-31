@@ -243,6 +243,8 @@ const ChakraComponents = {
   InputRightElement
 };
 
+const ChakraTags = Object.keys(ChakraComponents);
+
 const getMenuOptionGroupSelections = menuoptiongroup => {
   let type = menuoptiongroup.attribs.type;
   let selections = [];
@@ -537,6 +539,10 @@ const isTag = value => {
 };
  */
 
+const invalidComponent = x => {
+  return ReactHtmlParser(`<div style="color:red;">INVALID COMPONENT (${x})</div>`);
+};
+
 const chakraComponent = (
   component, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
 ) => {
@@ -553,6 +559,10 @@ const chakraComponent = (
   }
   if(typeof component !== "object"){
     return component;
+  }
+  let tagName = component.name;
+  if(tagName[0] === tagName[0].toUpperCase() && !ChakraTags.includes(tagName)){
+    return invalidComponent(`component '${tagName}'`);
   }
   let props = component.attribs;
   if(Array.isArray(props) && props.length === 0){
@@ -825,6 +835,10 @@ const chakraComponent = (
     if(isTag(props[key])){
       let name = props[key].name; 
       if(name[0] === name[0].toUpperCase()){
+        if(!ChakraTags.includes(name)){
+          let x = `'${name}' in attribute '${key}' of component '${component.name}'`;
+          return invalidComponent(x);
+        }
         props[key] = React.createElement(ChakraComponents[name], props[key].attribs);
       }else{
         fixTagAttribs(props[key].attribs);

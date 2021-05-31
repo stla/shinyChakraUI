@@ -698,6 +698,9 @@ const chakraComponent = (
         JSON.stringify(selected) + 
         ", widget: 'menuWithGroups'})})";
       let menubutton = component.children[0];
+      patch.MenuButton = {
+        as: menubutton.attribs.icon ? IconButton : Button
+      };
       if(menubutton.attribs.text){
         let buttonprops = menubutton.attribs;
         let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
@@ -731,6 +734,9 @@ const chakraComponent = (
         }
       }});
       let menubutton = component.children[0];
+      patch.MenuButton = {
+        as: menubutton.attribs.icon ? IconButton : Button
+      };
       if(menubutton.attribs.text){
         let buttonprops = menubutton.attribs;
         let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
@@ -1090,9 +1096,9 @@ const ChakraInput = ({ configuration, value, setValue }) => {
 
 const ChakraComponent = ({ configuration, value, setValue }) => {
   let patch = {
-    MenuButton: {
-      as: Button
-    },
+    // MenuButton: {
+    //   as: Button
+    // },
     process: true
   };
   // input elements

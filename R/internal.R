@@ -101,6 +101,7 @@ unclassComponent <- function(component){
   if(inherits(component, "shiny.tag.list")){
     component <- do.call(React$Fragment, component)
   }
+  component[["attribs"]] <- lapply(component[["attribs"]], unclass)
   attribs <- component[["attribs"]]
   attribsNames <- names(attribs)
   if(

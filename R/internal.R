@@ -365,38 +365,39 @@ unclassComponent <- function(component){
     component[["name"]] == "script"
   ){
     component <- makeScriptTag(component)
-  }else if(
-    component[["name"]] == "InputGroup" &&
-    is.null(attr(component, "processed"))
-  ){
-    attr(component, "processed") <- TRUE
-    children <- vapply(component[["children"]], `[[`, character(1L), "name")
-    inputs <- which(children == "Input")
-    script <- ""
-    for(i in inputs){
-      attr(component[["children"]][[i]], "processed") <- TRUE
-      input <- component[["children"]][[i]]
-      if(is.null(input[["attribs"]][["id"]])){
-        stop(
-          "Please provide an `id` attribute to `Input` components.",
-          call. = FALSE
-        )
-      }
-      if(is.null(input[["attribs"]][["value"]])){
-        value <- ""
-        component[["children"]][[i]][["attribs"]][["value"]] <- ""
-      }else{
-        value <- URLdecode(input[["attribs"]][["value"]])
-      }
-      script <- paste0(script, sprintf(
-        "Shiny.setInputValue('%s', '%s');",
-        input[["attribs"]][["id"]], value
-      ))
-    }
-    script <- sprintf("setTimeout(function(){%s})", script)
-    component <- React$Fragment(
-      component, makeScriptTag(script)
-    )
+  # }
+  # else if(
+  #   component[["name"]] == "InputGroup" &&
+  #   is.null(attr(component, "processed"))
+  # ){
+  #   attr(component, "processed") <- TRUE
+  #   children <- vapply(component[["children"]], `[[`, character(1L), "name")
+  #   inputs <- which(children == "Input")
+  #   script <- ""
+  #   for(i in inputs){
+  #     attr(component[["children"]][[i]], "processed") <- TRUE
+  #     input <- component[["children"]][[i]]
+  #     if(is.null(input[["attribs"]][["id"]])){
+  #       stop(
+  #         "Please provide an `id` attribute to `Input` components.",
+  #         call. = FALSE
+  #       )
+  #     }
+  #     if(is.null(input[["attribs"]][["value"]])){
+  #       value <- ""
+  #       component[["children"]][[i]][["attribs"]][["value"]] <- ""
+  #     }else{
+  #       value <- URLdecode(input[["attribs"]][["value"]])
+  #     }
+  #     script <- paste0(script, sprintf(
+  #       "Shiny.setInputValue('%s', '%s');",
+  #       input[["attribs"]][["id"]], value
+  #     ))
+  #   }
+  #   script <- sprintf("setTimeout(function(){%s})", script)
+  #   component <- React$Fragment(
+  #     component, makeScriptTag(script)
+  #   )
   }else if(
     component[["name"]] == "Tabs" &&
     is.null(attr(component, "processed")) &&
@@ -446,8 +447,8 @@ unclassComponent <- function(component){
     }
     component[["attribs"]][["text"]] <- lapply(text, URLencode)
   }else if(
-    component[["name"]] == "Input" &&
-    is.null(attr(component, "processed"))
+    component[["name"]] == "Input"
+    #is.null(attr(component, "processed"))
   ){
     if(is.null(attribs[["id"]])){
       stop(
@@ -455,20 +456,26 @@ unclassComponent <- function(component){
         call. = FALSE
       )
     }
-    attr(component, "processed") <- TRUE
+    component[["attribs"]][["className"]] <- "chakraTag"
+    # attr(component, "processed") <- TRUE
     if(is.null(attribs[["value"]])){
-      value <- ""
+      # value <- ""
       component[["attribs"]][["value"]] <- ""
-    }else{
-      value <- URLdecode(attribs[["value"]])
     }
-    script <- sprintf(
-      "setTimeout(function(){Shiny.setInputValue('%s', '%s')});",
-      attribs[["id"]], value
-    )
-    component <- React$Fragment(
-      component, makeScriptTag(script)
-    )
+    # else{
+    #   value <- URLdecode(attribs[["value"]])
+    # }
+    # script <- sprintf(
+    #   "setTimeout(function(){Shiny.setInputValue('%s', '%s')});",
+    #   attribs[["id"]], value
+    # )
+    # script <- sprintf(
+    #   "chakraBinding.initialize(document.getElementById('%s'));",
+    #   attribs[["id"]]
+    # )
+    # component <- React$Fragment(
+    #   component, makeScriptTag(script)
+    # )
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){

@@ -913,6 +913,7 @@ const chakraComponent = (
     props.dangerouslySetInnerHTML.__html = decodeURI(props.dangerouslySetInnerHTML.__html);
     component.decoded = true;
   }else if(component.name === "Input"){
+    props["data-shinyinitvalue"] = props.value;
     const [value, setValue] = React.useState(props.value);
     props.value = value;
     props.onChange = (event) => {
@@ -1253,6 +1254,53 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     // </ChakraProvider>
   );
 };
+
+var chakraBinding = new Shiny.InputBinding();
+
+$.extend(chakraBinding, {
+  find: function (scope) {
+    return $(scope).find(".chakraTag");
+  },
+  getType: function (el) {
+    return $(el).data("widget") ? "shinyChakraUI.widget" : false;
+  },
+  getValue: function (el) {
+    let value = $(el).data("shinyinitvalue");
+    let widget = $(el).data("widget");
+    return widget ? {value: value, widget: widget} : value;
+  },
+  setValue: function (el, value) {
+    // $(el).setValue(value);
+  },
+  subscribe: function (el, callback) {
+    // $(el).on("change.chakraBinding", function (e) {
+    //     callback();
+    // });
+  },
+  unsubscribe: function (el) {
+    // $(el).off(".chakradBinding");
+  },
+  receiveMessage: function (el, data) {
+    // if (data.hasOwnProperty('value'))
+    //     this.setValue(el, data.value);
+    // if (data.hasOwnProperty('label'))
+    //     $(el).parent().parent().find("[id$=xylabel]").text(data.label);
+    // if (data.hasOwnProperty('options'))
+    //     $(el).data('setOptions')(data.options);
+    // $(el).trigger('change');
+  },
+  getRatePolicy: function () {
+    return {
+      policy: 'debounce',
+      delay: 250
+    };
+  },
+  initialize: function initialize(el) {
+
+  }
+});
+
+Shiny.inputBindings.register(chakraBinding);
 
 reactShinyInput('.chakracomponent', 'shinyChakraUI.chakracomponent', ChakraComponent);
 reactShinyInput('.chakra', 'shinyChakraUI.chakra', ChakraInput, {type: "shinyChakraUI.widget"});

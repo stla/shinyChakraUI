@@ -89,6 +89,16 @@ chakraComponent <- function(inputId, ...){
     print(configuration[["component"]])
   }
   dependencies <- configuration[["dependencies"]]
+  # dependencies <- c(
+  #   dependencies,
+  #   list(htmlDependency(
+  #     name = "chakraBinding",
+  #     version = "1.0.0",
+  #     src = "www/bindings",
+  #     script = "chakraBindings.js",
+  #     package = "shinyChakraUI"
+  #   ))
+  # )
   configuration[["dependencies"]] <- NULL
   attachDependencies(createReactShinyInput(
     inputId = inputId,

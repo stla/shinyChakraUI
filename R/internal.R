@@ -127,10 +127,24 @@ unclassComponent <- function(component){
         "Shiny.inputBindings.bindingNames['shiny.selectInput'].binding.initialize(document.getElementById('%s'));",
         id
       )
-      # options <-
-      #   component[["children"]][[2L]][["children"]][[1L]][["children"]][[1L]]
-      # component[["children"]][[2L]][["children"]][[1L]][["children"]][[1L]] <-
-      #   list(html = URLencode(as.character(options)))
+      htmltools::htmlDependencies(component) <- NULL
+      component <- React$Fragment(
+        component, makeScriptTag(script)
+      )
+    }else if(grepl("shiny-date-input", component[["attribs"]][["class"]])){
+      script <- sprintf(
+        "Shiny.inputBindings.bindingNames['shiny.dateInput'].binding.initialize(document.getElementById('%s'));",
+        component[["attribs"]][["id"]]
+      )
+      htmltools::htmlDependencies(component) <- NULL
+      component <- React$Fragment(
+        component, makeScriptTag(script)
+      )
+    }else if(grepl("shiny-date-range-input", component[["attribs"]][["class"]])){
+      script <- sprintf(
+        "Shiny.inputBindings.bindingNames['shiny.dateRangeInput'].binding.initialize(document.getElementById('%s'));",
+        component[["attribs"]][["id"]]
+      )
       htmltools::htmlDependencies(component) <- NULL
       component <- React$Fragment(
         component, makeScriptTag(script)

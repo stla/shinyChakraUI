@@ -8,6 +8,7 @@
 #' @examples
 withDisclosure <- function(component){
   component[["withDisclosure"]] <- TRUE
+  attr(component, "withDisclosure") <- TRUE
   component
 }
 

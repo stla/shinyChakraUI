@@ -170,9 +170,11 @@ unclassComponent <- function(component){
       )
     }
   }
-  if(isTRUE(component[["withDisclosure"]])){
-    for(child in component[["children"]]){
+  if(isTRUE(attr(component, "withDisclosure"))){
+    for(i in seq_along(component[["children"]])){
+      child <- component[["children"]][[i]]
       if(isReactComponent(child)){
+        attr(component[["children"]][[i]], "withDisclosure") <- TRUE
         attribs <- child[["attribs"]]
         for(attrib in attribs){
           if(is.list(attrib) && identical(names(attrib), "disclosure")){

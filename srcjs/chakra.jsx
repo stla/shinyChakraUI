@@ -349,7 +349,7 @@ const makeMenuComponent = menu => {
       groupprops.defaultValue = selected[grouptitle];
     }
     groupprops.onChange = (selection) => {
-      value[grouptitle] = Array.isArray(selection) ? selection.map(decodeURI) : decodeURI(selection);
+      value[grouptitle] = selection;//Array.isArray(selection) ? selection.map(decodeURI) : decodeURI(selection);
       setValue(value);
       Shiny.setInputValue(
         menu.attribs.id + ":shinyChakraUI.widget", {value: value, widget: "menuWithGroups"}
@@ -777,24 +777,35 @@ const chakraComponent = (
   }else if(component.name === "Menu" && patch.process){
     let selected = getMenuSelection(component);
     if(selected){
+      selected = JSON.stringify(selected);
       makeMenuComponent(component);
       patch.process = false;
-      let code = "setTimeout(function(){Shiny.setInputValue('" + 
-        component.attribs.id + 
-        ":shinyChakraUI.widget', {value: " + 
-        JSON.stringify(selected) + 
-        ", widget: 'menuWithGroups'})})";
+      // let code = "setTimeout(function(){Shiny.setInputValue('" + 
+      //   component.attribs.id + 
+      //   ":shinyChakraUI.widget', {value: " + 
+      //   JSON.stringify(selected) + 
+      //   ", widget: 'menuWithGroups'})})";
       let menubutton = component.children[0];
       patch.MenuButton = {
         as: menubutton.attribs.icon ? IconButton : Button
       };
+      // let id = props.id;
+      // delete props.id;
       if(menubutton.attribs.text){
         let buttonprops = menubutton.attribs;
         let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
         let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
         let menulist = chakraComponent(component.children[1], {});
-        component = 
+        component = {
+          name: "div",
+          attribs: {
+            id: props.id,
+            className: "chakraTag",
+            "data-shinyinitvalue": selected,
+            "data-widget": "menuWithGroups"          
+          },
+          children: [
             <Menu {...props}>
               {({ isOpen }) => (
                 <React.Fragment>
@@ -804,16 +815,30 @@ const chakraComponent = (
                   {menulist}
                 </React.Fragment>
               )}
-            </Menu>;    
+            </Menu>
+          ]
+        };
+      }else{
+        component = {
+          name: "div",
+          attribs: {
+            id: props.id,
+            className: "chakraTag",
+            "data-shinyinitvalue": selected,
+            "data-widget": "menuWithGroups"          
+          },
+          children: [component]
+        };
       }
-      component = {
-        name: "Fragment",
-        attribs: {},
-        children: [
-          component,
-          <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
-        ]
-      };
+      props = component.attribs;
+      // component = {
+      //   name: "Fragment",
+      //   attribs: {},
+      //   children: [
+      //     component,
+      //     <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
+      //   ]
+      // };
     }else{
       patch = $.extend(patch, {MenuItem: {
         onClick: (e) => {
@@ -913,7 +938,7 @@ const chakraComponent = (
     props.dangerouslySetInnerHTML.__html = decodeURI(props.dangerouslySetInnerHTML.__html);
     component.decoded = true;
   }else if(component.name === "Input"){
-    props["data-shinyinitvalue"] = props.value;
+    props["data-shinyinitvalue"] = JSON.stringify(props.value);
     const [value, setValue] = React.useState(props.value);
     props.value = value;
     props.onChange = (event) => {

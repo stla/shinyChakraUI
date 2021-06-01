@@ -101,6 +101,22 @@ unclassComponent <- function(component){
   if(inherits(component, "shiny.tag.list")){
     component <- do.call(React$Fragment, component)
   }
+  Checkboxes <- RadioGroups <- dependencies <- NULL
+  shinyOutput <- FALSE
+  if(isSlider(component)){
+    dependencies <- evalHtmlDependencies(htmlDependencies(component))
+    # sliders <- list(list(id = component[["children"]][[2]][["attribs"]][["id"]]))
+    # component[["children"]][[2]][["attribs"]][["class"]] <- NULL
+    id <- component[["children"]][[2]][["attribs"]][["id"]]
+    script <- sprintf(
+      "Shiny.inputBindings.bindingNames['shiny.sliderInput'].binding.initialize(document.getElementById('%s'));",
+      id
+    )
+    component <- React$Fragment(
+      list(html = URLencode(as.character(component))),
+      makeScriptTag(script)
+    )
+  }
   if(!isChakraIcon(component) && grepl("Icon$", component[["name"]])){
     if(!is.element(component[["name"]], paste0(chakraIcons(), "Icon"))){
       stop(
@@ -133,7 +149,11 @@ unclassComponent <- function(component){
       )
     }
   }
-  for(attrib in component[["attribs"]]){
+  for(attribname in names(component[["attribs"]])){
+    attrib <- component[["attribs"]][[attribname]]
+    if(is.character(attrib) && attribname != "defaultValue"){
+      component[["attribs"]][[attribname]] <- URLencode(attrib)
+    }
     if(isReactComponent(attrib) && grepl("Icon$", attrib[["name"]])){
       if(!is.element(attrib[["name"]], paste0(chakraIcons(), "Icon"))){
         stop(
@@ -172,7 +192,7 @@ unclassComponent <- function(component){
     component[["name"]] %in% c("Button", "IconButton") &&
     "value" %in% attribsNames
   ){
-    component[["attribs"]][["data-val"]] <- URLencode(attribs[["value"]])
+    component[["attribs"]][["data-val"]] <- attribs[["value"]]
     component[["attribs"]][["value"]] <- NULL
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
@@ -199,18 +219,18 @@ unclassComponent <- function(component){
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
   }
-  if(
-    "value" %in% attribsNames &&
-    is.character(value <- attribs[["value"]])
-  ){
-    component[["attribs"]][["value"]] <- attribs[["value"]] <- URLencode(value)
-  }
-  if("onClick" %in% attribsNames){
-    component[["attribs"]][["onClick"]] <- URLencode(attribs[["onClick"]])
-  }
-  if("title" %in% attribsNames){
-    component[["attribs"]][["title"]] <- URLencode(attribs[["title"]])
-  }
+  # if(
+  #   "value" %in% attribsNames &&
+  #   is.character(value <- attribs[["value"]])
+  # ){
+  #   component[["attribs"]][["value"]] <- attribs[["value"]] <- URLencode(value)
+  # }
+  # if("onClick" %in% attribsNames){
+  #   component[["attribs"]][["onClick"]] <- URLencode(attribs[["onClick"]])
+  # }
+  # if("title" %in% attribsNames){
+  #   component[["attribs"]][["title"]] <- URLencode(attribs[["title"]])
+  # }
   if(component[["name"]] == "MenuItem"){
     if(!is.element("value", attribsNames)){
       stop(
@@ -229,24 +249,8 @@ unclassComponent <- function(component){
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
   }
-  Checkboxes <- RadioGroups <- dependencies <- NULL
-  shinyOutput <- FALSE
   if("class" %in% attribsNames && grepl("-output", attribs[["class"]])){
     shinyOutput <- TRUE
-  }
-  if(isSlider(component)){
-    dependencies <- evalHtmlDependencies(htmlDependencies(component))
-    # sliders <- list(list(id = component[["children"]][[2]][["attribs"]][["id"]]))
-    # component[["children"]][[2]][["attribs"]][["class"]] <- NULL
-    id <- component[["children"]][[2]][["attribs"]][["id"]]
-    script <- sprintf(
-      "Shiny.inputBindings.bindingNames['shiny.sliderInput'].binding.initialize(document.getElementById('%s'));",
-      id
-    )
-    component <- React$Fragment(
-      list(html = URLencode(as.character(component))),
-      makeScriptTag(script)
-    )
   }else if(
     inherits(component, "shiny.tag") && !is.null(htmlDependencies(component))
   ){

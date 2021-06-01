@@ -572,8 +572,8 @@ const invalidComponent = x => {
 const chakraComponent = (
   component, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
 ) => {
-  console.log("XXXXXXXXXXX");
-  console.log(component);
+//  console.log("XXXXXXXXXXX");
+//  console.log(component);
   if(React.isValidElement(component)){
     return component;
   }
@@ -581,6 +581,8 @@ const chakraComponent = (
     return decodeURI(component);
   }
   if(component.html){
+    console.log("XXXXXXXXXXX");
+    console.log(component.html);
     return ReactHtmlParser(decodeURI(component.html));
   }
   if(typeof component !== "object"){
@@ -594,17 +596,25 @@ const chakraComponent = (
   if(Array.isArray(props) && props.length === 0){
     props = {};
   }
-  if(props.title){
-    props.title = decodeURI(props.title);
+  for(const key in props){
+    if(typeof props[key] === "string"){
+      props[key] = decodeURI(props[key]);
+    }
   }
-  if(typeof props.value === "string"){
-    props.value = decodeURI(props.value);
-  }
-  if(typeof props["data-val"] === "string"){
-    props["data-val"] = decodeURI(props["data-val"]);
-  }
+  // if(props.title){
+  //   props.title = decodeURI(props.title);
+  // }
+  // if(typeof props.value === "string"){
+  //   props.value = decodeURI(props.value);
+  // }
+  // if(typeof props["data-val"] === "string"){
+  //   props["data-val"] = decodeURI(props["data-val"]);
+  // }
+  // if(typeof props.onClick === "string"){
+  //   props.onClick = eval(decodeURI(props.onClick));
+  // }
   if(typeof props.onClick === "string"){
-    props.onClick = eval(decodeURI(props.onClick));
+    props.onClick = eval(props.onClick);
   }
   if(component.widget === "alertdialog"){
     delete component.widget;
@@ -616,7 +626,7 @@ const chakraComponent = (
     };
     const onCloseButton = (e) => {
       let value = e.currentTarget.dataset.val;
-      if(value) setShinyValue(decodeURI(value));
+      if(value) setShinyValue(value);
       setIsOpen(false);
     };
     const cancelRef = React.useRef();
@@ -631,7 +641,7 @@ const chakraComponent = (
       DisableButton: {
         onClick: (e) => {
           let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(decodeURI(value));
+          if(value) setShinyValue(value);
           setDisabled(true);
           setIsOpen(false);
         }
@@ -643,7 +653,7 @@ const chakraComponent = (
       RemoveButton: {
         onClick: (e) => {
           let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(decodeURI(value));
+          if(value) setShinyValue(value);
           setIsOpen(false);
           $("#" + props.id).remove();
         }
@@ -665,7 +675,7 @@ const chakraComponent = (
       DisableIconButton: {
         onClick: (e) => {
           let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(decodeURI(value));
+          if(value) setShinyValue(value);
           setDisabled(true);
           setIsOpen(false);
         }
@@ -677,7 +687,7 @@ const chakraComponent = (
       RemoveIconButton: {
         onClick: (e) => {
           let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(decodeURI(value));
+          if(value) setShinyValue(value);
           setIsOpen(false);
           $("#" + props.id).remove();
         }
@@ -718,7 +728,7 @@ const chakraComponent = (
       Button: {
         onClick: (e) => {
           let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(decodeURI(value));
+          if(value) setShinyValue(value);
         }
       }
     };  
@@ -798,7 +808,7 @@ const chakraComponent = (
       Button: {
         onClick: (e) => {
           let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(decodeURI(value));
+          if(value) setShinyValue(value);
         }
       }
     };  

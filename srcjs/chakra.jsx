@@ -3,6 +3,7 @@ import * as React from 'react';
 import { unmountComponentAtNode } from "react-dom";
 import {
   useDisclosure,
+  useClipboard,
   ChakraProvider,
   Button,
   IconButton,
@@ -640,6 +641,7 @@ const chakraComponent = (
       props[key] = decodeURI(props[key]);
     }
     if(typeof props[key] === "object" && props[key].eval){
+      //let disclosure = component.disclosure; 
       props[key] = eval(decodeURI(props[key].eval));
     }
   }
@@ -955,7 +957,7 @@ const chakraComponent = (
   }else if(component.name === "ScriptTag" && component.decoded !== true){
     props.dangerouslySetInnerHTML.__html = decodeURI(props.dangerouslySetInnerHTML.__html);
     component.decoded = true;
-  }else if(component.name === "Input"){
+  }else if(component.name === "Input" && props.className === "chakraTag"){
     props["data-shinyinitvalue"] = props.value;
     const [value, setValue] = React.useState(props.value);
     props.value = value;
@@ -1251,12 +1253,34 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
   // states
   let states = configuration.states;
   if(states){
+    states = JSON.parse(decodeURI(states));
     for(let key in states){
-      let [state, setState] = React.useState(states[key]);
-      states[key] = {get: () => state, set: setState};
+      if(typeof states[key] === "object" && states[key].eval){
+        states[key] = eval(states[key].eval);
+      }else{
+        let [state, setState] = React.useState(states[key]);
+        states[key] = {get: () => state, set: setState};
+      }
     }
+    states.clipboard = useClipboard(states.helloworld.get());
     Shiny.addCustomMessageHandler("setState_" + configuration.inputId, function(x){
+      let bind = false;
+      if(typeof x.value === "object"){
+        if(x.value.html){
+          x.value = ReactHtmlParser(x.value.html);
+          bind = true;
+        }else if(x.value.react){
+          // let [state, setState] = React.useState("a");
+          // for(let key in x.value.react.states){
+          //   let [state, setState] = React.useState(x.value.react.states[key]);
+          //   states[key] = {get: () => state, set: setState};      
+          // }
+          x.value = chakraComponent(JSON.parse(JSON.stringify(x.value.react)), states, {});
+          bind = true;
+        }
+      }
       states[x.state].set(x.value);
+      if(bind) Shiny.bindAll();
     });
   }
   // Checkbox elements

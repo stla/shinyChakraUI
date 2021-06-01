@@ -10,6 +10,11 @@
 #'
 #' @examples
 setReactState <- function(session, componentId, stateName, value){
+  if(inherits(value, "html")){
+    value <- list(html = as.character(value))
+  }else if(inherits(value, "shiny.tag")){
+    value <- list(react = unclassComponent(value)[["component"]])
+  }
   session$sendCustomMessage(
     paste0("setState_", componentId),
     list(state = stateName, value = value)
@@ -22,6 +27,7 @@ setReactState <- function(session, componentId, stateName, value){
 #'
 #' @return
 #' @export
+#' @importFrom jsonlite toJSON
 #'
 #' @examples
 withStates <- function(component, states){
@@ -131,6 +137,8 @@ chakraComponent <- function(inputId, ...){
   # )
   configuration[["dependencies"]] <- NULL
   configuration[["inputId"]] <- inputId
+  configuration[["states"]] <-
+    URLencode(as.character(toJSON(configuration[["states"]], auto_unbox = TRUE)))
   attachDependencies(createReactShinyInput(
     inputId = inputId,
     class = "chakracomponent",

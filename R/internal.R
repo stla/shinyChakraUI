@@ -471,7 +471,7 @@ unclassComponent <- function(component){
     }
     component[["attribs"]][["text"]] <- lapply(text, URLencode)
   }else if(
-    component[["name"]] == "Input"
+    component[["name"]] == "Input" && !is.element("className", attribsNames)
     #is.null(attr(component, "processed"))
   ){
     if(is.null(attribs[["id"]])){

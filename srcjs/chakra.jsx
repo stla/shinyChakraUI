@@ -596,7 +596,7 @@ const appendDisclosure = (component, disclosure) => {
 };
 
 const chakraComponent = (
-  component, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+  component, states, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
 ) => {
 //  console.log("XXXXXXXXXXX");
 //  console.log(component);
@@ -610,6 +610,9 @@ const chakraComponent = (
     console.log("XXXXXXXXXXX");
     console.log(component.html);
     return ReactHtmlParser(unescapeHtml(decodeURI(component.html)));
+  }
+  if(component.eval){
+    return eval(decodeURI(component.eval));
   }
   if(typeof component !== "object"){
     return component;
@@ -635,6 +638,9 @@ const chakraComponent = (
   for(const key in props){
     if(typeof props[key] === "string"){
       props[key] = decodeURI(props[key]);
+    }
+    if(typeof props[key] === "object" && props[key].eval){
+      props[key] = eval(decodeURI(props[key].eval));
     }
   }
   if(component.disclosure){
@@ -797,7 +803,7 @@ const chakraComponent = (
         let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
         let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
-        let menulist = chakraComponent(component.children[1], {});
+        let menulist = chakraComponent(component.children[1], {}, {});
         component = {
           name: "div",
           attribs: {
@@ -855,7 +861,7 @@ const chakraComponent = (
         let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
         let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
-        let menulist = chakraComponent(component.children[1], patch);
+        let menulist = chakraComponent(component.children[1], {}, patch);
         component = 
             <Menu {...props}>
               {({ isOpen }) => (
@@ -982,7 +988,7 @@ const chakraComponent = (
         newpropsChildren[i] = component.children[i];
       }else{
         newpropsChildren[i] = chakraComponent(
-          component.children[i], patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+          component.children[i], states, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
         );
       }
     }
@@ -1242,18 +1248,17 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     // },
     process: true
   };
-  // input elements
-  // let inputs = configuration.inputs;
-  // if(inputs){
-  //   $(document).on('shiny:connected', function() {
-  //       for(let i = 0; i < inputs.length; i++){
-  //         let id = inputs[i].id;
-  //         let val = inputs[i].value;
-  //         Shiny.setInputValue(id, val);
-  //         $("#" + id).val(val);
-  //       }
-  //   });  
-  // }
+  // states
+  let states = configuration.states;
+  if(states){
+    for(let key in states){
+      let [state, setState] = React.useState(states[key]);
+      states[key] = {get: () => state, set: setState};
+    }
+    Shiny.addCustomMessageHandler("setState_" + configuration.inputId, function(x){
+      states[x.state].set(x.value);
+    });
+  }
   // Checkbox elements
   const [checkedItems, setCheckedItems] = React.useState(configuration.Checkboxes);
   const checkboxOnChange = (e) => {
@@ -1281,6 +1286,7 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     // {
       chakraComponent(
         JSON.parse(JSON.stringify(configuration.component)),
+        states,
         patch,
         checkedItems,
         checkboxOnChange,

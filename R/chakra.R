@@ -1,5 +1,36 @@
 #' Title
 #'
+#' @param session
+#' @param componentId
+#' @param stateName
+#' @param value
+#'
+#' @return
+#' @export
+#'
+#' @examples
+setReactState <- function(session, componentId, stateName, value){
+  session$sendCustomMessage(
+    paste0("setState_", componentId),
+    list(state = stateName, value = value)
+  )
+}
+
+#' Title
+#'
+#' @param component
+#'
+#' @return
+#' @export
+#'
+#' @examples
+withStates <- function(component, states){
+  attr(component, "states") <- states
+  component
+}
+
+#' Title
+#'
 #' @param component
 #'
 #' @return
@@ -86,7 +117,6 @@ chakraComponent <- function(inputId, ...){
       configuration[["component"]][["children"]],
       list(unclass(makeScriptTag("setTimeout(function(){Shiny.bindAll()})")))
     )
-    print(configuration[["component"]])
   }
   dependencies <- configuration[["dependencies"]]
   # dependencies <- c(
@@ -100,6 +130,7 @@ chakraComponent <- function(inputId, ...){
   #   ))
   # )
   configuration[["dependencies"]] <- NULL
+  configuration[["inputId"]] <- inputId
   attachDependencies(createReactShinyInput(
     inputId = inputId,
     class = "chakracomponent",

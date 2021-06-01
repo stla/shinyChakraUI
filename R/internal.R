@@ -101,6 +101,7 @@ unclassComponent <- function(component){
   if(inherits(component, "shiny.tag.list")){
     component <- do.call(React$Fragment, component)
   }
+  states <- attr(component, "states")
   Checkboxes <- RadioGroups <- dependencies <- NULL
   shinyOutput <- FALSE
   if(isSlider(component)){
@@ -235,6 +236,13 @@ unclassComponent <- function(component){
     component[["attribs"]][["class"]] <- NULL
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
+  }
+  for(attribname in attribsNames){
+    attrib <- attribs[[attribname]]
+    if(is.list(attrib) && identical(names(attrib), "eval")){
+      component[["attribs"]][[attribname]] <-
+        list(eval = URLencode(attrib[["eval"]]))
+    }
   }
   if(
     component[["name"]] %in% c("Button", "IconButton") &&
@@ -495,7 +503,9 @@ unclassComponent <- function(component){
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
-      if(
+      if(is.list(child) && identical(names(child), "eval")){
+        list(eval = URLencode(child[["eval"]]))
+      }else if(
         is.list(child) &&
         !inherits(child, "shiny.tag") &&
         is.null(child[["html"]])
@@ -503,7 +513,7 @@ unclassComponent <- function(component){
         unlist(child) # this handles actionButton
       }else if(inherits(child, "shiny.tag")){
         x <- unclassComponent(child)
-        #inputs <<- c(inputs, x[["inputs"]])
+        states <<- c(x[["states"]], states)
         shinyOutput <<- x[["shinyOutput"]] || shinyOutput
         Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)
         RadioGroups <<- c(x[["RadioGroups"]], RadioGroups)
@@ -523,6 +533,7 @@ unclassComponent <- function(component){
   # }
   list(
     component = unclass(component),
+    states = states,
     shinyOutput = shinyOutput,
     Checkboxes = Checkboxes,
     RadioGroups = RadioGroups,

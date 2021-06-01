@@ -58,7 +58,11 @@ import {
   TabList, 
   TabPanels, 
   Tab, 
-  TabPanel
+  TabPanel,
+  Fade, 
+  ScaleFade, 
+  Slide, 
+  SlideFade
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -266,7 +270,11 @@ const ChakraComponents = {
   TabList, 
   TabPanels, 
   Tab, 
-  TabPanel
+  TabPanel,
+  Fade, 
+  ScaleFade, 
+  Slide, 
+  SlideFade
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -600,6 +608,15 @@ const chakraComponent = (
   if(tagName[0] === tagName[0].toUpperCase() && !ChakraTags.includes(tagName)){
     return invalidComponent(`component '${tagName}'`);
   }
+  if(component.withDisclosure){
+    delete component.withDisclosure;
+    const disclosure = useDisclosure();
+    for(let i = 0; i < component.children.length; i++){
+      if(isTag(component.children[i])){
+        component.children[i].disclosure = disclosure;
+      }
+    }
+  }
   let props = component.attribs;
   if(Array.isArray(props) && props.length === 0){
     props = {};
@@ -607,6 +624,9 @@ const chakraComponent = (
   for(const key in props){
     if(typeof props[key] === "string"){
       props[key] = decodeURI(props[key]);
+    }
+    if(typeof props[key] === "object" && props[key].disclosure){
+      props[key] = component.disclosure[props[key].disclosure];
     }
   }
   // if(props.title){

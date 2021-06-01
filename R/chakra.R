@@ -1,3 +1,16 @@
+#' Title
+#'
+#' @param component
+#'
+#' @return
+#' @export
+#'
+#' @examples
+withDisclosure <- function(component){
+  component[["withDisclosure"]] <- TRUE
+  component
+}
+
 #' <Add Title>
 #'
 #' <Add Description>

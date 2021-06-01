@@ -351,16 +351,16 @@ unclassComponent <- function(component){
   }else if(
     component[["name"]] == "RadioGroup" && !is.null(attribs[["value"]])
   ){
-    script <- sprintf(
-      "setTimeout(function(){Shiny.setInputValue('%s', '%s')});",
-      attribs[["id"]], URLdecode(attribs[["value"]])
-    )
+    # script <- sprintf(
+    #   "setTimeout(function(){Shiny.setInputValue('%s', '%s')});",
+    #   attribs[["id"]], URLdecode(attribs[["value"]])
+    # )
     RadioGroups <- list(attribs[["value"]])
     names(RadioGroups) <- attribs[["id"]]
     component[["attribs"]][["value"]] <- NULL
-    component <- React$Fragment(
-      component, makeScriptTag(script)
-    )
+    # component <- React$Fragment(
+    #   component, makeScriptTag(script)
+    # )
   }else if(
     component[["name"]] == "script"
   ){
@@ -398,21 +398,21 @@ unclassComponent <- function(component){
   #   component <- React$Fragment(
   #     component, makeScriptTag(script)
   #   )
-  }else if(
-    component[["name"]] == "Tabs" &&
-    is.null(attr(component, "processed")) &&
-    "id" %in% attribsNames
-  ){
-    attr(component, "processed") <- TRUE
-    index <-
-      ifelse("defaultIndex" %in% attribsNames, attribs[["defaultIndex"]], 0)
-    script <- sprintf(
-      "setTimeout(function(){Shiny.setInputValue('%s', %s)})",
-      attribs[["id"]], index
-    )
-    component <- React$Fragment(
-      component, makeScriptTag(script)
-    )
+  # }else if(
+  #   component[["name"]] == "Tabs" &&
+  #   is.null(attr(component, "processed")) &&
+  #   "id" %in% attribsNames
+  # ){
+  #   attr(component, "processed") <- TRUE
+  #   index <-
+  #     ifelse("defaultIndex" %in% attribsNames, attribs[["defaultIndex"]], 0)
+  #   script <- sprintf(
+  #     "setTimeout(function(){Shiny.setInputValue('%s', %s)})",
+  #     attribs[["id"]], index
+  #   )
+  #   component <- React$Fragment(
+  #     component, makeScriptTag(script)
+  #   )
   }else if(component[["name"]] == "Menu"){
     children <- vapply(component[["children"]], `[[`, character(1L), "name")
     if(!identical(children, c("MenuButton", "MenuList"))){

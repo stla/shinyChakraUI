@@ -881,6 +881,8 @@ const chakraComponent = (
     };  
   }else if(component.name === "Tabs" && props.id){
     props.onChange = index => Shiny.setInputValue(props.id, index);
+    props.className = "chakraTag";
+    props["data-shinyinitvalue"] = props.defaultIndex ? props.defaultIndex : 0;
   }
   if(props.class === "checkboxWithChildren"){
     let code = makeCheckboxWithChildren(component);
@@ -931,14 +933,16 @@ const chakraComponent = (
           setRadiogroupValues(obj);
           Shiny.setInputValue(props.id, value);
         },
-        value: radiogroupValues[props.id]
+        value: radiogroupValues[props.id],
+        className: "chakraTag",
+        "data-shinyinitvalue": radiogroupValues[props.id]
       }
     );
   }else if(component.name === "ScriptTag" && component.decoded !== true){
     props.dangerouslySetInnerHTML.__html = decodeURI(props.dangerouslySetInnerHTML.__html);
     component.decoded = true;
   }else if(component.name === "Input"){
-    props["data-shinyinitvalue"] = JSON.stringify(props.value);
+    props["data-shinyinitvalue"] = props.value;
     const [value, setValue] = React.useState(props.value);
     props.value = value;
     props.onChange = (event) => {

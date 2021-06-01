@@ -321,8 +321,8 @@ unclassComponent <- function(component){
     names(Checkboxes) <- attribs[["id"]]
     #component[["attribs"]][["isChecked"]] <- NULL
   }else if(
-    component[["name"]] == "CheckboxGroup" &&
-    is.null(attr(component, "processed"))
+    component[["name"]] == "CheckboxGroup"
+    # is.null(attr(component, "processed"))
   ){
     if(is.null(attribs[["id"]])){
       stop(
@@ -338,14 +338,16 @@ unclassComponent <- function(component){
       if(length(defaultValue)){
         component[["attribs"]][["defaultValue"]] <-
           defaultValue <- lapply(defaultValue, URLencode)
-        script <- sprintf(
-          "setTimeout(function(){Shiny.setInputValue('%s', [%s].map(decodeURI))});",
-          attribs[["id"]], toString(paste0("'", defaultValue, "'"))
-        )
-        attr(component, "processed") <- TRUE
-        component <- React$Fragment(
-          component, makeScriptTag(script)
-        )
+        # script <- sprintf(
+        #   "setTimeout(function(){Shiny.setInputValue('%s', [%s].map(decodeURI))});",
+        #   attribs[["id"]], toString(paste0("'", defaultValue, "'"))
+        # )
+        # attr(component, "processed") <- TRUE
+        # component <- React$Fragment(
+        #   component, makeScriptTag(script)
+        # )
+      }else{
+        component[["attribs"]][["defaultValue"]] <- NULL
       }
     }
   }else if(

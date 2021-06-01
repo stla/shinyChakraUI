@@ -468,11 +468,12 @@ const makeCheckboxWithChildren = div => {
       );
     })
   }];
-  let code = "setTimeout(function(){Shiny.setInputValue('" + 
-    inputId + "', " +   
-    JSON.stringify({value: state, widget: "checkboxWithChildren"}) + 
-    ")})";
-  return code;
+  return state;
+  // let code = "setTimeout(function(){Shiny.setInputValue('" + 
+  //   inputId + "', " +   
+  //   JSON.stringify({value: state, widget: "checkboxWithChildren"}) + 
+  //   ")})";
+  // return code;
 };
 
 const formatStringToCamelCase = str => {
@@ -885,22 +886,19 @@ const chakraComponent = (
     props["data-shinyinitvalue"] = props.defaultIndex ? props.defaultIndex : 0;
   }
   if(props.class === "checkboxWithChildren"){
-    let code = makeCheckboxWithChildren(component);
-    props.className = "checkboxWithChildren";
+    let state = makeCheckboxWithChildren(component);
+    props.className = "chakraTag";
     delete props.class;
-    // let componentcopy = {
-    //   name: component.name,
-    //   attribs: component.attribs,
-    //   children: [component.children[0], component.children[1]]
+    props["data-shinyinitvalue"] = JSON.stringify(state);
+    props["data-widget"] = "checkboxWithChildren";
+    // component = {
+    //   name: "Fragment",
+    //   attribs: {},
+    //   children: [
+    //     component,
+    //     <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
+    //   ]
     // };
-    component = {
-      name: "Fragment",
-      attribs: {},
-      children: [
-        component,
-        <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
-      ]
-    };
   }
   if(
     component.name === "Checkbox" && 
@@ -909,15 +907,25 @@ const chakraComponent = (
   ){
     //props = $.extend(props, {isChecked: props["data-checked"][props["data-index"]]});
     props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
-  }else if(component.name === "CheckboxGroup"){
+  }else if(component.name === "CheckboxGroup" && component.processed !== true){
+    component.processed = true;
+    let divattrs = {id: props.id};
     if(props.defaultValue){
       props.defaultValue = props.defaultValue.map(decodeURI);
+      divattrs.className = "chakraTag";
+      divattrs["data-shinyinitvalue"] = JSON.stringify(props.defaultValue);
     }
-    props = $.extend(props, 
+    component.attribs = $.extend(props, 
       {onChange: value => {
         Shiny.setInputValue(props.id, value);
       }}
     );
+    component = {
+      name: "div",
+      attribs: divattrs,
+      children: [component]
+    };
+    props = divattrs;
   }else if(component.name === "RadioGroup"){
     props = $.extend(props, 
       {

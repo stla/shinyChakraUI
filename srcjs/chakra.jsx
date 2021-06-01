@@ -585,6 +585,15 @@ function unescapeHtml(html) {
   });
 }
 
+const appendDisclosure = (component, disclosure) => {
+  for(let i = 0; i < component.children.length; i++){
+    if(isTag(component.children[i])){
+      component.children[i].disclosure = disclosure;
+      appendDisclosure(component.children[i], disclosure);
+    }
+  }
+};
+
 const chakraComponent = (
   component, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
 ) => {
@@ -611,11 +620,12 @@ const chakraComponent = (
   if(component.withDisclosure){
     delete component.withDisclosure;
     const disclosure = useDisclosure();
-    for(let i = 0; i < component.children.length; i++){
-      if(isTag(component.children[i])){
-        component.children[i].disclosure = disclosure;
-      }
-    }
+    appendDisclosure(component, disclosure);
+    // for(let i = 0; i < component.children.length; i++){
+    //   if(isTag(component.children[i])){
+    //     component.children[i].disclosure = disclosure;
+    //   }
+    // }
   }
   let props = component.attribs;
   if(Array.isArray(props) && props.length === 0){
@@ -625,9 +635,13 @@ const chakraComponent = (
     if(typeof props[key] === "string"){
       props[key] = decodeURI(props[key]);
     }
-    if(typeof props[key] === "object" && props[key].disclosure){
-      props[key] = component.disclosure[props[key].disclosure];
-    }
+  }
+  if(component.disclosure){
+    for(const key in props){
+      if(typeof props[key] === "object" && props[key].disclosure){
+        props[key] = component.disclosure[props[key].disclosure];
+      }
+    }  
   }
   // if(props.title){
   //   props.title = decodeURI(props.title);

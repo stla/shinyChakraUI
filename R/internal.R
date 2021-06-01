@@ -116,8 +116,29 @@ unclassComponent <- function(component){
       list(html = URLencode(as.character(component))),
       makeScriptTag(script)
     )
-  }
-  if(!isChakraIcon(component) && grepl("Icon$", component[["name"]])){
+  }else if(
+    inherits(component, "shiny.tag") && !is.null(htmlDependencies(component))
+  ){
+    dependencies <- evalHtmlDependencies(htmlDependencies(component))
+    depnames <- vapply(dependencies, `[[`, FUN.VALUE = character(1L), "name")
+    if("selectize" %in% depnames){
+      id <- component[["children"]][[2L]][["children"]][[1L]][["attribs"]][["id"]]
+      script <- sprintf(
+        "Shiny.inputBindings.bindingNames['shiny.selectInput'].binding.initialize(document.getElementById('%s'));",
+        id
+      )
+      # options <-
+      #   component[["children"]][[2L]][["children"]][[1L]][["children"]][[1L]]
+      # component[["children"]][[2L]][["children"]][[1L]][["children"]][[1L]] <-
+      #   list(html = URLencode(as.character(options)))
+      htmltools::htmlDependencies(component) <- NULL
+      component <- React$Fragment(
+        component, makeScriptTag(script)
+      )
+    }else{
+      component <- list(html = URLencode(as.character(component)))
+    }
+  }else if(!isChakraIcon(component) && grepl("Icon$", component[["name"]])){
     if(!is.element(component[["name"]], paste0(chakraIcons(), "Icon"))){
       stop(
         sprintf("Invalid icon '%s'.", component[["name"]]),
@@ -251,24 +272,6 @@ unclassComponent <- function(component){
   }
   if("class" %in% attribsNames && grepl("-output", attribs[["class"]])){
     shinyOutput <- TRUE
-  }else if(
-    inherits(component, "shiny.tag") && !is.null(htmlDependencies(component))
-  ){
-    dependencies <- evalHtmlDependencies(htmlDependencies(component))
-    depnames <- vapply(dependencies, `[[`, FUN.VALUE = character(1L), "name")
-    if("selectize" %in% depnames){
-      id <- component[["children"]][[2L]][["children"]][[1L]][["attribs"]][["id"]]
-      script <- sprintf(
-        "Shiny.inputBindings.bindingNames['shiny.selectInput'].binding.initialize(document.getElementById('%s'));",
-        id
-      )
-      htmltools::htmlDependencies(component) <- NULL
-      component <- React$Fragment(
-        component, makeScriptTag(script)
-      )
-    }else{
-      component <- list(html = URLencode(as.character(component)))
-    }
   }else if(
     component[["name"]] == "input" &&
     attribs[["type"]] %in% c("text", "number") &&

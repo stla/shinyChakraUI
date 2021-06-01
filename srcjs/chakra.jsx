@@ -569,6 +569,14 @@ const invalidComponent = x => {
   return ReactHtmlParser(`<div style="color:red;">INVALID COMPONENT (${x})</div>`);
 };
 
+function unescapeHtml(html) {
+  var el = document.createElement('div');
+  return html.replace(/\&[#0-9a-z]+;/gi, function (enc) {
+      el.innerHTML = enc;
+      return el.innerText
+  });
+}
+
 const chakraComponent = (
   component, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
 ) => {
@@ -583,7 +591,7 @@ const chakraComponent = (
   if(component.html){
     console.log("XXXXXXXXXXX");
     console.log(component.html);
-    return ReactHtmlParser(decodeURI(component.html));
+    return ReactHtmlParser(unescapeHtml(decodeURI(component.html)));
   }
   if(typeof component !== "object"){
     return component;

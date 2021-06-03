@@ -1,5 +1,34 @@
 #' Title
 #'
+#' @param state
+#'
+#' @return
+#' @export
+#'
+#' @examples
+getState <- function(state){
+  list(eval = sprintf("states.%s.get()", state))
+}
+
+#' Title
+#'
+#' @param value
+#'
+#' @return
+#' @export
+#'
+#' @examples
+useClipboard <- function(value){
+  if(is.character(value)){
+    value <- paste0("'", value, "'")
+  }else{
+    value <- value[["eval"]]
+  }
+  list(eval = sprintf("Hooks['useClipboard'](%s)", value))
+}
+
+#' Title
+#'
 #' @param session
 #' @param componentId
 #' @param stateName

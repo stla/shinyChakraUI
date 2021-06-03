@@ -29,6 +29,29 @@ useClipboard <- function(value){
 
 #' Title
 #'
+#' @return
+#' @export
+#'
+#' @examples
+useDisclosure <- function(){
+  list(eval = "Hooks['useDisclosure']()")
+}
+
+#' Title
+#'
+#' @param state
+#' @param value
+#'
+#' @return
+#' @export
+#'
+#' @examples
+getHook <- function(state, value){
+  list(eval = sprintf("states.%s.%s", state, value))
+}
+
+#' Title
+#'
 #' @param session
 #' @param componentId
 #' @param stateName

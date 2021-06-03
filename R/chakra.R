@@ -9,14 +9,14 @@
 #' @export
 #'
 #' @examples
-setReactState <- function(session, componentId, stateName, value){
+setReactState <- function(session, stateName, value){
   if(inherits(value, "html")){
     value <- list(html = as.character(value))
   }else if(inherits(value, "shiny.tag")){
     value <- list(react = unclassComponent(value)[["component"]])
   }
   session$sendCustomMessage(
-    paste0("setState_", componentId),
+    statesEnvir[[stateName]],
     list(state = stateName, value = value)
   )
 }
@@ -31,7 +31,14 @@ setReactState <- function(session, componentId, stateName, value){
 #'
 #' @examples
 withStates <- function(component, states){
-  attr(component, "states") <- states
+  #attr(component, "states") <- states
+  component[["states"]] <-
+    URLencode(as.character(toJSON(states, auto_unbox = TRUE)))
+  statesGroup <- paste0("setState_", randomString(15))
+  component[["statesGroup"]] <- statesGroup
+  for(state in names(states)){
+    assign(state, statesGroup, envir = statesEnvir)
+  }
   component
 }
 
@@ -137,8 +144,8 @@ chakraComponent <- function(inputId, ...){
   # )
   configuration[["dependencies"]] <- NULL
   configuration[["inputId"]] <- inputId
-  configuration[["states"]] <-
-    URLencode(as.character(toJSON(configuration[["states"]], auto_unbox = TRUE)))
+  # configuration[["states"]] <-
+  #   URLencode(as.character(toJSON(configuration[["states"]], auto_unbox = TRUE)))
   attachDependencies(createReactShinyInput(
     inputId = inputId,
     class = "chakracomponent",

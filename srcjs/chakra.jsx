@@ -622,6 +622,31 @@ const chakraComponent = (
   if(tagName[0] === tagName[0].toUpperCase() && !ChakraTags.includes(tagName)){
     return invalidComponent(`component '${tagName}'`);
   }
+  if(component.statesGroup){
+    states = JSON.parse(decodeURI(component.states));
+    for(let key in states){
+      if(typeof states[key] === "object" && states[key].eval){
+        states[key] = eval(states[key].eval);
+      }else{
+        let [state, setState] = React.useState(states[key]);
+        states[key] = {get: () => state, set: setState};
+      }
+    }
+    Shiny.addCustomMessageHandler(component.statesGroup, function(x){
+      let bind = false;
+      if(typeof x.value === "object"){
+        if(x.value.html){
+          x.value = ReactHtmlParser(x.value.html);
+          bind = true;
+        }else if(x.value.react){
+          x.value = chakraComponent(JSON.parse(JSON.stringify(x.value.react)), states, {});
+          bind = true;
+        }
+      }
+      states[x.state].set(x.value);
+      if(bind) Shiny.bindAll();
+    });
+  }
   if(component.withDisclosure){
     delete component.withDisclosure;
     const disclosure = useDisclosure();
@@ -1243,6 +1268,11 @@ const ChakraInput = ({ configuration, value, setValue }) => {
   }
 };
 
+const Hooks = {
+  useDisclosure,
+  useClipboard
+};
+
 const ChakraComponent = ({ configuration, value, setValue }) => {
   let patch = {
     // MenuButton: {
@@ -1251,38 +1281,32 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     process: true
   };
   // states
-  let states = configuration.states;
-  if(states){
-    states = JSON.parse(decodeURI(states));
-    for(let key in states){
-      if(typeof states[key] === "object" && states[key].eval){
-        states[key] = eval(states[key].eval);
-      }else{
-        let [state, setState] = React.useState(states[key]);
-        states[key] = {get: () => state, set: setState};
-      }
-    }
-    states.clipboard = useClipboard(states.helloworld.get());
-    Shiny.addCustomMessageHandler("setState_" + configuration.inputId, function(x){
-      let bind = false;
-      if(typeof x.value === "object"){
-        if(x.value.html){
-          x.value = ReactHtmlParser(x.value.html);
-          bind = true;
-        }else if(x.value.react){
-          // let [state, setState] = React.useState("a");
-          // for(let key in x.value.react.states){
-          //   let [state, setState] = React.useState(x.value.react.states[key]);
-          //   states[key] = {get: () => state, set: setState};      
-          // }
-          x.value = chakraComponent(JSON.parse(JSON.stringify(x.value.react)), states, {});
-          bind = true;
-        }
-      }
-      states[x.state].set(x.value);
-      if(bind) Shiny.bindAll();
-    });
-  }
+  // let states = configuration.states;
+  // if(states){
+  //   states = JSON.parse(decodeURI(states));
+  //   for(let key in states){
+  //     if(typeof states[key] === "object" && states[key].eval){
+  //       states[key] = eval(states[key].eval);
+  //     }else{
+  //       let [state, setState] = React.useState(states[key]);
+  //       states[key] = {get: () => state, set: setState};
+  //     }
+  //   }
+  //   Shiny.addCustomMessageHandler("setState_" + configuration.inputId, function(x){
+  //     let bind = false;
+  //     if(typeof x.value === "object"){
+  //       if(x.value.html){
+  //         x.value = ReactHtmlParser(x.value.html);
+  //         bind = true;
+  //       }else if(x.value.react){
+  //         x.value = chakraComponent(JSON.parse(JSON.stringify(x.value.react)), states, {});
+  //         bind = true;
+  //       }
+  //     }
+  //     states[x.state].set(x.value);
+  //     if(bind) Shiny.bindAll();
+  //   });
+  // }
   // Checkbox elements
   const [checkedItems, setCheckedItems] = React.useState(configuration.Checkboxes);
   const checkboxOnChange = (e) => {
@@ -1310,7 +1334,7 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     // {
       chakraComponent(
         JSON.parse(JSON.stringify(configuration.component)),
-        states,
+        {},
         patch,
         checkedItems,
         checkboxOnChange,

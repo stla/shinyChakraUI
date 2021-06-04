@@ -1,4 +1,5 @@
 var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
     entry: path.join(__dirname, 'srcjs', 'chakra.jsx'),
@@ -27,6 +28,11 @@ module.exports = {
         'react-dom': 'window.ReactDOM',
         'reactR': 'window.reactR'
     },
+    plugins: [
+            new webpack.ProvidePlugin({
+              "acorn": "acorn"
+            })
+    ],
     stats: {
         colors: true
     },

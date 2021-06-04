@@ -482,35 +482,18 @@ unclassComponent <- function(component){
     }
     component[["attribs"]][["text"]] <- lapply(text, URLencode)
   }else if(
-    component[["name"]] == "Input" && !is.element("className", attribsNames)
-    #is.null(attr(component, "processed"))
+    component[["name"]] == "Input" &&
+    "id" %in% attribsNames &&
+    !isFALSE(attribs[["shinyValue"]]) &&
+    is.null(attribs[["value"]])
   ){
-    if(is.null(attribs[["id"]])){
-      stop(
-        "Please provide an `id` attribute to `Input` components.",
-        call. = FALSE
-      )
-    }
-    component[["attribs"]][["className"]] <- "chakraTag"
-    # attr(component, "processed") <- TRUE
-    if(is.null(attribs[["value"]])){
-      # value <- ""
-      component[["attribs"]][["value"]] <- ""
-    }
-    # else{
-    #   value <- URLdecode(attribs[["value"]])
+    # if(is.null(attribs[["id"]])){
+    #   stop(
+    #     "Please provide an `id` attribute to `Input` components.",
+    #     call. = FALSE
+    #   )
     # }
-    # script <- sprintf(
-    #   "setTimeout(function(){Shiny.setInputValue('%s', '%s')});",
-    #   attribs[["id"]], value
-    # )
-    # script <- sprintf(
-    #   "chakraBinding.initialize(document.getElementById('%s'));",
-    #   attribs[["id"]]
-    # )
-    # component <- React$Fragment(
-    #   component, makeScriptTag(script)
-    # )
+    component[["attribs"]][["value"]] <- ""
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){

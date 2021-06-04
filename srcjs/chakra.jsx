@@ -588,6 +588,22 @@ function unescapeHtml(html) {
   });
 }
 
+const getArguments = f => {
+  let acornParse = acorn.parse(f).body[0];
+  let params;
+  if(acornParse.expression){
+    params = acornParse.expression.params;
+  }else{
+    params = acornParse.params;
+  }
+  return params.map(x => x.name);
+}; 
+
+console.log("ARGUMENTS", getArguments(unescapeHtml));
+console.log("ARGUMENTS", getArguments(invalidComponent));
+//console.log("ARGUMENTS", getArguments(() => 0));
+//window.Acorn = acorn;
+
 const appendDisclosure = (component, disclosure) => {
   for(let i = 0; i < component.children.length; i++){
     if(isTag(component.children[i])){
@@ -597,16 +613,43 @@ const appendDisclosure = (component, disclosure) => {
   }
 };
 
+const makeState = (x, name) => {
+  if(typeof x === "object" && x.eval){
+    return eval(x.eval);
+  }else{
+    let [state, setState] = React.useState(x);
+    return {get: () => ({name: name, get: () => state}), set: setState};
+  }
+};
+
 const appendStates = (component, states) => {
-  if(component.attribs.id){
+  if(component.attribs.id && component.attribs.shinyValue !== false){
     let state = "chakra" + component.attribs.id;
     if(component.name === "Input"){
-      states[state] = component.attribs.value;
+      if(typeof component.attribs.value !== "object"){
+        states[state] = makeState(component.attribs.value);
+      }else{
+        if(!component.attribs.onChange){
+          let value = eval(component.attribs.value.eval);
+          if(value.name){
+            console.log("oKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKk");
+            states[state] = states[value.name];
+            component.attribs.value = value.get();
+          }else{
+            states[state] = makeState(value);
+          }
+          //states[state].get = () => component.attribs.value.eval;
+          //component.reactiveValue = true;
+        }else{
+          states[state] = makeState(component.attribs.value);
+        }
+      }
     }else if(component.name === "Checkbox"){
       if(typeof component.attribs.isChecked === "object"){
         component.dontprocess = true;
       }else{
         states[state] = component.attribs.isChecked === true;
+        states[state] = makeState(states[state]);
       }
     }
   }
@@ -658,16 +701,12 @@ const chakraComponent = (
   if(component.statesGroup){
     states = JSON.parse(decodeURI(component.states));
     states.chakraState = {};
-    console.log("states", states);
-    appendStates(component, states);
-    console.log("states", states);
     for(let key in states){
-      if(typeof states[key] === "object" && states[key].eval){
-        states[key] = eval(states[key].eval);
-      }else{
-        let [state, setState] = React.useState(states[key]);
-        states[key] = {get: () => state, set: setState};
-      }
+      states[key] = makeState(states[key], key);
+    }
+    appendStates(component, states);
+    for(let key in states){
+      if(states[key].get && states[key].get().get) states[key].get = states[key].get().get;
     }
     Shiny.addCustomMessageHandler(component.statesGroup, function(x){
       // if(states[x.state] === undefined){
@@ -999,6 +1038,8 @@ const chakraComponent = (
     let onChange = null;
     if(props.onChange){
       let f = props.onChange;
+      // let farguments = getArguments(f);
+      // let argument = farguments.length ? 
       onChange = event => {
         setChecked(event.target.checked);
         Shiny.setInputValue(event.currentTarget.id, event.target.checked);
@@ -1058,34 +1099,64 @@ const chakraComponent = (
   }else if(component.name === "ScriptTag" && component.decoded !== true){
     props.dangerouslySetInnerHTML.__html = decodeURI(props.dangerouslySetInnerHTML.__html);
     component.decoded = true;
-  }else if(component.name === "Input" && props.className === "chakraTag"){
+  }else if(component.name === "Input" && props.id && props.shinyValue !== false){
+    props.className = "chakraTag";
     props["data-shinyinitvalue"] = props.value;
+    let f = props.onChange;
     if(states){
       // let chakraState = states.chakraState;
       // let stateValue = chakraState.get();
       // stateValue[props.id] = props.value;  
       let chakraState = states["chakra" + props.id];
       //chakraState.set("a");
-      props.value = chakraState.get();
-      const setValue = value => {
-        chakraState.set(value);
-        // let stateValue = chakraState.get();
-        // stateValue[props.id] = value;  
-        // chakraState.set(stateValue);
-      };
-      props.onChange = (event) => {
-        setValue(event.target.value);
-        Shiny.setInputValue(props.id, event.target.value);
-      };
+      if(chakraState.get){
+        const getter = () => {
+          let value = chakraState.get(); 
+          setTimeout(function(){Shiny.setInputValue(props.id, value)}); 
+          return value;
+        };
+        props.value = getter();//chakraState.get();
+        const setValue = value => {
+          console.log("ONCHANGE");
+          chakraState.set(value);
+          //Shiny.setInputValue(props.id, value);
+          // let stateValue = chakraState.get();
+          // stateValue[props.id] = value;  
+          // chakraState.set(stateValue);
+        };
+        if(f){
+          props.onChange = (event) => {
+            setValue(event.target.value);
+            f(event);
+          };
+        }else{
+          props.onChange = (event) => {
+            setValue(event.target.value);
+          };
+        }
+      }else{
+        props.onChange = (event) => {
+          Shiny.setInputValue(props.id, event.target.value);
+          f(event);
+        };
+      }
       delete states["chakra" + props.id];
       return React.createElement(Input, props);
     }else{
       const [value, setValue] = React.useState(props.value);
       props.value = value;
-      props.onChange = (event) => {
-        setValue(event.target.value);
-        Shiny.setInputValue(props.id, event.target.value);
-      };
+      if(f){
+        props.onChange = (event) => {
+          setValue(event.target.value);
+          Shiny.setInputValue(props.id, event.target.value);
+          f(event);
+        };
+      }else{
+        props.onChange = (event) => {
+          setValue(event.target.value);
+          Shiny.setInputValue(props.id, event.target.value);
+        };
+      }
     }
   }
   for(const key in props){

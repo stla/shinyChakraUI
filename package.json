@@ -9,7 +9,8 @@
     "framer-motion": "^4.0.0",
     "react-html-parser": "^2.0.0",
     "react-icons": "^4.0.0",
-    "react-script-tag": "^1.1.2"
+    "react-script-tag": "^1.1.2",
+    "acorn": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",

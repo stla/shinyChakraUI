@@ -599,7 +599,16 @@ const appendDisclosure = (component, disclosure) => {
 
 const appendStates = (component, states) => {
   if(component.attribs.id){
-    states["chakra" + component.attribs.id] = component.attribs.value;
+    let state = "chakra" + component.attribs.id;
+    if(component.name === "Input"){
+      states[state] = component.attribs.value;
+    }else if(component.name === "Checkbox"){
+      if(typeof component.attribs.isChecked === "object"){
+        component.dontprocess = true;
+      }else{
+        states[state] = component.attribs.isChecked === true;
+      }
+    }
   }
   for(let i = 0; i < component.children.length; i++){
     if(isTag(component.children[i])){
@@ -609,19 +618,18 @@ const appendStates = (component, states) => {
   }
 };
 
-// const InvalidState = () => {
-//   return (
-//     <div>Invalid state</div>
-//   );
-// };
+const InvalidState = (message) => {
+  return (
+    <div>{message}</div>
+  );
+};
 
 const chakraComponent = (
-  component, states, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+  component, states, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
 ) => {
 //  console.log("XXXXXXXXXXX");
   console.log("COMPONENT", component);
   console.log("states", states);
-  if(states === "a") states = null;
   if(React.isValidElement(component)){
     return component;
   }
@@ -662,6 +670,13 @@ const chakraComponent = (
       }
     }
     Shiny.addCustomMessageHandler(component.statesGroup, function(x){
+      // if(states[x.state] === undefined){
+      //   let root = document.getElementById(inputId);
+      //   unmountComponentAtNode(root);
+      //   let app = <InvalidState message={`Invalid state '${x.state}'.`}/>;
+      //   ReactDOM.render(app, root);
+      //   throw "";
+      // }
       let bind = false;
       if(typeof x.value === "object"){
         if(x.value.html){
@@ -967,11 +982,40 @@ const chakraComponent = (
   }
   if(
     component.name === "Checkbox" && 
+    !component.dontprocess &&
     props.id !== undefined &&
     !["parentCheckbox", "childrenCheckbox"].includes(props.className)
   ){
     //props = $.extend(props, {isChecked: props["data-checked"][props["data-index"]]});
-    props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
+    //props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
+    let reactState;
+    if(states){
+      let chakraState = states["chakra" + props.id];
+      reactState = [chakraState.get(), chakraState.set];
+    }else{
+      reactState = React.useState(props.isChecked === true);
+    }
+    const [isChecked, setChecked] = reactState;
+    let onChange = null;
+    if(props.onChange){
+      let f = props.onChange;
+      onChange = event => {
+        setChecked(event.target.checked);
+        Shiny.setInputValue(event.currentTarget.id, event.target.checked);
+        f(event);
+      };
+    }else{
+      onChange = event => {
+        setChecked(event.target.checked);
+        Shiny.setInputValue(event.currentTarget.id, event.target.checked);
+      };
+    }
+    props = $.extend(props, 
+      {
+        isChecked: isChecked,
+        onChange: onChange
+      }
+    );
   }else if(component.name === "CheckboxGroup" && component.processed !== true){
     component.processed = true;
     let divattrs = {id: props.id};
@@ -1069,7 +1113,7 @@ const chakraComponent = (
       }else{
         let x = component.children[i].hasStates || component.children[i].eval ? states : null;
         let cc = chakraComponent(
-          component.children[i], x, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+          component.children[i], x, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
         );
         component.children[i] = cc; 
         // newpropsChildren[i] = chakraComponent(
@@ -1405,8 +1449,9 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
         JSON.parse(JSON.stringify(configuration.component)),
         null,
         patch,
-        checkedItems,
-        checkboxOnChange,
+        configuration.inputId,
+        null,//checkedItems,
+        null,//checkboxOnChange,
         radiogroupValues,
         setRadiogroupValues
       )

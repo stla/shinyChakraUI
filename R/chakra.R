@@ -64,6 +64,13 @@ getHook <- function(state, value){
 #'
 #' @examples
 setReactState <- function(session, stateName, value){
+  if(is.null(statesEnvir[[stateName]])){
+    rm(list = ls(statesEnvir), envir = statesEnvir)
+    stop(
+      sprintf("Unknown state '%s'.", stateName),
+      call. = TRUE
+    )
+  }
   if(inherits(value, "html")){
     value <- list(html = as.character(value))
   }else if(inherits(value, "shiny.tag")){

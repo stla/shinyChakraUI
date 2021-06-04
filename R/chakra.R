@@ -25,7 +25,9 @@ useClipboard <- function(value){
   }else{
     value <- value[["eval"]]
   }
-  list(eval = sprintf("Hooks['useClipboard'](%s)", value))
+  list(
+    eval = sprintf("$.extend(Hooks['useClipboard'](%s), {isHook: true})", value)
+  )
 }
 
 #' Title
@@ -35,7 +37,7 @@ useClipboard <- function(value){
 #'
 #' @examples
 useDisclosure <- function(){
-  list(eval = "Hooks['useDisclosure']()")
+  list(eval = "$.extend(Hooks['useDisclosure'](), {isHook: true})")
 }
 
 #' Title

@@ -613,14 +613,30 @@ const appendDisclosure = (component, disclosure) => {
   }
 };
 
-const makeState = (x, name) => {
+const getState = (states) => ((state) => states[state].get());
+const setState = states => ((state, value) => states[state].set(value));
+
+const Eval = (ev, states, Hooks, getState, setState) => (
+  Function("states", "Hooks", "getState", "setState", "return " + ev)(states, Hooks, getState(states), setState(states))
+);
+
+const makeState = (x, states, name) => {
   if(typeof x === "object" && x.eval){
-    return eval(x.eval);
-  }else{
-    let [state, setState] = React.useState(x);
-    //return {get: () => ({name: name, get: () => state}), set: setState};
-    return {get: () => state, set: setState};
+    console.log("eval", x.eval);
+    x = Eval("() => " + x.eval, states, Hooks, getState, setState);
+    if(x().isHook){
+      x = x();
+      let hook = {...x};
+      delete hook.isHook;
+      x.get = () => hook;
+      return x;
+    }else{
+      return {get: x};
+    }
   }
+  let [reactState, setReactState] = React.useState(x);
+  //return {get: () => ({name: name, get: () => state}), set: setState};
+  return {get: () => reactState, set: setReactState};
 };
 
 const appendStates = (component, states) => {
@@ -628,18 +644,18 @@ const appendStates = (component, states) => {
     let state = "chakra" + component.attribs.id;
     if(component.name === "Input"){
       if(typeof component.attribs.value !== "object"){
-        states[state] = makeState(component.attribs.value);
+        states[state] = makeState(component.attribs.value, states);
       }else{
 //        if(!component.attribs.onChange){
           let code = decodeURI(component.attribs.value.eval);
-          let value = eval(code);
+          let value = Eval(code, states, Hooks, getState, setState);
           if(value.name){ // non, pas logique !
             console.log("oKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKk");
             states[state] = states[value.name];
             component.attribs.value = value.get();
           }else{
             component.attribs.value = value;
-            states[state] = {get: () => eval(code), set: () => {}};
+            states[state] = {get: () => Eval(code, states, Hooks, getState, setState), set: () => {}};
           }
           //states[state].get = () => component.attribs.value.eval;
           //component.reactiveValue = true;
@@ -652,7 +668,7 @@ const appendStates = (component, states) => {
         component.dontprocess = true;
       }else{
         states[state] = component.attribs.isChecked === true;
-        states[state] = makeState(states[state]);
+        states[state] = makeState(states[state], states);
       }
     }
   }
@@ -663,6 +679,7 @@ const appendStates = (component, states) => {
     }
   }
 };
+
 
 const InvalidState = (message) => {
   return (
@@ -688,7 +705,7 @@ const chakraComponent = (
     return ReactHtmlParser(unescapeHtml(decodeURI(component.html)));
   }
   if(component.eval){
-    return eval(decodeURI(component.eval));
+    return Eval(decodeURI(component.eval), states, Hooks, getState, setState);
   }
   if(typeof component !== "object"){
     return component;
@@ -705,9 +722,15 @@ const chakraComponent = (
     states = JSON.parse(decodeURI(component.states));
     states.chakraState = {};
     for(let key in states){
-      states[key] = makeState(states[key], key);
+      if(key === "disclosure"){
+        console.log("DISCLOSURE", eval(states[key].eval));
+        console.log("DISCLOSURE", Eval(states[key].eval, states, Hooks, getState, setState));
+      }
+      states[key] = makeState(states[key], states);
+      console.log("states[key]", states[key]);
     }
     appendStates(component, states);
+    console.log("states", states);
     for(let key in states){
       if(states[key].get && states[key].get().get) states[key].get = states[key].get().get;
     }
@@ -756,7 +779,7 @@ const chakraComponent = (
       // ReactDOM.render(<InvalidState/>, document.getElementById("invalidstate"));
       // throw "" ;
       //let disclosure = component.disclosure; 
-      props[key] = eval(decodeURI(props[key].eval));
+      props[key] = Eval(decodeURI(props[key].eval), states, Hooks, getState, setState);
     }
   }
   if(component.disclosure){
@@ -779,7 +802,7 @@ const chakraComponent = (
   //   props.onClick = eval(decodeURI(props.onClick));
   // }
   if(typeof props.onClick === "string"){
-    props.onClick = eval(props.onClick);
+    props.onClick = Eval(props.onClick, states, Hooks, getState, setState);
   }
   if(component.widget === "alertdialog"){
     delete component.widget;

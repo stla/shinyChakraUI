@@ -618,7 +618,8 @@ const makeState = (x, name) => {
     return eval(x.eval);
   }else{
     let [state, setState] = React.useState(x);
-    return {get: () => ({name: name, get: () => state}), set: setState};
+    //return {get: () => ({name: name, get: () => state}), set: setState};
+    return {get: () => state, set: setState};
   }
 };
 
@@ -629,20 +630,22 @@ const appendStates = (component, states) => {
       if(typeof component.attribs.value !== "object"){
         states[state] = makeState(component.attribs.value);
       }else{
-        if(!component.attribs.onChange){
-          let value = eval(component.attribs.value.eval);
-          if(value.name){
+//        if(!component.attribs.onChange){
+          let code = decodeURI(component.attribs.value.eval);
+          let value = eval(code);
+          if(value.name){ // non, pas logique !
             console.log("oKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKk");
             states[state] = states[value.name];
             component.attribs.value = value.get();
           }else{
-            states[state] = makeState(value);
+            component.attribs.value = value;
+            states[state] = {get: () => eval(code), set: () => {}};
           }
           //states[state].get = () => component.attribs.value.eval;
           //component.reactiveValue = true;
-        }else{
-          states[state] = makeState(component.attribs.value);
-        }
+        // }else{
+        //   states[state] = makeState(component.attribs.value);
+        // }
       }
     }else if(component.name === "Checkbox"){
       if(typeof component.attribs.isChecked === "object"){

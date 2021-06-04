@@ -7,6 +7,7 @@
 #'
 #' @examples
 getState <- function(state){
+  assign(state, NULL, envir = usedStatesEnvir)
   list(eval = sprintf("states.%s.get()", state))
 }
 
@@ -47,6 +48,7 @@ useDisclosure <- function(){
 #'
 #' @examples
 getHook <- function(state, value){
+  assign(state, NULL, envir = usedStatesEnvir)
   list(eval = sprintf("states.%s.%s", state, value))
 }
 
@@ -175,6 +177,19 @@ chakraComponent <- function(inputId, ...){
       call. = TRUE
     )
   }
+  states <- ls(statesEnvir)
+  usedStates <- ls(usedStatesEnvir)
+  for(usedState in usedStates){
+    if(!is.element(usedState, states)){
+      rm(list = states, envir = statesEnvir)
+      rm(list = usedStates, envir = usedStatesEnvir)
+      stop(
+        sprintf("Unknown state '%s'.", usedState),
+        call. = FALSE
+      )
+    }
+  }
+  rm(list = usedStates, envir = usedStatesEnvir)
   configuration <-
     unclassComponent(React$ChakraProvider(do.call(React$Fragment, component)))
   if(configuration[["shinyOutput"]]){

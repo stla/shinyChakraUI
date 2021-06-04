@@ -7,6 +7,8 @@ randomString <- function(size){
 
 statesEnvir <- new.env()
 
+usedStatesEnvir <- new.env()
+
 dropNulls <- function(x){
   Filter(Negate(is.null), x)
 }

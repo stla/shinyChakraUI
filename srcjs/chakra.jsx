@@ -609,6 +609,12 @@ const appendStates = (component, states) => {
   }
 };
 
+// const InvalidState = () => {
+//   return (
+//     <div>Invalid state</div>
+//   );
+// };
+
 const chakraComponent = (
   component, states, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
 ) => {
@@ -690,6 +696,8 @@ const chakraComponent = (
       props[key] = decodeURI(props[key]);
     }
     if(typeof props[key] === "object" && props[key].eval){
+      // ReactDOM.render(<InvalidState/>, document.getElementById("invalidstate"));
+      // throw "" ;
       //let disclosure = component.disclosure; 
       props[key] = eval(decodeURI(props[key].eval));
     }

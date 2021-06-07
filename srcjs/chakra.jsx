@@ -1068,45 +1068,43 @@ const chakraComponent = (
   }
   if(
     component.name === "Checkbox" && 
-    props.shinyValue !== false && 
+    //props.shinyValue !== false && 
     !component.dontprocess &&
     props.id !== undefined &&
     !["parentCheckbox", "childrenCheckbox"].includes(props.className)
   ){
-    //props = $.extend(props, {isChecked: props["data-checked"][props["data-index"]]});
-    //props = $.extend(props, {isChecked: checkedItems[props.id], onChange: checkboxOnChange});
-    let reactState;
-    if(states){
-      let chakraState = states["chakra" + props.id];
-      reactState = [chakraState.get(), chakraState.set];
-    }else{
-      reactState = React.useState(props.isChecked === true);
-    }
-    const [isChecked, setChecked] = reactState;
-    let onChange = null;
-    if(props.onChange){
-      let f = props.onChange;
-      // let farguments = getArguments(f);
-      // let argument = farguments.length ? 
-      onChange = event => {
-        //alert(event.target.checked);
-        //console.log("EEEEEEEEEVVVVVVVVENT",event);
-        setChecked(event.target.checked);
-        Shiny.setInputValue(props.id, event.target.checked);
-        f(event);
-      };
-    }else{
-      onChange = event => {
-        setChecked(event.target.checked);
-        Shiny.setInputValue(props.id, event.target.checked);
-      };
-    }
-    props = $.extend(props, 
-      {
-        isChecked: isChecked,
-        onChange: onChange
-      }
-    );
+    props.defaultChecked = props.isChecked === true;
+    delete props.isChecked;
+    // let reactState;
+    // if(states){
+    //   let chakraState = states["chakra" + props.id];
+    //   reactState = [chakraState.get(), chakraState.set];
+    // }else{
+    //   reactState = React.useState(props.isChecked === true);
+    // }
+    // const [isChecked, setChecked] = reactState;
+    // let onChange = null;
+    // if(props.onChange){
+    //   let f = props.onChange;
+    //   onChange = event => {
+    //     //alert(event.target.checked);
+    //     //console.log("EEEEEEEEEVVVVVVVVENT",event);
+    //     setChecked(event.target.checked);
+    //     Shiny.setInputValue(props.id, event.target.checked);
+    //     f(event);
+    //   };
+    // }else{
+    //   onChange = event => {
+    //     setChecked(event.target.checked);
+    //     Shiny.setInputValue(props.id, event.target.checked);
+    //   };
+    // }
+    // props = $.extend(props, 
+    //   {
+    //     isChecked: isChecked,
+    //     onChange: onChange
+    //   }
+    // );
   }else if(component.name === "CheckboxGroup" && component.processed !== true){
     component.processed = true;
     let divattrs = {id: props.id};

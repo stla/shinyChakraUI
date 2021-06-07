@@ -11,6 +11,28 @@ getState <- function(state){
   list(eval = sprintf("states.%s.get()", state))
 }
 
+
+Function <- function(arguments = list(), body){
+  list(eval = sprintf("(%s) => {%s}", toString(arguments), body))
+}
+
+#' Title
+#'
+#' @param state
+#' @param value
+#'
+#' @return
+#' @export
+#'
+#' @examples
+setState <- function(state, value){
+  if(is.list(value) && identical(names(value), "eval")){
+    list(eval = sprintf("states.%s.set(%s)", state, value[["eval"]]))
+  }else{
+    sprintf("states.%s.set(%s)", state)
+  }
+}
+
 #' Title
 #'
 #' @param value
@@ -73,14 +95,17 @@ setReactState <- function(session, stateName, value){
       call. = TRUE
     )
   }
+  type <- "value"
   if(inherits(value, "html")){
-    value <- list(html = as.character(value))
+    type <- "html"
+    value <- URLencode(as.character(value))
   }else if(inherits(value, "shiny.tag")){
-    value <- list(react = unclassComponent(value)[["component"]])
+    type <- "component"
+    value <- unclassComponent(value)[["component"]]
   }
   session$sendCustomMessage(
     statesEnvir[[stateName]],
-    list(state = stateName, value = value)
+    list(state = stateName, value = value, type = type)
   )
 }
 

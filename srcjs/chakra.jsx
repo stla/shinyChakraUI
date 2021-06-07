@@ -616,14 +616,25 @@ const appendDisclosure = (component, disclosure) => {
 const getState = (states) => ((state) => states[state].get());
 const setState = states => ((state, value) => states[state].set(value));
 
-const Eval = (ev, states, Hooks, getState, setState) => (
-  Function("states", "Hooks", "getState", "setState", "return " + ev)(states, Hooks, getState(states), setState(states))
-);
+const Eval = (ev, states, Hooks, getState, setState) => {
+  let x = Function("states", "Hooks", "getState", "setState", "return " + ev)(states, Hooks, getState(states), setState(states));
+  console.log("EEEEEVVVVVAAAAAALLLLLL", x);
+  console.log("ev", ev);
+  console.log("states", states);
+  console.log("getState", getState);
+  console.log("setState", setState);
+  if(x == 2) throw "";
+  return x;
+};
 
 const makeState = (x, states, name) => {
+  let aa;
   if(typeof x === "object" && x.eval){
+    aa = {...x};
+    console.log("x",x);
     console.log("eval", x.eval);
     x = Eval("() => " + x.eval, states, Hooks, getState, setState);
+    console.log("x()", x());
     if(x().isHook){
       x = x();
       let hook = {...x};
@@ -634,7 +645,19 @@ const makeState = (x, states, name) => {
       return {get: x};
     }
   }
+//  let ru = React.useState(x);
   let [reactState, setReactState] = React.useState(x);
+  // if(reactState == 2){
+  //   console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
+  //   console.log("ru", ru);
+  //   console.log("window.SSTATE", window.SSTATE);
+  //   console.log("x", x);
+  //   console.log("states", states);
+  //   console.log("aa", aa);
+  //   console.log("name", name);
+  //   console.log("setReactState", setReactState);
+  //   throw "";
+  // }
   //return {get: () => ({name: name, get: () => state}), set: setState};
   return {get: () => reactState, set: setReactState};
 };
@@ -743,14 +766,12 @@ const chakraComponent = (
       //   throw "";
       // }
       let bind = false;
-      if(typeof x.value === "object"){
-        if(x.value.html){
-          x.value = ReactHtmlParser(x.value.html);
-          bind = true;
-        }else if(x.value.react){
-          x.value = chakraComponent(JSON.parse(JSON.stringify(x.value.react)), states, {});
-          bind = true;
-        }
+      if(x.type === "html"){
+        x.value = ReactHtmlParser(decodeURI(x.value));
+        bind = true;
+      }else if(x.type === "component"){
+        x.value = chakraComponent(JSON.parse(JSON.stringify(x.value)), states, {});
+        bind = true;
       }
       states[x.state].set(x.value);
       if(bind) Shiny.bindAll();
@@ -1067,14 +1088,16 @@ const chakraComponent = (
       // let farguments = getArguments(f);
       // let argument = farguments.length ? 
       onChange = event => {
+        //alert(event.target.checked);
+        //console.log("EEEEEEEEEVVVVVVVVENT",event);
         setChecked(event.target.checked);
-        Shiny.setInputValue(event.currentTarget.id, event.target.checked);
+        Shiny.setInputValue(props.id, event.target.checked);
         f(event);
       };
     }else{
       onChange = event => {
         setChecked(event.target.checked);
-        Shiny.setInputValue(event.currentTarget.id, event.target.checked);
+        Shiny.setInputValue(props.id, event.target.checked);
       };
     }
     props = $.extend(props, 

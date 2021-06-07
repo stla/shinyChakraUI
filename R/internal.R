@@ -296,6 +296,14 @@ unclassComponent <- function(component){
     component[["attribs"]][["action"]] <- NULL
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
+  }else if(
+    component[["name"]] %in% c("Button", "IconButton") &&
+    "id" %in% attribsNames &&
+    !is.element("className", attribsNames)
+  ){
+    component[["attribs"]][["className"]] <- "action-button"
+    attribs <- component[["attribs"]]
+    attribsNames <- names(attribs)
   }
   # if(
   #   "value" %in% attribsNames &&

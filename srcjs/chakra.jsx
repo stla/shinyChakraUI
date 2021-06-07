@@ -686,14 +686,15 @@ const appendStates = (component, states) => {
         //   states[state] = makeState(component.attribs.value);
         // }
       }
-    }else if(component.name === "Checkbox"){
-      if(typeof component.attribs.isChecked === "object"){
-        component.dontprocess = true;
-      }else{
-        states[state] = component.attribs.isChecked === true;
-        states[state] = makeState(states[state], states);
-      }
     }
+    // else if(component.name === "Checkbox"){
+    //   if(typeof component.attribs.isChecked === "object"){
+    //     component.dontprocess = true;
+    //   }else{
+    //     states[state] = component.attribs.isChecked === true;
+    //     states[state] = makeState(states[state], states);
+    //   }
+    // }
   }
   for(let i = 0; i < component.children.length; i++){
     if(isTag(component.children[i])){
@@ -777,6 +778,8 @@ const chakraComponent = (
       if(bind) Shiny.bindAll();
     });
     States[component.statesGroup] = states;
+    delete component.statesGroup;
+    component.hasStates = true;
   }
   if(component.withDisclosure){
     delete component.withDisclosure;
@@ -1073,8 +1076,12 @@ const chakraComponent = (
     props.id !== undefined &&
     !["parentCheckbox", "childrenCheckbox"].includes(props.className)
   ){
-    props.defaultChecked = props.isChecked === true;
-    delete props.isChecked;
+    if(typeof props.isChecked !== "object"){
+      if(props.defaultChecked === undefined){
+        props.defaultChecked = props.isChecked === true;
+      }
+      delete props.isChecked;
+    }
     // let reactState;
     // if(states){
     //   let chakraState = states["chakra" + props.id];

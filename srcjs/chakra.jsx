@@ -1068,6 +1068,7 @@ const chakraComponent = (
   }
   if(
     component.name === "Checkbox" && 
+    props.shinyValue !== false && 
     !component.dontprocess &&
     props.id !== undefined &&
     !["parentCheckbox", "childrenCheckbox"].includes(props.className)
@@ -1232,6 +1233,13 @@ const chakraComponent = (
         newpropsChildren[i] = component.children[i];
       }else{
         let x = component.children[i].hasStates || component.children[i].eval ? states : null;
+        if(props.shinyValue === false && isTag(component.children[i])){
+          let attribs = component.children[i].attribs;
+          if(Array.isArray(attribs) && attribs.length === 0){
+            attribs = {};
+          }        
+          attribs.shinyValue = false;
+        }
         let cc = chakraComponent(
           component.children[i], x, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
         );

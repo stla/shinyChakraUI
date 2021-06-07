@@ -111,6 +111,7 @@ setReactState <- function(session, stateName, value){
     value <- URLencode(as.character(value))
   }else if(inherits(value, "shiny.tag")){
     type <- "component"
+    value[["attribs"]][["shinyValue"]] <- FALSE
     value <- unclassComponent(value)[["component"]]
   }
   session$sendCustomMessage(

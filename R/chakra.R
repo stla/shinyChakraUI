@@ -58,6 +58,16 @@ useClipboard <- function(value){
 #' @export
 #'
 #' @examples
+useRef <- function(){
+  list(eval = "React.useRef()")
+}
+
+#' Title
+#'
+#' @return
+#' @export
+#'
+#' @examples
 useDisclosure <- function(){
   list(eval = "$.extend(Hooks['useDisclosure'](), {isHook: true})")
 }

@@ -941,12 +941,12 @@ const chakraComponent = (
         }
       }
     };  
-  }else if(component.name === "Menu" && patch.process){
+  }else if(component.name === "Menu" && component.process !== false){
+    component.process = false;
     let selected = getMenuSelection(component);
     if(selected){
       selected = JSON.stringify(selected);
       makeMenuComponent(component);
-      patch.process = false;
       // let code = "setTimeout(function(){Shiny.setInputValue('" + 
       //   component.attribs.id + 
       //   ":shinyChakraUI.widget', {value: " + 

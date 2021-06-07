@@ -119,7 +119,9 @@ setReactState <- function(session, stateName, value){
 #'
 #' @examples
 withStates <- function(component, states){
-  #attr(component, "states") <- states
+  if(component[["name"]] == "Menu"){
+    component <- React$Fragment(component)
+  }
   component[["states"]] <-
     URLencode(as.character(toJSON(states, auto_unbox = TRUE)))
   statesGroup <- paste0("setState_", randomString(15))

@@ -698,7 +698,7 @@ const appendStates = (component, states) => {
   }
   for(let i = 0; i < component.children.length; i++){
     if(isTag(component.children[i])){
-      component.children[i].hasStates = true;
+      //component.children[i].hasStates = true;
       appendStates(component.children[i], states);
     }
   }
@@ -997,7 +997,8 @@ const chakraComponent = (
             "data-shinyinitvalue": selected,
             "data-widget": "menuWithGroups"          
           },
-          children: [component]
+          children: [component],
+          hasStates: component.hasStates
         };
       }
       props = component.attribs;
@@ -1237,7 +1238,10 @@ const chakraComponent = (
       if(React.isValidElement(component.children[i])){
         newpropsChildren[i] = component.children[i];
       }else{
-        let x = component.children[i].hasStates || component.children[i].eval ? states : null;
+        if(component.hasStates && isTag(component.children[i])){
+          component.children[i].hasStates = true;
+        }
+        let x = component.hasStates || component.children[i].eval ? states : null;
         if(props.shinyValue === false && isTag(component.children[i])){
           let attribs = component.children[i].attribs;
           if(Array.isArray(attribs) && attribs.length === 0){

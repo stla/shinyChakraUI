@@ -97,14 +97,14 @@ getHook <- function(state, value){
 #' @export
 #'
 #' @examples
-setReactState <- function(session, stateName, value){
-  if(is.null(statesEnvir[[stateName]])){
-    rm(list = ls(statesEnvir), envir = statesEnvir)
-    stop(
-      sprintf("Unknown state '%s'.", stateName),
-      call. = TRUE
-    )
-  }
+setReactState <- function(session, inputId, stateName, value){
+  # if(is.null(statesEnvir[[stateName]])){
+  #   rm(list = ls(statesEnvir), envir = statesEnvir)
+  #   stop(
+  #     sprintf("Unknown state '%s'.", stateName),
+  #     call. = TRUE
+  #   )
+  # }
   type <- "value"
   if(inherits(value, "html")){
     type <- "html"
@@ -116,7 +116,7 @@ setReactState <- function(session, stateName, value){
     value[["hasStates"]] <- TRUE
   }
   session$sendCustomMessage(
-    statesEnvir[[stateName]],
+    statesEnvir[[inputId]][[stateName]],
     list(state = stateName, value = value, type = type)
   )
 }
@@ -131,16 +131,22 @@ setReactState <- function(session, stateName, value){
 #'
 #' @examples
 withStates <- function(component, states){
+  #print(ls(sys.frame(-1)))
+  #print(lapply(sys.frames(),ls))
   if(component[["name"]] == "Menu"){
     component <- React$Fragment(component)
   }
-  component[["states"]] <-
-    URLencode(as.character(toJSON(states, auto_unbox = TRUE)))
+  # component[["states"]] <-
+  #   URLencode(as.character(toJSON(states, auto_unbox = TRUE)))
   statesGroup <- paste0("setState_", randomString(15))
   component[["statesGroup"]] <- statesGroup
-  for(state in names(states)){
-    assign(state, statesGroup, envir = statesEnvir)
-  }
+  component[["states"]] <- states
+  # for(state in names(states)){
+  #   s <- states[[state]]
+  #   if(!(is.list(s) && identical(names(s), "eval"))){
+  #     assign(state, statesGroup, envir = statesEnvir)
+  #   }
+  # }
   component
 }
 
@@ -227,19 +233,20 @@ chakraComponent <- function(inputId, ...){
   }
   states <- ls(statesEnvir)
   usedStates <- ls(usedStatesEnvir)
-  for(usedState in usedStates){
-    if(!is.element(usedState, states)){
-      rm(list = states, envir = statesEnvir)
-      rm(list = usedStates, envir = usedStatesEnvir)
-      stop(
-        sprintf("Unknown state '%s'.", usedState),
-        call. = FALSE
-      )
-    }
-  }
-  rm(list = usedStates, envir = usedStatesEnvir)
-  configuration <-
-    unclassComponent(React$ChakraProvider(do.call(React$Fragment, component)))
+  # for(usedState in usedStates){
+  #   if(!is.element(usedState, states)){
+  #     rm(list = states, envir = statesEnvir)
+  #     rm(list = usedStates, envir = usedStatesEnvir)
+  #     stop(
+  #       sprintf("Unknown state '%s'.", usedState),
+  #       call. = FALSE
+  #     )
+  #   }
+  # }
+  # rm(list = usedStates, envir = usedStatesEnvir)
+  configuration <- unclassComponent(
+    React$ChakraProvider(do.call(React$Fragment, component)), inputId
+  )
   if(configuration[["shinyOutput"]]){
     configuration[["component"]][["children"]] <- c(
       configuration[["component"]][["children"]],

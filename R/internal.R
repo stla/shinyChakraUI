@@ -108,7 +108,22 @@ makeScriptTag <- function(script){
 
 #' @importFrom htmltools htmlDependencies
 #' @noRd
-unclassComponent <- function(component){
+unclassComponent <- function(component, inputId){
+  if(!is.null(statesGroup <- component[["statesGroup"]])){
+    states <- component[["states"]]
+    component[["states"]] <-
+      URLencode(as.character(toJSON(states, auto_unbox = TRUE)))
+    x <- rep(statesGroup, length(states))
+    names(x) <- names(states)
+    x <- c(x, statesEnvir[[inputId]])
+    assign(inputId, x, envir = statesEnvir)
+    # for(state in names(states)){
+    #   s <- states[[state]]
+    #   if(!(is.list(s) && identical(names(s), "eval"))){
+    #     assign(state, statesGroup, envir = statesEnvir)
+    #   }
+    # }
+  }
   if(inherits(component, "shiny.tag.list")){
     component <- do.call(React$Fragment, component)
   }
@@ -514,7 +529,7 @@ unclassComponent <- function(component){
       ){
         unlist(child) # this handles actionButton
       }else if(inherits(child, "shiny.tag")){
-        x <- unclassComponent(child)
+        x <- unclassComponent(child, inputId)
         #states <<- c(x[["states"]], states)
         shinyOutput <<- x[["shinyOutput"]] || shinyOutput
         Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)

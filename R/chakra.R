@@ -98,13 +98,20 @@ getHook <- function(state, value){
 #'
 #' @examples
 setReactState <- function(session, inputId, stateName, value){
-  # if(is.null(statesEnvir[[stateName]])){
-  #   rm(list = ls(statesEnvir), envir = statesEnvir)
-  #   stop(
-  #     sprintf("Unknown state '%s'.", stateName),
-  #     call. = TRUE
-  #   )
-  # }
+  if(is.null(statesEnvir[[inputId]])){
+    rm(list = ls(statesEnvir), envir = statesEnvir)
+    stop(
+      sprintf("Unknown component '%s'.", inputId),
+      call. = TRUE
+    )
+  }
+  if(is.na(statesEnvir[[inputId]][stateName])){
+    rm(list = ls(statesEnvir), envir = statesEnvir)
+    stop(
+      sprintf("Unknown state '%s'.", stateName),
+      call. = TRUE
+    )
+  }
   type <- "value"
   if(inherits(value, "html")){
     type <- "html"

@@ -112,6 +112,13 @@ setReactState <- function(session, inputId, stateName, value){
       call. = TRUE
     )
   }
+  if(statesEnvir[[inputId]][stateName] == ""){
+    rm(list = ls(statesEnvir), envir = statesEnvir)
+    stop(
+      sprintf("You cannot set a value to state '%s'.", stateName),
+      call. = TRUE
+    )
+  }
   type <- "value"
   if(inherits(value, "html")){
     type <- "html"
@@ -119,7 +126,7 @@ setReactState <- function(session, inputId, stateName, value){
   }else if(inherits(value, "shiny.tag")){
     type <- "component"
     value[["attribs"]][["shinyValue"]] <- FALSE
-    value <- unclassComponent(value)[["component"]]
+    value <- unclassComponent(value, NULL, "setReactState")[["component"]]
     value[["hasStates"]] <- TRUE
   }
   session$sendCustomMessage(
@@ -252,7 +259,9 @@ chakraComponent <- function(inputId, ...){
   # }
   # rm(list = usedStates, envir = usedStatesEnvir)
   configuration <- unclassComponent(
-    React$ChakraProvider(do.call(React$Fragment, component)), inputId
+    React$ChakraProvider(do.call(React$Fragment, component)),
+    inputId,
+    "chakraComponent"
   )
   if(configuration[["shinyOutput"]]){
     configuration[["component"]][["children"]] <- c(

@@ -613,27 +613,42 @@ const appendDisclosure = (component, disclosure) => {
   }
 };
 
-const getState = (states) => ((state) => states[state].get());
-const setState = states => ((state, value) => states[state].set(value));
+const getState = (states, inputId) => ((state) => {
+  if(states[state] === undefined){
+    let root = document.getElementById(inputId);
+    unmountComponentAtNode(root);
+    let app = <InvalidState message={`Invalid state '${state}'.`}/>;
+    ReactDOM.render(app, root);
+    throw "";    
+  }
+  return states[state].get();
+});
+const setState = (states, inputId) => ((state, value) => {
+  if(states[state] === undefined){
+    let root = document.getElementById(inputId);
+    unmountComponentAtNode(root);
+    let app = <InvalidState message={`Invalid state '${state}'.`}/>;
+    ReactDOM.render(app, root);
+    throw "";    
+  }
+  states[state].set(value);
+});
 
-const Eval = (ev, states, Hooks, getState, setState) => {
-  let x = Function("states", "Hooks", "getState", "setState", "return " + ev)(states, Hooks, getState(states), setState(states));
+const Eval = (ev, states, Hooks, getState, setState, inputId) => {
+  let x = Function("states", "Hooks", "getState", "setState", "return " + ev)(states, Hooks, getState(states, inputId), setState(states, inputId));
   console.log("EEEEEVVVVVAAAAAALLLLLL", x);
   console.log("ev", ev);
   console.log("states", states);
-  console.log("getState", getState);
-  console.log("setState", setState);
-  if(x == 2) throw "";
   return x;
 };
 
-const makeState = (x, states, name) => {
+const makeState = (x, states, inputId) => {
   let aa;
   if(typeof x === "object" && x.eval){
     aa = {...x};
     console.log("x",x);
     console.log("eval", x.eval);
-    x = Eval("() => " + x.eval, states, Hooks, getState, setState);
+    x = Eval("() => " + x.eval, states, Hooks, getState, setState, inputId);
     console.log("x()", x());
     if(x().isHook){
       x = x();
@@ -662,23 +677,26 @@ const makeState = (x, states, name) => {
   return {get: () => reactState, set: setReactState};
 };
 
-const appendStates = (component, states) => {
+const appendStates = (component, states, inputId) => {
   if(component.attribs.id && component.attribs.shinyValue !== false){
     let state = "chakra" + component.attribs.id;
     if(component.name === "Input"){
       if(typeof component.attribs.value !== "object"){
-        states[state] = makeState(component.attribs.value, states);
+        states[state] = makeState(component.attribs.value, states, inputId);
       }else{
 //        if(!component.attribs.onChange){
           let code = decodeURI(component.attribs.value.eval);
-          let value = Eval(code, states, Hooks, getState, setState);
+          let value = Eval(code, states, Hooks, getState, setState, inputId);
           if(value.name){ // non, pas logique !
             console.log("oKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKk");
             states[state] = states[value.name];
             component.attribs.value = value.get();
           }else{
             component.attribs.value = value;
-            states[state] = {get: () => Eval(code, states, Hooks, getState, setState), set: () => {}};
+            states[state] = {
+              get: () => Eval(code, states, Hooks, getState, setState, inputId), 
+              set: () => {}
+            };
           }
           //states[state].get = () => component.attribs.value.eval;
           //component.reactiveValue = true;
@@ -699,13 +717,13 @@ const appendStates = (component, states) => {
   for(let i = 0; i < component.children.length; i++){
     if(isTag(component.children[i])){
       //component.children[i].hasStates = true;
-      appendStates(component.children[i], states);
+      appendStates(component.children[i], states, inputId);
     }
   }
 };
 
 
-const InvalidState = (message) => {
+const InvalidState = ({message}) => {
   return (
     <div>{message}</div>
   );
@@ -729,7 +747,7 @@ const chakraComponent = (
     return ReactHtmlParser(unescapeHtml(decodeURI(component.html)));
   }
   if(component.eval){
-    return Eval(decodeURI(component.eval), states, Hooks, getState, setState);
+    return Eval(decodeURI(component.eval), states, Hooks, getState, setState, inputId);
   }
   if(typeof component !== "object"){
     return component;
@@ -746,14 +764,10 @@ const chakraComponent = (
     states = JSON.parse(decodeURI(component.states));
     states.chakraState = {};
     for(let key in states){
-      if(key === "disclosure"){
-        console.log("DISCLOSURE", eval(states[key].eval));
-        console.log("DISCLOSURE", Eval(states[key].eval, states, Hooks, getState, setState));
-      }
-      states[key] = makeState(states[key], states);
+      states[key] = makeState(states[key], states, inputId);
       console.log("states[key]", states[key]);
     }
-    appendStates(component, states);
+    appendStates(component, states, inputId);
     console.log("states", states);
     for(let key in states){
       if(states[key].get && states[key].get().get) states[key].get = states[key].get().get;
@@ -771,7 +785,7 @@ const chakraComponent = (
         x.value = ReactHtmlParser(decodeURI(x.value));
         bind = true;
       }else if(x.type === "component"){
-        x.value = chakraComponent(JSON.parse(JSON.stringify(x.value)), states, {});
+        x.value = chakraComponent(JSON.parse(JSON.stringify(x.value)), states, {}, inputId);
         bind = true;
       }
       states[x.state].set(x.value);
@@ -803,7 +817,8 @@ const chakraComponent = (
       // ReactDOM.render(<InvalidState/>, document.getElementById("invalidstate"));
       // throw "" ;
       //let disclosure = component.disclosure; 
-      props[key] = Eval(decodeURI(props[key].eval), states, Hooks, getState, setState);
+      props[key] = 
+        Eval(decodeURI(props[key].eval), states, Hooks, getState, setState, inputId);
     }
   }
   if(component.disclosure){
@@ -826,7 +841,7 @@ const chakraComponent = (
   //   props.onClick = eval(decodeURI(props.onClick));
   // }
   if(typeof props.onClick === "string"){
-    props.onClick = Eval(props.onClick, states, Hooks, getState, setState);
+    props.onClick = Eval(props.onClick, states, Hooks, getState, setState, inputId);
   }
   if(component.widget === "alertdialog"){
     delete component.widget;
@@ -966,7 +981,7 @@ const chakraComponent = (
         let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
         let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
-        let menulist = chakraComponent(component.children[1], {}, {});
+        let menulist = chakraComponent(component.children[1], {}, {}, inputId);
         component = {
           name: "div",
           attribs: {
@@ -1025,7 +1040,7 @@ const chakraComponent = (
         let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
         let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
-        let menulist = chakraComponent(component.children[1], {}, patch);
+        let menulist = chakraComponent(component.children[1], {}, patch, inputId);
         component = 
             <Menu {...props}>
               {({ isOpen }) => (
@@ -1159,7 +1174,7 @@ const chakraComponent = (
     props.className = "chakraTag";
     props["data-shinyinitvalue"] = props.value;
     let f = props.onChange;
-    if(states){
+    if(Object.keys(states).length){
       // let chakraState = states.chakraState;
       // let stateValue = chakraState.get();
       // stateValue[props.id] = props.value;  
@@ -1241,7 +1256,7 @@ const chakraComponent = (
         if(component.hasStates && isTag(component.children[i])){
           component.children[i].hasStates = true;
         }
-        let x = component.hasStates || component.children[i].eval ? states : null;
+        let x = component.hasStates || component.children[i].eval ? states : {};
         if(props.shinyValue === false && isTag(component.children[i])){
           let attribs = component.children[i].attribs;
           if(Array.isArray(attribs) && attribs.length === 0){
@@ -1584,7 +1599,7 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     // {
       chakraComponent(
         JSON.parse(JSON.stringify(configuration.component)),
-        null,
+        {},
         patch,
         configuration.inputId,
         null,//checkedItems,

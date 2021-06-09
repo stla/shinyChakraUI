@@ -729,8 +729,14 @@ const InvalidState = ({message}) => {
   );
 };
 
+function ShinyValue(inputId){
+  let $el = $("#" + inputId);
+  this.add = (key,v) => {$el.data("value", $.extend($el.data("value"), Object.fromEntries([[key,v]])))};
+  this.set = (key,v) => {this.add(key,v);Shiny.setInputValue(inputId, $el.data("value"))};
+}
+
 const chakraComponent = (
-  component, states, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+  component, shinyValue, states, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
 ) => {
 //  console.log("XXXXXXXXXXX");
   console.log("COMPONENT", component);
@@ -785,7 +791,7 @@ const chakraComponent = (
         x.value = ReactHtmlParser(decodeURI(x.value));
         bind = true;
       }else if(x.type === "component"){
-        x.value = chakraComponent(JSON.parse(JSON.stringify(x.value)), states, {}, inputId);
+        x.value = chakraComponent(JSON.parse(JSON.stringify(x.value)), shinyValue, states, {}, inputId);
         bind = true;
       }
       states[x.state].set(x.value);
@@ -981,7 +987,7 @@ const chakraComponent = (
         let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
         let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
-        let menulist = chakraComponent(component.children[1], {}, {}, inputId);
+        let menulist = chakraComponent(component.children[1], shinyValue, {}, {}, inputId);
         component = {
           name: "div",
           attribs: {
@@ -1040,7 +1046,7 @@ const chakraComponent = (
         let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
         let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
-        let menulist = chakraComponent(component.children[1], {}, patch, inputId);
+        let menulist = chakraComponent(component.children[1], shinyValue, {}, patch, inputId);
         component = 
             <Menu {...props}>
               {({ isOpen }) => (
@@ -1097,6 +1103,10 @@ const chakraComponent = (
         props.defaultChecked = props.isChecked === true;
       }
       delete props.isChecked;
+      shinyValue.add(props.id, props.defaultChecked);
+      //Shiny.setInputValue("id", 1, {priority: "event"});
+      //shinyValue.set(props.id, props.defaultChecked);
+      props.onChange = event => shinyValue.set(props.id, event.target.checked)
     }
     // let reactState;
     // if(states){
@@ -1265,7 +1275,7 @@ const chakraComponent = (
           attribs.shinyValue = false;
         }
         let cc = chakraComponent(
-          component.children[i], x, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+          component.children[i], shinyValue, x, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
         );
         component.children[i] = cc; 
         // newpropsChildren[i] = chakraComponent(
@@ -1594,11 +1604,15 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     );
   }
   const [radiogroupValues, setRadiogroupValues] = React.useState(RadioGroups);
+  let shinyValue = new ShinyValue(configuration.inputId);
+  //setValue("xxx");
+  //$("#id").addClass("chakraTag");
   return (
     // <ChakraProvider>
     // {
       chakraComponent(
         JSON.parse(JSON.stringify(configuration.component)),
+        shinyValue,
         {},
         patch,
         configuration.inputId,
@@ -1651,6 +1665,7 @@ $.extend(chakraBinding, {
   getValue: function (el) {
     let value = $(el).data("shinyinitvalue");
     let widget = $(el).data("widget");
+    console.log("GETVALUE", el, value);
     return widget ? {value: value, widget: widget} : value;
   },
   setValue: function (el, value) {
@@ -1680,73 +1695,73 @@ $.extend(chakraBinding, {
     };
   },
   initialize: function initialize(el) {
-
+    console.log("INITIALIZE", el);
   }
 });
 
 Shiny.inputBindings.register(chakraBinding);
 
 
-
-reactShinyInput('.chakracomponent', 'shinyChakraUI.chakracomponent', ChakraComponent);
+//reactShinyInput('.chakracomponent', 'shinyChakraUI.chakracomponent', ChakraComponent);
 reactShinyInput('.chakra', 'shinyChakraUI.chakra', ChakraInput, {type: "shinyChakraUI.widget"});
 
-// Shiny.inputBindings.register(new class extends Shiny.InputBinding {
 
-//   /*
-//    * Methods override those in Shiny.InputBinding
-//    */
+Shiny.inputBindings.register(new class extends Shiny.InputBinding {
 
-//   find(scope) {
-//     return $(scope).find(".chakracomponent");
-//   }
-//   getValue(el) {
-//     const element = React.createElement(ChakraComponent, {
-//       configuration: $(el).data("configuration")
-//     });
-//     ReactDOM.render(element, el);  
+  /*
+   * Methods override those in Shiny.InputBinding
+   */
 
-//     return null;
-//   }
-//   setValue(el, value, rateLimited = false) {
-//     /*
-//      * We have to check whether $(el).data('callback') is undefined here
-//      * in case shiny::renderUI() is involved. If an input is contained in a
-//      * shiny::uiOutput(), the following strange thing happens occasionally:
-//      *
-//      *   1. setValue() is bound to an el in this.render(), below
-//      *   2. An event that will call setValue() is enqueued
-//      *   3. While the event is still enqueued, el is unbound and removed
-//      *      from the DOM by the JS code associated with shiny::uiOutput()
-//      *      - That code uses jQuery .html() in output_binding_html.js
-//      *      - .html() removes el from the DOM and clears ist data and events
-//      *   4. By the time the setValue() bound to the original el is invoked,
-//      *      el has been unbound and its data cleared.
-//      *
-//      *  Since the original input is gone along with its callback, it
-//      *  seems to make the most sense to do nothing.
-//      */
-//     if ($(el).data('callback') !== undefined) {
-//       this.setInputValue(el, value);
-//       this.getCallback(el)(rateLimited);
-//       this.render(el);
-//     }
-//   }
-//   initialize(el) {
-//     $(el).data('value', JSON.parse($(el).next().text()));
-//     $(el).data('configuration', JSON.parse($(el).next().next().text()));
-//   }
-//   subscribe(el, callback) {
-//   }
-//   unsubscribe(el) {
-//     ReactDOM.render(null, el);
-//   }
-//   receiveMessage(el, data) {
-// //    options.receiveMessage.call(this, el, data);
-//   }
-//   getType(el) {
-//     return false;
-//   }
+  find(scope) {
+    return $(scope).find(".chakracomponent");
+  }
+  getValue(el) {
+    const element = React.createElement(ChakraComponent, {
+      configuration: $(el).data("configuration")
+    });
+    ReactDOM.render(element, el);  
 
-// }, 'shinyChakraUI.chakracomponent');
+    return $(el).data("value");
+  }
+  setValue(el, value, rateLimited = false) {
+    /*
+     * We have to check whether $(el).data('callback') is undefined here
+     * in case shiny::renderUI() is involved. If an input is contained in a
+     * shiny::uiOutput(), the following strange thing happens occasionally:
+     *
+     *   1. setValue() is bound to an el in this.render(), below
+     *   2. An event that will call setValue() is enqueued
+     *   3. While the event is still enqueued, el is unbound and removed
+     *      from the DOM by the JS code associated with shiny::uiOutput()
+     *      - That code uses jQuery .html() in output_binding_html.js
+     *      - .html() removes el from the DOM and clears ist data and events
+     *   4. By the time the setValue() bound to the original el is invoked,
+     *      el has been unbound and its data cleared.
+     *
+     *  Since the original input is gone along with its callback, it
+     *  seems to make the most sense to do nothing.
+     */
+    if ($(el).data('callback') !== undefined) {
+      this.setInputValue(el, value);
+      this.getCallback(el)(rateLimited);
+      this.render(el);
+    }
+  }
+  initialize(el) {
+    //$(el).data('value', JSON.parse($(el).next().text()));
+    $(el).data('configuration', JSON.parse($(el).next().next().text()));
+  }
+  subscribe(el, callback) {
+  }
+  unsubscribe(el) {
+    ReactDOM.render(null, el);
+  }
+  receiveMessage(el, data) {
+//    options.receiveMessage.call(this, el, data);
+  }
+  getType(el) {
+    return false;
+  }
+
+}, 'shinyChakraUI.chakracomponent');
 

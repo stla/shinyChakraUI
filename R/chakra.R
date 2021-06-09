@@ -8,7 +8,7 @@
 #' @examples
 getState <- function(state){
   assign(state, NULL, envir = usedStatesEnvir)
-  list(eval = sprintf("states.%s.get()", state))
+  list(eval = sprintf("getState('%s')", state))
 }
 
 

@@ -128,6 +128,7 @@ setReactState <- function(session, inputId, stateName, value){
     value[["attribs"]][["shinyValue"]] <- FALSE
     value <- unclassComponent(value, NULL, "setReactState")[["component"]]
     value[["hasStates"]] <- TRUE
+    value[["force"]] <- TRUE
   }
   session$sendCustomMessage(
     statesEnvir[[inputId]][[stateName]],

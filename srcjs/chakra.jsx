@@ -522,6 +522,14 @@ const isTag = value => {
       && value.hasOwnProperty('children');
 };
 
+const isJseval = x => {
+  return (typeof x === "object") && x.hasOwnProperty("__eval");
+};
+
+const isHook = x => {
+  return (typeof x === "object") && x.hasOwnProperty("__hook");
+};
+
 /* const chakraComponent = (component, patch) => {
   let props = component.attribs;
   if(Array.isArray(props) && props.length === 0){
@@ -644,22 +652,27 @@ const Eval = (ev, states, Hooks, getState, setState, inputId) => {
 
 const makeState = (x, states, inputId) => {
   let aa;
-  if(typeof x === "object" && x.eval){
-    aa = {...x};
-    console.log("x",x);
-    console.log("eval", x.eval);
-    x = Eval("() => " + x.eval, states, Hooks, getState, setState, inputId);
-    console.log("x()", x());
-    if(x().isHook){
-      x = x();
-      let hook = {...x};
-      delete hook.isHook;
-      x.get = () => hook;
-      return x;
-    }else{
-      return {get: x};
-    }
+  if(isJseval(x)){
+    return {get: Eval("() => " + x.__eval, states, Hooks, getState, setState, inputId)};
+  }else if(isHook(x)){
+    let hook = Eval(x.__hook, states, Hooks, getState, setState, inputId);
+    return $.extend(hook, {get: () => hook});
   }
+  //   aa = {...x};
+  //   console.log("x",x);
+  //   console.log("eval", x.eval);
+  //   x = Eval("() => " + x.eval, states, Hooks, getState, setState, inputId);
+  //   console.log("x()", x());
+  //   if(x().isHook){
+  //     x = x();
+  //     let hook = {...x};
+  //     delete hook.isHook;
+  //     x.get = () => hook;
+  //     return x;
+  //   }else{
+  //     return {get: x};
+  //   }
+  // }
 //  let ru = React.useState(x);
   let [reactState, setReactState] = React.useState(x);
   // if(reactState == 2){
@@ -681,11 +694,11 @@ const appendStates = (component, states, inputId) => {
   if(component.attribs.id && component.attribs.shinyValue !== false){
     let state = "chakra" + component.attribs.id;
     if(component.name === "Input"){
-      if(typeof component.attribs.value !== "object"){
+      if(!isJseval(component.attribs.value)){
         states[state] = makeState(component.attribs.value, states, inputId);
       }else{
 //        if(!component.attribs.onChange){
-          let code = decodeURI(component.attribs.value.eval);
+          let code = decodeURI(component.attribs.value.__eval);
           let value = Eval(code, states, Hooks, getState, setState, inputId);
           if(value.name){ // non, pas logique !
             console.log("oKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKk");
@@ -762,8 +775,8 @@ const chakraComponent = (
     console.log(component.html);
     return ReactHtmlParser(unescapeHtml(decodeURI(component.html)));
   }
-  if(component.eval){
-    return Eval(decodeURI(component.eval), states, Hooks, getState, setState, inputId);
+  if(isJseval(component)){
+    return Eval(decodeURI(component.__eval), states, Hooks, getState, setState, inputId);
   }
   if(typeof component !== "object"){
     return component;
@@ -804,8 +817,8 @@ const chakraComponent = (
         x.value = ReactHtmlParser(decodeURI(x.value));
         bind = true;
       }else if(x.type === "component"){
-        let s = {...states.boxtext2};
-        states.boxtext2.get = () => {alert(component.name); return s.get()};
+        // let s = {...states.boxtext2};
+        // states.boxtext2.get = () => {alert(component.name); return s.get()};
         x.value = chakraComponent(JSON.parse(JSON.stringify(x.value)), shinyValue, states, {}, inputId);
         //states.done = true;
         states[x.state].set(undefined);
@@ -837,12 +850,12 @@ const chakraComponent = (
     if(typeof props[key] === "string"){
       props[key] = decodeURI(props[key]);
     }
-    if(typeof props[key] === "object" && props[key].eval){
+    if(isJseval(props[key])){
       // ReactDOM.render(<InvalidState/>, document.getElementById("invalidstate"));
       // throw "" ;
       //let disclosure = component.disclosure; 
       props[key] = 
-        Eval(decodeURI(props[key].eval), states, Hooks, getState, setState, inputId);
+        Eval(decodeURI(props[key].__eval), states, Hooks, getState, setState, inputId);
     }
   }
   if(component.disclosure){
@@ -1296,7 +1309,7 @@ const chakraComponent = (
           component.children[i].hasStates = true;
           component.children[i].force = component.force;
         }
-        let x = component.hasStates || component.children[i].eval ? states : {};
+        let x = component.hasStates || isJseval(component.children[i]) ? states : {};
         if(props.shinyValue === false && isTag(component.children[i])){
           let attribs = component.children[i].attribs;
           if(Array.isArray(attribs) && attribs.length === 0){

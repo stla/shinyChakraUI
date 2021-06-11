@@ -1,5 +1,18 @@
 #' Title
 #'
+#' @param code
+#'
+#' @return
+#' @export
+#'
+#' @examples
+jseval <- function(code){
+  stopifnot(is.character(code))
+  list("__eval" = URLencode(code))
+}
+
+#' Title
+#'
 #' @param state
 #'
 #' @return
@@ -8,12 +21,12 @@
 #' @examples
 getState <- function(state){
   assign(state, NULL, envir = usedStatesEnvir)
-  list(eval = sprintf("getState('%s')", state))
+  jseval(sprintf("getState('%s')", state))
 }
 
 
 Function <- function(arguments = list(), body){
-  list(eval = sprintf("(%s) => {%s}", toString(arguments), body))
+  jseval(sprintf("(%s) => {%s}", toString(arguments), body))
 }
 
 #' Title
@@ -45,10 +58,10 @@ useClipboard <- function(value){
   if(is.character(value)){
     value <- paste0("'", value, "'")
   }else{
-    value <- value[["eval"]]
+    value <- value[["__eval"]]
   }
   list(
-    eval = sprintf("$.extend(Hooks['useClipboard'](%s), {isHook: true})", value)
+    "__hook" = sprintf("Hooks['useClipboard'](%s)", value)
   )
 }
 
@@ -59,7 +72,7 @@ useClipboard <- function(value){
 #'
 #' @examples
 useRef <- function(){
-  list(eval = "React.useRef()")
+  jseval("React.useRef()")
 }
 
 #' Title
@@ -69,7 +82,7 @@ useRef <- function(){
 #'
 #' @examples
 useDisclosure <- function(){
-  list(eval = "$.extend(Hooks['useDisclosure'](), {isHook: true})")
+  list("__hook" = "Hooks['useDisclosure']()")
 }
 
 #' Title
@@ -83,7 +96,7 @@ useDisclosure <- function(){
 #' @examples
 getHook <- function(state, value){
   assign(state, NULL, envir = usedStatesEnvir)
-  list(eval = sprintf("states.%s.%s", state, value))
+  jseval(sprintf("states.%s.%s", state, value))
 }
 
 #' Title

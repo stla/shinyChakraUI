@@ -57,6 +57,14 @@ asShinyTag <- function(x){
   x
 }
 
+isJseval <- function(x){
+  is.list(x) && identical(names(x), "__eval")
+}
+
+isHook <- function(x){
+  is.list(x) && identical(names(x), "__hook")
+}
+
 isSlider <- function(x){
   inherits(x, "shiny.tag") &&
     length(x[["children"]]) == 2L &&
@@ -120,7 +128,7 @@ unclassComponent <- function(component, inputId, call){
     component[["states"]] <-
       URLencode(as.character(toJSON(states, auto_unbox = TRUE)))
     x <- vapply(states, function(s){
-      if(is.list(s) && identical(names(s), "eval")) "" else statesGroup
+      if(isJseval(s) || isHook(s)) "" else statesGroup
     }, character(1L))
     x <- c(x, statesEnvir[[inputId]])
     assign(inputId, x, envir = statesEnvir)
@@ -270,13 +278,13 @@ unclassComponent <- function(component, inputId, call){
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
   }
-  for(attribname in attribsNames){
-    attrib <- attribs[[attribname]]
-    if(is.list(attrib) && identical(names(attrib), "eval")){
-      component[["attribs"]][[attribname]] <-
-        list(eval = URLencode(attrib[["eval"]]))
-    }
-  }
+  # for(attribname in attribsNames){
+  #   attrib <- attribs[[attribname]]
+  #   if(is.list(attrib) && identical(names(attrib), "eval")){
+  #     component[["attribs"]][[attribname]] <-
+  #       list(eval = URLencode(attrib[["eval"]]))
+  #   }
+  # }
   if(
     component[["name"]] %in% c("Button", "IconButton") &&
     "className" %in% attribsNames &&
@@ -527,8 +535,8 @@ unclassComponent <- function(component, inputId, call){
   }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
-      if(is.list(child) && identical(names(child), "eval")){
-        list(eval = URLencode(child[["eval"]]))
+      if(isJseval(child)){
+        child
       }else if(
         is.list(child) &&
         !inherits(child, "shiny.tag") &&

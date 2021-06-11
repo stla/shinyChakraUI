@@ -57,6 +57,11 @@ asShinyTag <- function(x){
   x
 }
 
+isShinyTag <- function(x){
+  inherits(x, "shiny.tag") ||
+    (is.list(x) && all(c("name", "attribs", "children") %in% names(x)))
+}
+
 isJseval <- function(x){
   is.list(x) && identical(names(x), "__eval")
 }
@@ -68,7 +73,7 @@ isHook <- function(x){
 isSlider <- function(x){
   inherits(x, "shiny.tag") &&
     length(x[["children"]]) == 2L &&
-    identical(x[["children"]][[2]][["attribs"]][["class"]], "js-range-slider")
+    identical(x[["children"]][[2L]][["attribs"]][["class"]], "js-range-slider")
 }
 
 sliderDependencies <- function(){

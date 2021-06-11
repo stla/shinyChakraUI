@@ -1069,6 +1069,7 @@ const chakraComponent = (
       //   ]
       // };
     }else{
+      shinyValue.add(props.id, null);
       patch = $.extend(patch, {MenuItem: {
         onClick: (e) => {
           shinyValue.set(props.id, e.currentTarget.dataset.val);

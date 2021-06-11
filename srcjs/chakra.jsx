@@ -530,6 +530,10 @@ const isHook = x => {
   return (typeof x === "object") && x.hasOwnProperty("__hook");
 };
 
+const isHTML = x => {
+  return (typeof x === "object") && x.hasOwnProperty("__html");
+};
+
 /* const chakraComponent = (component, patch) => {
   let props = component.attribs;
   if(Array.isArray(props) && props.length === 0){
@@ -770,10 +774,10 @@ const chakraComponent = (
   if(typeof component === "string"){
     return decodeURI(component);
   }
-  if(component.html){
+  if(isHTML(component)){
     console.log("XXXXXXXXXXX");
-    console.log(component.html);
-    return ReactHtmlParser(unescapeHtml(decodeURI(component.html)));
+    console.log(component.__html);
+    return ReactHtmlParser(unescapeHtml(decodeURI(component.__html)));
   }
   if(isJseval(component)){
     return Eval(decodeURI(component.__eval), states, Hooks, getState, setState, inputId);

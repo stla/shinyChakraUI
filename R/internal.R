@@ -44,7 +44,7 @@ encode <- function(x){
   if(inherits(x, "shiny.tag")){
     list(x)
   }else if(inherits(x, "html")){
-    list(list(html = URLencode(as.character(x))))
+    list(list("__html" = URLencode(as.character(x))))
   }else if(is.list(x) && is.null(names(x))){
     x
   }else{
@@ -155,7 +155,7 @@ unclassComponent <- function(component, inputId, call){
       id
     )
     component <- React$Fragment(
-      list(html = URLencode(as.character(component))),
+      list("__html" = URLencode(as.character(component))),
       makeScriptTag(script)
     )
   }else if(
@@ -192,7 +192,7 @@ unclassComponent <- function(component, inputId, call){
         component, makeScriptTag(script)
       )
     }else{
-      component <- list(html = URLencode(as.character(component)))
+      component <- list("__html" = URLencode(as.character(component)))
     }
   }else if(!isChakraIcon(component) && grepl("Icon$", component[["name"]])){
     if(!is.element(component[["name"]], paste0(chakraIcons(), "Icon"))){
@@ -540,7 +540,7 @@ unclassComponent <- function(component, inputId, call){
       }else if(
         is.list(child) &&
         !inherits(child, "shiny.tag") &&
-        is.null(child[["html"]])
+        is.null(child[["__html"]])
       ){
         unlist(child) # this handles actionButton
       }else if(inherits(child, "shiny.tag")){
@@ -552,7 +552,7 @@ unclassComponent <- function(component, inputId, call){
         dependencies <<- c(x[["dependencies"]], dependencies)
         x[["component"]]
       }else if(inherits(child, "html")){
-        list(html = URLencode(as.character(child)))
+        list("__html" = URLencode(as.character(child)))
       }else if(is.character(child)){
         URLencode(child)
       }else{

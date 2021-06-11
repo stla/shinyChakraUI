@@ -337,7 +337,7 @@ const getMenuSelection = menu => {
   return getMenuListSelection(getMenuList(menu));
 };
 
-const makeMenuComponent = menu => {
+const makeMenuComponent = (menu, shinyValue) => {
   let selected = getMenuSelection(menu);
   if(selected === null){
     return ;
@@ -352,6 +352,7 @@ const makeMenuComponent = menu => {
     }
     groupprops.onChange = (selection) => {
       value[grouptitle] = selection;//Array.isArray(selection) ? selection.map(decodeURI) : decodeURI(selection);
+      shinyValue.set(menu.attribs.id, value);
       setValue(value);
       Shiny.setInputValue(
         menu.attribs.id + ":shinyChakraUI.widget", {value: value, widget: "menuWithGroups"}
@@ -1004,8 +1005,9 @@ const chakraComponent = (
     component.process = false;
     let selected = getMenuSelection(component);
     if(selected){
+      shinyValue.add(props.id, selected);
       selected = JSON.stringify(selected);
-      makeMenuComponent(component);
+      makeMenuComponent(component, shinyValue);
       // let code = "setTimeout(function(){Shiny.setInputValue('" + 
       //   component.attribs.id + 
       //   ":shinyChakraUI.widget', {value: " + 
@@ -1069,6 +1071,7 @@ const chakraComponent = (
     }else{
       patch = $.extend(patch, {MenuItem: {
         onClick: (e) => {
+          shinyValue.set(props.id, e.currentTarget.dataset.val);
           Shiny.setInputValue(props.id, e.currentTarget.dataset.val);
         }
       }});
@@ -1133,7 +1136,6 @@ const chakraComponent = (
     props.id !== undefined &&
     !["parentCheckbox", "childrenCheckbox"].includes(props.className)
   ){
-    if(props.id === "uuuuu") alert(JSON.stringify(props));
     if(typeof props.isChecked !== "object"){
       if(props.defaultChecked === undefined){
         props.defaultChecked = props.isChecked === true;

@@ -48,6 +48,21 @@ ui <- chakraPage(
       chakraComponent(
         "id",
 
+        withStates(
+          Tag$Box(
+            bg = "tomato",
+            borderWidth = "4px",
+            getState("thebutton"),
+            getState("yellowtext")
+          ),
+          states = list(
+            thebutton = Tag$Checkbox(
+              id = "boxcheckbox", isChecked = TRUE, "BOXCHECKBOX"
+            ),
+            yellowtext = HTML("<p style='color:yellow'>YELLOW TEXT</p>")
+          )
+        ),
+
 
         withStates(
           Tag$Menu(
@@ -240,13 +255,14 @@ ui <- chakraPage(
 
         chakraDrawer(
           "drawer",
-          openButton = Tag$Button("Open"),
+          openButton = Tag$Button("Open Drawer"),
           options = chakraDrawerOptions(placement = "right"),
           header = Tag$DrawerHeader("I'm the header"),
           body = Tag$DrawerBody(
             Tag$Box("I'm the body")
           ),
           footer = Tag$DrawerFooter(
+            Tag$Button(value = "try me", "Try me"),
             Tag$Button("Close", action = "close", variant = "outline")
           )
         ),
@@ -280,26 +296,26 @@ ui <- chakraPage(
           )
         ),
 
-        # Tag$RadioGroup(
-        #   id = "radio",
-        #   value = "1",
-        #   name = "xx",
-        #   Tag$Stack(
-        #     direction = "row",
-        #     Tag$Radio(
-        #       value = "1",
-        #       "First"
-        #     ),
-        #     Tag$Radio(
-        #       value = "2",
-        #       "Second"
-        #     ),
-        #     Tag$Radio(
-        #       value = "3",
-        #       "Third"
-        #     )
-        #   )
-        # ),
+        Tag$RadioGroup(
+          id = "radio",
+          value = "1",
+          name = "xx",
+          Tag$Stack(
+            direction = "row",
+            Tag$Radio(
+              value = "1",
+              "First"
+            ),
+            Tag$Radio(
+              value = "2",
+              "Second"
+            ),
+            Tag$Radio(
+              value = "3",
+              "Third"
+            )
+          )
+        ),
 
         #Tag$XXIcon(),
 

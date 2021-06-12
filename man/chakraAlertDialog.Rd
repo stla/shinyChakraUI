@@ -10,7 +10,7 @@ chakraAlertDialog(
   openButton,
   header,
   body,
-  footerButtons = React$Button("Cancel", action = "cancel", value = "cancel")
+  footerButtons = Tag$Button("Cancel", action = "cancel", value = "cancel")
 )
 }
 \arguments{

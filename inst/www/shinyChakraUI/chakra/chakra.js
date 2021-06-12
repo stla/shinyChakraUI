@@ -85862,7 +85862,11 @@ var makeMenuComponent = function makeMenuComponent(menu, shinyValue) {
 }; //const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 
-var makeCheckboxWithChildren = function makeCheckboxWithChildren(div) {
+var isEmptyArray = function isEmptyArray(x) {
+  return Array.isArray(x) && x.length === 0;
+};
+
+var makeCheckboxWithChildren = function makeCheckboxWithChildren(div, shinyValue) {
   var childCheckboxes = JSON.parse(JSON.stringify(div.children[1].children));
   var n = childCheckboxes.length;
   var state = [];
@@ -85872,7 +85876,7 @@ var makeCheckboxWithChildren = function makeCheckboxWithChildren(div) {
     indices.push(i);
     var _attribs = childCheckboxes[i].attribs;
 
-    if (Array.isArray(_attribs) && _attribs.length === 0) {
+    if (isEmptyArray(_attribs)) {
       childCheckboxes[i].attribs = {};
     }
 
@@ -85911,7 +85915,7 @@ var makeCheckboxWithChildren = function makeCheckboxWithChildren(div) {
 
   var attribs = parentCheckbox.attribs;
 
-  if (Array.isArray(attribs) && attribs.length === 0) {
+  if (isEmptyArray(attribs)) {
     parentCheckbox.attribs = {};
     attribs = parentCheckbox.attribs;
   }
@@ -85932,6 +85936,7 @@ var makeCheckboxWithChildren = function makeCheckboxWithChildren(div) {
     }
 
     console.log("state", state);
+    shinyValue.set(div.attribs.id, state);
     xsetCheckedItems(state);
     Shiny.setInputValue(inputId, {
       value: state,
@@ -85980,6 +85985,7 @@ var makeCheckboxWithChildren = function makeCheckboxWithChildren(div) {
             setIsChecked(e.target.checked);
             console.log("i", i);
             xcheckedItems[i] = e.target.checked;
+            shinyValue.set(div.attribs.id, xcheckedItems);
             xsetCheckedItems(xcheckedItems);
             Shiny.setInputValue(inputId, {
               value: xcheckedItems,
@@ -86311,7 +86317,7 @@ function ShinyValue(inputId) {
       $el.data("value", $.extend(value, Object.fromEntries([[key, v]])));
 
       if (Shiny.shinyapp.isConnected()) {
-        Shiny.setInputValue(inputId, $el.data("value"));
+        Shiny.setInputValue(inputId + ":shinyChakraUI.component", $el.data("value"));
       }
     }
   };
@@ -86342,7 +86348,17 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
   }
 
   if (isJseval(component)) {
-    return Eval(decodeURI(component.__eval), states, Hooks, getState, setState, inputId);
+    var ev = Eval(decodeURI(component.__eval), states, Hooks, getState, setState, inputId);
+
+    if (isHTML(ev)) {
+      return react_html_parser__WEBPACK_IMPORTED_MODULE_5___default()(unescapeHtml(decodeURI(ev.__html)));
+    }
+
+    if (isTag(ev)) {
+      component = ev;
+    } else {
+      return ev;
+    }
   }
 
   if (_typeof(component) !== "object") {
@@ -86464,6 +86480,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
 
   if (component.widget === "alertdialog") {
     delete component.widget;
+    shinyValue.add(props.id, null);
 
     var _React$useState7 = react__WEBPACK_IMPORTED_MODULE_1__["useState"](false),
         _React$useState8 = _slicedToArray(_React$useState7, 2),
@@ -86476,7 +86493,10 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
         setDisabled = _React$useState10[1];
 
     var setShinyValue = function setShinyValue(value) {
-      return Shiny.setInputValue(props.id, value);
+      if (value) {
+        Shiny.setInputValue(props.id, value);
+        shinyValue.set(props.id, value);
+      }
     };
 
     var onClose = function onClose() {
@@ -86484,8 +86504,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
     };
 
     var onCloseButton = function onCloseButton(e) {
-      var value = e.currentTarget.dataset.val;
-      if (value) setShinyValue(value);
+      setShinyValue(e.currentTarget.dataset.val);
       setIsOpen(false);
     };
 
@@ -86502,8 +86521,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
       },
       DisableButton: {
         onClick: function onClick(e) {
-          var value = e.currentTarget.dataset.val;
-          if (value) setShinyValue(value);
+          setShinyValue(e.currentTarget.dataset.val);
           setDisabled(true);
           setIsOpen(false);
         }
@@ -86514,8 +86532,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
       },
       RemoveButton: {
         onClick: function onClick(e) {
-          var value = e.currentTarget.dataset.val;
-          if (value) setShinyValue(value);
+          setShinyValue(e.currentTarget.dataset.val);
           setIsOpen(false);
           $("#" + props.id).remove();
         }
@@ -86538,8 +86555,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
       },
       DisableIconButton: {
         onClick: function onClick(e) {
-          var value = e.currentTarget.dataset.val;
-          if (value) setShinyValue(value);
+          setShinyValue(e.currentTarget.dataset.val);
           setDisabled(true);
           setIsOpen(false);
         }
@@ -86550,8 +86566,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
       },
       RemoveIconButton: {
         onClick: function onClick(e) {
-          var value = e.currentTarget.dataset.val;
-          if (value) setShinyValue(value);
+          setShinyValue(e.currentTarget.dataset.val);
           setIsOpen(false);
           $("#" + props.id).remove();
         }
@@ -86581,6 +86596,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
         _onClose = _useDisclosure.onClose;
 
     var btnRef = react__WEBPACK_IMPORTED_MODULE_1__["useRef"]();
+    shinyValue.add(props.id, null);
 
     var _setShinyValue = function _setShinyValue(value) {
       return Shiny.setInputValue(props.id, value);
@@ -86602,7 +86618,12 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
       Button: {
         onClick: function onClick(e) {
           var value = e.currentTarget.dataset.val;
-          if (value) _setShinyValue(value);
+
+          if (value) {
+            _setShinyValue(value);
+
+            shinyValue.set(props.id, value);
+          }
         }
       }
     };
@@ -86670,6 +86691,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
       //   ]
       // };
     } else {
+      shinyValue.add(props.id, null);
       patch = $.extend(patch, {
         MenuItem: {
           onClick: function onClick(e) {
@@ -86718,16 +86740,19 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
       }
     };
   } else if (component.name === "Tabs" && props.id) {
+    var defaultIndex = props.defaultIndex ? props.defaultIndex : 0;
+    shinyValue.add(props.id, defaultIndex);
+
     props.onChange = function (index) {
-      return Shiny.setInputValue(props.id, index);
+      Shiny.setInputValue(props.id, index);
+      shinyValue.set(props.id, index);
     };
 
     props.className = "chakraTag";
-    props["data-shinyinitvalue"] = props.defaultIndex ? props.defaultIndex : 0;
-  }
-
-  if (props["class"] === "checkboxWithChildren") {
-    var state = makeCheckboxWithChildren(component);
+    props["data-shinyinitvalue"] = defaultIndex;
+  } else if (props["class"] === "checkboxWithChildren") {
+    var state = makeCheckboxWithChildren(component, shinyValue);
+    shinyValue.add(props.id, state);
     props.className = "chakraTag";
     delete props["class"];
     props["data-shinyinitvalue"] = JSON.stringify(state);
@@ -86739,9 +86764,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
     //     <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
     //   ]
     // };
-  }
-
-  if (component.name === "Checkbox" && //props.shinyValue !== false && 
+  } else if (component.name === "Checkbox" && //props.shinyValue !== false && 
   !component.dontprocess && props.id !== undefined && !["parentCheckbox", "childrenCheckbox"].includes(props.className)) {
     if (_typeof(props.isChecked) !== "object") {
       if (props.defaultChecked === undefined) {
@@ -86821,6 +86844,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
     };
     props = divattrs;
   } else if (component.name === "RadioGroup") {
+    shinyValue.add(props.id, radiogroupValues[props.id]);
     props = $.extend(props, {
       onChange: function onChange(value) {
         var obj = {};
@@ -86835,6 +86859,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
 
         setRadiogroupValues(obj);
         Shiny.setInputValue(props.id, value);
+        shinyValue.set(props.id, value);
       },
       value: radiogroupValues[props.id],
       className: "chakraTag",
@@ -86958,7 +86983,7 @@ var chakraComponent = function chakraComponent(component, shinyValue, states, pa
         if (props.shinyValue === false && isTag(component.children[i])) {
           var attribs = component.children[i].attribs;
 
-          if (Array.isArray(attribs) && attribs.length === 0) {
+          if (isEmptyArray(attribs)) {
             attribs = {};
           }
 
@@ -87513,7 +87538,7 @@ Shiny.inputBindings.register(new ( /*#__PURE__*/function (_Shiny$InputBinding) {
   }, {
     key: "getType",
     value: function getType(el) {
-      return false;
+      return "shinyChakraUI.component";
     }
   }]);
 

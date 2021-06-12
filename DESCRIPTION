@@ -17,4 +17,5 @@ Imports:
     htmltools,
     reactR,
     shiny,
-    jsonlite
+    jsonlite,
+    rlang

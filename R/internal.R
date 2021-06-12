@@ -130,8 +130,21 @@ unclassComponent <- function(component, inputId, call){
       )
     }
     states <- component[["states"]]
+    for(stateName in names(states)){
+      state <- states[[stateName]]
+      if(!isJseval(state) && !isHook(state)){
+        if(inherits(state, "html")){
+          states[[stateName]] <- list("__html" = URLencode(as.character(state)))
+        }else if(isShinyTag(state)){
+          states[[stateName]] <-
+            unclassComponent(state, inputId, "unclassComponent")[["component"]]
+        }
+      }
+    }
     component[["states"]] <-
-      URLencode(as.character(toJSON(states, auto_unbox = TRUE)))
+      URLencode(as.character(
+        toJSON(states, auto_unbox = TRUE, null = "null", digits = NA)
+      ))
     x <- vapply(states, function(s){
       if(isJseval(s) || isHook(s)) "" else statesGroup
     }, character(1L))

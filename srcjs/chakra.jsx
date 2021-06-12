@@ -781,7 +781,15 @@ const chakraComponent = (
     return ReactHtmlParser(unescapeHtml(decodeURI(component.__html)));
   }
   if(isJseval(component)){
-    return Eval(decodeURI(component.__eval), states, Hooks, getState, setState, inputId);
+    let ev = Eval(decodeURI(component.__eval), states, Hooks, getState, setState, inputId);
+    if(isHTML(ev)){
+      return ReactHtmlParser(unescapeHtml(decodeURI(ev.__html)));
+    }
+    if(isTag(ev)){
+      component = ev;
+    }else{
+      return ev;
+    }
   }
   if(typeof component !== "object"){
     return component;

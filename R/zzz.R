@@ -1,6 +1,11 @@
 #' @importFrom shiny registerInputHandler
+#' @importFrom jsonlite toJSON fromJSON
 #' @noRd
 .onLoad <- function(...){
+
+  shiny::registerInputHandler("shinyChakraUI.component", function(data, ...){
+    fromJSON(toJSON(data, null = "null", digits = NA, auto_unbox = TRUE))
+  }, force = TRUE)
 
   shiny::registerInputHandler("shinyChakraUI.widget", function(data, ...){
     widget <- data[["widget"]]

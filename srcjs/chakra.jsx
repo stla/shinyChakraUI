@@ -749,17 +749,17 @@ const InvalidState = ({message}) => {
 
 function ShinyValue(inputId){
   let $el = $("#" + inputId);
-  this.add = (key,v,force) => {
+  this.add = (key, v, force) => {
     let value = $el.data("value");
     if(force || value === undefined || value[key] === undefined){
       $el.data("value", $.extend(value, Object.fromEntries([[key,v]])));
       if(Shiny.shinyapp.isConnected()){
-        Shiny.setInputValue(inputId, $el.data("value"));
+        Shiny.setInputValue(inputId + ":shinyChakraUI.component", $el.data("value"));
       }
     }
   };
-  this.set = (key,v) => {
-    this.add(key,v,true);//Shiny.setInputValue(inputId, $el.data("value"))
+  this.set = (key, v) => {
+    this.add(key, v, true);//Shiny.setInputValue(inputId, $el.data("value"))
   };
 }
 
@@ -1814,7 +1814,7 @@ Shiny.inputBindings.register(new class extends Shiny.InputBinding {
 //    options.receiveMessage.call(this, el, data);
   }
   getType(el) {
-    return false;
+    return "shinyChakraUI.component";
   }
 
 }, 'shinyChakraUI.chakracomponent');

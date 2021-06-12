@@ -1123,9 +1123,14 @@ const chakraComponent = (
       }
     };  
   }else if(component.name === "Tabs" && props.id){
-    props.onChange = index => Shiny.setInputValue(props.id, index);
+    let defaultIndex = props.defaultIndex ? props.defaultIndex : 0;
+    shinyValue.add(props.id, defaultIndex);
+    props.onChange = index => {
+      Shiny.setInputValue(props.id, index);
+      shinyValue.set(props.id, index);
+    };
     props.className = "chakraTag";
-    props["data-shinyinitvalue"] = props.defaultIndex ? props.defaultIndex : 0;
+    props["data-shinyinitvalue"] = defaultIndex;
   }
   if(props.class === "checkboxWithChildren"){
     let state = makeCheckboxWithChildren(component, shinyValue);
@@ -1220,6 +1225,7 @@ const chakraComponent = (
     };
     props = divattrs;
   }else if(component.name === "RadioGroup"){
+    shinyValue.add(props.id, radiogroupValues[props.id]);
     props = $.extend(props, 
       {
         onChange: (value) => {
@@ -1233,6 +1239,7 @@ const chakraComponent = (
           }
           setRadiogroupValues(obj);
           Shiny.setInputValue(props.id, value);
+          shinyValue.set(props.id, value);
         },
         value: radiogroupValues[props.id],
         className: "chakraTag",

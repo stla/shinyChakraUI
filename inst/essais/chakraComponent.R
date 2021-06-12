@@ -1,6 +1,6 @@
 library(shiny)
 library(shinyChakraUI)
-library(reactR)
+#library(reactR)
 
 myinput <- textInput("text", "Enter text", value="a")
 
@@ -46,43 +46,43 @@ ui <- chakraPage(
 
 
     withStates(
-      React$Menu(
+      Tag$Menu(
         id = "menu2",
         #        isOpen = getState("isopen"),
         # onOpen = list(eval = "() => {states.text.set('CLOSE ME'); setState('isopen', true)}"),
         # onClose = list(eval = "() => {setState('text', 'OPEN ME'); setState('isopen', false)}"),
         onOpen = jseval("() => {setState('isopen', true)}"),
         onClose = jseval("() => {setState('isopen', false)}"),
-        React$MenuButton(
+        Tag$MenuButton(
           colorScheme = "blue",
           isActive = getState("isopen"),
           getState("text")
         ),
-        React$MenuList(
+        Tag$MenuList(
           minWidth = "240px",
-          React$MenuOptionGroup(
+          Tag$MenuOptionGroup(
             title = "Order",
             type = "radio",
-            React$MenuItemOption(
+            Tag$MenuItemOption(
               value = "asc",
               isChecked = TRUE,
               "Ascending"
             ),
-            React$MenuItemOption(
+            Tag$MenuItemOption(
               value = "desc",
               "Descending"
             )
           ),
-          React$MenuDivider(),
-          React$MenuOptionGroup(
+          Tag$MenuDivider(),
+          Tag$MenuOptionGroup(
             title = "Country",
             type = "checkbox",
-            React$MenuItemOption(
+            Tag$MenuItemOption(
               value = "email",
               isChecked = TRUE,
               "Email"
             ),
-            React$MenuItemOption(
+            Tag$MenuItemOption(
               value = "phone",
               "Phone"
             )
@@ -98,7 +98,7 @@ ui <- chakraPage(
     ),
 
 #    HTML(as.character(tags$p(id="ii", class="chakraTag", "data-shinyvalue"="a"))),
-React$Button(
+Tag$Button(
   id = "button",
   className = "action-button",
   "CLICK MMMMMMMEEEEEEE"
@@ -106,7 +106,7 @@ React$Button(
 
 # tags$div(list(eval = '(() => {if(!window.SSTATE){window.SSTATE={"st":React.useState(2)};console.log(\"OOOOOOOOO\",window.SSTATE)};console.log(\"SSSTTTAAATTTEEES\", typeof 2)})()')),
     # withStates(
-    #   React$Button(
+    #   Tag$Button(
     #     onClick = list(eval = "() => states.uuu.set('AAAA')"),
     #     getState("uuu")
     #   ),
@@ -114,19 +114,19 @@ React$Button(
     # ),
     #
     withStates(
-      React$Fragment(
-      React$Box(
+      Tag$Fragment(
+      Tag$Box(
         # list(eval = "(() => {alert(JSON.stringify(states))})()"),
         #list(eval = "(() => {let s = {...states.boxtext}; let x = states.boxtext.set; states.boxtext.set = (v) => {states.chakrazzz = states.cc; alert('ho'); bind = false; x(chakraComponent(JSON.parse(JSON.stringify(v)), $.extend(states, {boxtext:s}), {}))}; states.boxtext = s;})()"),
         #onClick = list(eval = "() => Shiny.setInputValue('input3', getState('boxtext'))"),#states.boxtext.set(React.createElement('span',{},['aa']))"),#"() => states.boxtext.set($($.parseHTML('<span>aaaa</span>')).toArray())"),
         getState("boxtext")#list(eval = "states.chakrazzz.get().toString()")
       ),
-      React$Button(
+      Tag$Button(
          onClick = jseval("() => {setState('hidden', false);setState('boxtext', 'PPPPPPPPPP')}"),
 #        onClick = list(eval = "() => {console.log(states.chakrazzz.get());let x = states.chakrazzz.set;states.chakrazzz.set = (v) =>{alert('hi');x(v)}}"),
         getState("AA")
       ),
-      React$Checkbox(
+      Tag$Checkbox(
         id = "hiddencheckbox",
         "data-x" = 3,
         hidden = getState("hidden"),
@@ -141,7 +141,7 @@ React$Button(
     ),
 
     # withStates(
-    #   React$Input(
+    #   Tag$Input(
     #     id = "ooo",
     #     placeholder = getState("placeholder")
     #   ),
@@ -151,14 +151,14 @@ React$Button(
     # ),
 
     # withStates(
-    #   React$Stack(
-    #     React$Input(
+    #   Tag$Stack(
+    #     Tag$Input(
     #       className = "not",
     #       value = getState("helloworld"),
     #       isReadOnly = TRUE,
     #       placeholder="Welcome"
     #     ),
-    #     React$Button(
+    #     Tag$Button(
     #       onClick = list(eval = "states.clipboard.onCopy"),
     #       ml = 2,
     #       list(eval = "states.clipboard.hasCopied ? 'Copied' : 'Copy'")
@@ -171,14 +171,14 @@ React$Button(
     # ),
 
     # withDisclosure(
-    #   React$Fragment(
-    #     React$Button(
+    #   Tag$Fragment(
+    #     Tag$Button(
     #       onClick =  list(eval = "component.disclosure.onToggle"),# list(disclosure = "onToggle"),
     #       "Click me!"
     #     ),
-    #     React$Fade(
+    #     Tag$Fade(
     #       "in" = list(disclosure = "isOpen"),
-    #       React$Box(
+    #       Tag$Box(
     #         p="40px",
     #         color="white",
     #         mt="4",
@@ -193,17 +193,17 @@ React$Button(
 
 withStates(
   tags$div(
-    React$Button(
+    Tag$Button(
       onClick = jseval("() => console.log(states.disclosure.get())"),
       "TYPEOF"
     ),
-    React$Button(
+    Tag$Button(
       onClick =  getHook("disclosure", "onToggle"),
       "Click me!!!!!!!!!!!!!!!!!"
     ),
-    React$Fade(
+    Tag$Fade(
       "in" = getHook("disclosure", "isOpen"),
-      React$Box(
+      Tag$Box(
         p="40px",
         color="white",
         mt="4",
@@ -217,17 +217,17 @@ withStates(
   states = list(disclosure = useDisclosure())
 ),
 
-    React$Tabs(
+    Tag$Tabs(
       id = "tabs",
-      React$TabList(
-        React$Tab("One"),
-        React$Tab("Two")
+      Tag$TabList(
+        Tag$Tab("One"),
+        Tag$Tab("Two")
       ),
-      React$TabPanels(
-        React$TabPanel(
+      Tag$TabPanels(
+        Tag$TabPanel(
           tags$p("one")
         ),
-        React$TabPanel(
+        Tag$TabPanel(
           tags$p("two")
         )
       )
@@ -236,26 +236,26 @@ withStates(
 
     chakraDrawer(
       "drawer",
-      openButton = React$Button("Open"),
+      openButton = Tag$Button("Open"),
       options = chakraDrawerOptions(placement = "right"),
-      header = React$DrawerHeader("I'm the header"),
-      body = React$DrawerBody(
-        React$Box("I'm the body")
+      header = Tag$DrawerHeader("I'm the header"),
+      body = Tag$DrawerBody(
+        Tag$Box("I'm the body")
       ),
-      footer = React$DrawerFooter(
-        React$Button("Close", action = "close", variant = "outline")
+      footer = Tag$DrawerFooter(
+        Tag$Button("Close", action = "close", variant = "outline")
       )
     ),
 
-    React$CheckboxGroup(
+    Tag$CheckboxGroup(
       id = "checkboxgroup",
       defaultValue = c("nar => uto", "sasuke"),
-      React$HStack(
-        React$Checkbox(
+      Tag$HStack(
+        Tag$Checkbox(
           value = "nar => uto",
           "Naruto"
         ),
-        React$Checkbox(
+        Tag$Checkbox(
           value = "sasuke",
           "Sasuke"
         )
@@ -276,43 +276,43 @@ withStates(
       )
     ),
 
-    # React$RadioGroup(
+    # Tag$RadioGroup(
     #   id = "radio",
     #   value = "1",
     #   name = "xx",
-    #   React$Stack(
+    #   Tag$Stack(
     #     direction = "row",
-    #     React$Radio(
+    #     Tag$Radio(
     #       value = "1",
     #       "First"
     #     ),
-    #     React$Radio(
+    #     Tag$Radio(
     #       value = "2",
     #       "Second"
     #     ),
-    #     React$Radio(
+    #     Tag$Radio(
     #       value = "3",
     #       "Third"
     #     )
     #   )
     # ),
 
-#React$XXIcon(),
+#Tag$XXIcon(),
 
-React$Menu(
+Tag$Menu(
   id = "mm",
-  React$MenuButton(
+  Tag$MenuButton(
     colorScheme = "red",
-    icon = React$HamburgerIcon()
+    icon = Tag$HamburgerIcon()
     #text = list(textWhenOpen = "Close me", textWhenClose = "Open me"),
   ),
-  React$MenuList(
+  Tag$MenuList(
     minWidth = "240px",
-    React$MenuItem(
+    Tag$MenuItem(
       value = "item1",
       "Item1"
     ),
-    React$MenuItem(
+    Tag$MenuItem(
       value = "item2",
       "Item2"
     )
@@ -320,38 +320,38 @@ React$Menu(
 ),
 
 
-    React$Menu(
+    Tag$Menu(
       id = "menu",
-      React$MenuButton(
+      Tag$MenuButton(
         colorScheme = "blue",
         text = list(textWhenOpen = "Close", textWhenClose = "Open")
 #        "My menu"
       ),
-      React$MenuList(
+      Tag$MenuList(
         minWidth = "240px",
-        React$MenuOptionGroup(
+        Tag$MenuOptionGroup(
           title = "Order",
           type = "radio",
-          React$MenuItemOption(
+          Tag$MenuItemOption(
             value = "asc",
             isChecked = TRUE,
             "Ascending"
           ),
-          React$MenuItemOption(
+          Tag$MenuItemOption(
             value = "desc",
             "Descending"
           )
         ),
-        React$MenuDivider(),
-        React$MenuOptionGroup(
+        Tag$MenuDivider(),
+        Tag$MenuOptionGroup(
           title = "Country",
           type = "checkbox",
-          React$MenuItemOption(
+          Tag$MenuItemOption(
             value = "email",
             isChecked = TRUE,
             "Email"
           ),
-          React$MenuItemOption(
+          Tag$MenuItemOption(
             value = "phone",
             "Phone"
           )
@@ -361,13 +361,13 @@ React$Menu(
 
     chakraCheckboxWithChildren(
       "cwc",
-      React$Checkbox(
+      Tag$Checkbox(
         "Parentxxx checkbox"
       ),
-      React$Checkbox(
+      Tag$Checkbox(
         "Child checkbox 1"
       ),
-      React$Checkbox(
+      Tag$Checkbox(
         isChecked = TRUE,
         "Child checkbox 2"
       )
@@ -378,26 +378,26 @@ React$Menu(
 
     tags$input(id="ii", type="text", value="vv"),
     HTML("uuu"),
-    React$Input(
+    Tag$Input(
       id = "theinput",
       placeholder = "The input",
       value = "x"
     ),
-    React$InputGroup(
-      React$InputLeftElement(
+    Tag$InputGroup(
+      Tag$InputLeftElement(
         pointerEvents = "none",
-        children = React$PhoneIcon()
+        children = Tag$PhoneIcon()
       ),
-      # React$InputLeftAddon(
+      # Tag$InputLeftAddon(
       #   children="+234"
       # ),
-      React$Input(
+      Tag$Input(
         id = "theinput2",
         value = "a => b"
       )
     ),
 
-    React$Button(
+    Tag$Button(
       colorScheme = "red",
       onClick = "() => console.log('ok')",
       "console log"
@@ -405,35 +405,35 @@ React$Menu(
 
 chakraAlertDialog(
   inputId = "alert",
-  openButton = React$Button(
+  openButton = Tag$Button(
     "Delete customer",
     colorScheme = "red"
   ),
-  header = React$AlertDialogHeader(
+  header = Tag$AlertDialogHeader(
     "Delete customer", fontSize = "lg", fontWeight = "bold"
   ),
-  body = React$AlertDialogBody("Are you sure? You can't undo this action afterwards"),
+  body = Tag$AlertDialogBody("Are you sure? You can't undo this action afterwards"),
   footerButtons = list(
-    React$Button(
+    Tag$Button(
       "Cancel", action = "cancel", id = "cancel", value = "CANCEL"
     ),
-    React$Button(
+    Tag$Button(
       "Delete", action = "disable", id = "delete", colorScheme = "red", ml = 3
     ),
-    React$Button(
+    Tag$Button(
       "unmount", action = "remove", value = "xx"
     )
   )
 ),
 
-  React$Checkbox(
+  Tag$Checkbox(
     id = "checkbox",
     isChecked = TRUE,
     "CHECKBOX"
   ),
 
 withStates(
-  React$Checkbox(
+  Tag$Checkbox(
     id = "checkbox2",
     onChange = jseval(
       "(event) => setState('checkboxtext', event.target.checked ? 'UUUU' : 'VVV')"
@@ -444,21 +444,21 @@ withStates(
                 checkboxtext2 = jseval("getState('checkboxtext') + 'UUUUU'"))
 ),
 
-React$Checkbox(
+Tag$Checkbox(
   id = "checkbox3",
   onChange = jseval("(e) => alert('hi')"),
   "CHECKBOX3"
 ),
 
 withStates(
-  React$Fragment(
-    React$Input(
+  Tag$Fragment(
+    Tag$Input(
       id = "input3",
       value = getState("inputvalue"),#list(eval = "'$' + states.inputvalue.get()"),#getState("inputvalue")
       onChange = jseval("(event) => setState('inputvalue', event.target.value.replace('$', ''))"),
       shinyValue = TRUE
     ),
-    React$Button(
+    Tag$Button(
       colorScheme = "orange",
       onClick = jseval("() => {console.log(Hooks['useDisclosure']); setState('inputvalue', 'IIIIIIIIIIII')}")
     )
@@ -498,46 +498,46 @@ server <- function(input, output, session){
 
 #  observeEvent(input[["button"]],{
     output[["ui"]] <- renderUI({
-#      chakraComponent("iiii", React$Button("TEST"))
+#      chakraComponent("iiii", Tag$Button("TEST"))
       actionButton("red", "CHAKRA BUTTON")
     })
  # })
 
     observeEvent(input[["button"]],{
       print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
-      checkbox <- React$Checkbox(
+      checkbox <- Tag$Checkbox(
         id = "zzz",
         onChange = list(eval = "(event) => {alert(states.chakrazzz)}"),
         "NEWCHECKBOX"
       )
       checkbox[["hasStates"]] = TRUE
-      scripttag <- React$ScriptTag(dangerouslySetInnerHTML = list(eval="{__html: 'console.log(\"SSSTTTAAATTTEEES\", states)'}"))
+      scripttag <- Tag$ScriptTag(dangerouslySetInnerHTML = list(eval="{__html: 'console.log(\"SSSTTTAAATTTEEES\", states)'}"))
       scripttag <- tags$div(list(eval = '(() => {if(!states.chakrazzz){states.chakrazzz = STATE};console.log(\"SSSTTTAAATTTEEES\", states)})()'))
       scripttag[["hasStates"]] = TRUE
-      component <- React$Fragment(scripttag,checkbox)
+      component <- Tag$Fragment(scripttag,checkbox)
       setReactState(session, "id", "boxtext",
-                    React$Fragment(
+                    Tag$Fragment(
                       #tags$div(list(eval = "$(getState('span')).trigger('xx')")),
-                      React$Button(
+                      Tag$Button(
                         onClick = jseval("() => {$('#myspan').text('SSSSSSSS')}"),
                         paste0("SETSTATEAA", input[["button"]])
                       ),
-                    React$Checkbox(
+                    Tag$Checkbox(
                       id = "uuuuu",
                       isChecked = TRUE,
                       onChange = jseval("(event) => {setState('AA','LLL');alert(states.AA.get())}"),
                       HTML("<span id='myspan'>SPAN</span>") #getState('boxtext2')
                     ))
 
-                    # React$CheckboxGroup(
+                    # Tag$CheckboxGroup(
                     #   id = "zzz",
                     #   defaultValue = c("nar => uto", "sasuke"),
-                    #   React$HStack(
-                    #     React$Checkbox(
+                    #   Tag$HStack(
+                    #     Tag$Checkbox(
                     #       value = "nar => uto",
                     #       "Naruto"
                     #     ),
-                    #     React$Checkbox(
+                    #     Tag$Checkbox(
                     #       value = "sasuke",
                     #       "Sasuke"
                     #     )
@@ -548,18 +548,18 @@ server <- function(input, output, session){
                     #   onClick = list(eval = "() => states.boxtext.set('YYYOOOO')"),
                     #   "QQQQQQQQQ"
                     # )
-                    # React$Input(
+                    # Tag$Input(
                     #   id = "xxxxxxxxxxxxxxxxxx",
                     #   placeholder = "AAAAAAAAAAAAAAAAAAAA",
                     #   value = "x"
                     # )
-                    # React$Stack(
-                    #   React$Button(
+                    # Tag$Stack(
+                    #   Tag$Button(
                     #     onClick = list(eval = "() => states.boxtext.set('YYYOOOO')"),
                     #     "OOOOOOOO"
                     #   ),
                     #   withStates(
-                    #     React$Box(
+                    #     Tag$Box(
                     #       "AAAA"#list(eval = "states.boxtext2.get()")
                     #     ), states = NULL#list(boxtext2 = "IIIIIIIII")
                     #   ),
@@ -570,7 +570,7 @@ server <- function(input, output, session){
       #   title = "Important message",
       #   "This is an important message!",
       #   footer =
-      #     chakraComponent("xx", React$Button("data-dismiss" = "modal", "Dismiss"))
+      #     chakraComponent("xx", Tag$Button("data-dismiss" = "modal", "Dismiss"))
       # ))
     })
 

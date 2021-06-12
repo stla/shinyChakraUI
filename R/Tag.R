@@ -16,6 +16,9 @@ isCapitalized <- function(word){
   }
 }
 
+#' @export
+`[[.ReactTagBuilder` <- `$.ReactTagBuilder`
+
 #' Title
 #' @description xx
 #' @export

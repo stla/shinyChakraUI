@@ -37,7 +37,7 @@ isChakraCheckbox <- function(x){
 }
 
 isReactComponent <- function(x){
-  inherits(x, "reactR_component")
+  inherits(x, "ReactTag")
 }
 
 encode <- function(x){
@@ -113,7 +113,7 @@ makeScriptTag <- function(script){
     script[["children"]] <- list()
     script
   }else{
-    React$ScriptTag(
+    Tag$ScriptTag(
       dangerouslySetInnerHTML = list("__html" = URLencode(script))
     )
   }
@@ -145,7 +145,7 @@ unclassComponent <- function(component, inputId, call){
     # }
   }
   if(inherits(component, "shiny.tag.list")){
-    component <- do.call(React$Fragment, component)
+    component <- do.call(Tag$Fragment, component)
   }
   #states <- attr(component, "states")
   Checkboxes <- RadioGroups <- dependencies <- NULL
@@ -159,7 +159,7 @@ unclassComponent <- function(component, inputId, call){
       "Shiny.inputBindings.bindingNames['shiny.sliderInput'].binding.initialize(document.getElementById('%s'));",
       id
     )
-    component <- React$Fragment(
+    component <- Tag$Fragment(
       list("__html" = URLencode(as.character(component))),
       makeScriptTag(script)
     )
@@ -175,7 +175,7 @@ unclassComponent <- function(component, inputId, call){
         id
       )
       htmltools::htmlDependencies(component) <- NULL
-      component <- React$Fragment(
+      component <- Tag$Fragment(
         component, makeScriptTag(script)
       )
     }else if(grepl("shiny-date-input", component[["attribs"]][["class"]])){
@@ -184,7 +184,7 @@ unclassComponent <- function(component, inputId, call){
         component[["attribs"]][["id"]]
       )
       htmltools::htmlDependencies(component) <- NULL
-      component <- React$Fragment(
+      component <- Tag$Fragment(
         component, makeScriptTag(script)
       )
     }else if(grepl("shiny-date-range-input", component[["attribs"]][["class"]])){
@@ -193,7 +193,7 @@ unclassComponent <- function(component, inputId, call){
         component[["attribs"]][["id"]]
       )
       htmltools::htmlDependencies(component) <- NULL
-      component <- React$Fragment(
+      component <- Tag$Fragment(
         component, makeScriptTag(script)
       )
     }else{
@@ -387,7 +387,7 @@ unclassComponent <- function(component, inputId, call){
       '$("#%s").val("%s");', attribs[["id"]], URLdecode(attribs[["value"]])
     )
     component[["attribs"]][["value"]] <- NULL
-    component <- React$Fragment(
+    component <- Tag$Fragment(
       component, makeScriptTag(script)
     )
   }else if(

@@ -162,7 +162,7 @@ withStates <- function(component, states){
   #print(ls(sys.frame(-1)))
   #print(lapply(sys.frames(),ls))
   if(component[["name"]] == "Menu"){
-    component <- React$Fragment(component)
+    component <- Tag$Fragment(component)
   }
   # component[["states"]] <-
   #   URLencode(as.character(toJSON(states, auto_unbox = TRUE)))
@@ -273,7 +273,7 @@ chakraComponent <- function(inputId, ...){
   # }
   # rm(list = usedStates, envir = usedStatesEnvir)
   configuration <- unclassComponent(
-    React$ChakraProvider(do.call(React$Fragment, component)),
+    Tag$ChakraProvider(do.call(Tag$Fragment, component)),
     inputId,
     "chakraComponent"
   )
@@ -750,11 +750,11 @@ chakraAlertDialogInput <- function(
   }
   header[["name"]] <- "AlertDialogHeader"
   body[["name"]] <- "AlertDialogBody"
-  component <- React$Fragment(
+  component <- Tag$Fragment(
     openButton,
-    React$AlertDialog(
-      React$AlertDialogOverlay(
-        React$AlertDialogContent(
+    Tag$AlertDialog(
+      Tag$AlertDialogOverlay(
+        Tag$AlertDialogContent(
           header,
           body,
           asShinyTag(
@@ -792,7 +792,7 @@ chakraAlertDialog <- function(
   openButton,
   header,
   body,
-  footerButtons = React$Button("Cancel", action = "cancel", value = "cancel")
+  footerButtons = Tag$Button("Cancel", action = "cancel", value = "cancel")
 ){
   stopifnot(isChakraButton(openButton))
   openButton[["attribs"]][["action"]] <- "open"
@@ -820,11 +820,11 @@ chakraAlertDialog <- function(
   }
   component <- tags$div(
     id = inputId,
-    React$Fragment(
+    Tag$Fragment(
       openButton,
-      React$AlertDialog(
-        React$AlertDialogOverlay(
-          React$AlertDialogContent(
+      Tag$AlertDialog(
+        Tag$AlertDialogOverlay(
+          Tag$AlertDialogContent(
             header,
             body,
             asShinyTag(
@@ -983,9 +983,9 @@ chakraDrawer <- function(
     name = "Drawer",
     attribs = options,
     children = list(
-      React$DrawerOverlay(),
-      React$DrawerContent(
-        if(closeButton) React$DrawerCloseButton(),
+      Tag$DrawerOverlay(),
+      Tag$DrawerContent(
+        if(closeButton) Tag$DrawerCloseButton(),
         header,
         body,
         footer
@@ -995,7 +995,7 @@ chakraDrawer <- function(
   class(drawer) <- "shiny.tag"
   component <- tags$div(
     id = inputId,
-    React$Fragment(
+    Tag$Fragment(
       openButton,
       drawer
     )
@@ -1027,9 +1027,9 @@ chakraDrawerInput <- function(
     name = "Drawer",
     attribs = options,
     children = list(
-      React$DrawerOverlay(),
-      React$DrawerContent(
-        if(closeButton) React$DrawerCloseButton(),
+      Tag$DrawerOverlay(),
+      Tag$DrawerContent(
+        if(closeButton) Tag$DrawerCloseButton(),
         header,
         body,
         footer
@@ -1037,7 +1037,7 @@ chakraDrawerInput <- function(
     )
   )
   class(drawer) <- "shiny.tag"
-  component <- React$Fragment(
+  component <- Tag$Fragment(
     openButton,
     drawer
   )

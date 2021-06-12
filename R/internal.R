@@ -1,3 +1,5 @@
+emptyNamedList <- `names<-`(list(), character(0L))
+
 randomString <- function(size){
   paste0(
     sample(c(letters,LETTERS,0:9), size, replace = TRUE),

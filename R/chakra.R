@@ -830,7 +830,7 @@ chakraAlertDialog <- function(
             asShinyTag(
               list(
                 name = "AlertDialogFooter",
-                attribs = list(),
+                attribs = emptyNamedList,
                 children = footerButtons
               )
             )

@@ -899,15 +899,20 @@ const chakraComponent = (
   }
   if(component.widget === "alertdialog"){
     delete component.widget;
+    shinyValue.add(props.id, null);
     const [isOpen, setIsOpen] = React.useState(false);
     const [disabled, setDisabled] = React.useState(false);
-    const setShinyValue = value => Shiny.setInputValue(props.id, value);
+    const setShinyValue = value => {
+      if(value){
+        Shiny.setInputValue(props.id, value);
+        shinyValue.set(props.id, value);
+      }
+    };
     const onClose = () => {
       setIsOpen(false);
     };
     const onCloseButton = (e) => {
-      let value = e.currentTarget.dataset.val;
-      if(value) setShinyValue(value);
+      setShinyValue(e.currentTarget.dataset.val);
       setIsOpen(false);
     };
     const cancelRef = React.useRef();
@@ -921,8 +926,7 @@ const chakraComponent = (
       },
       DisableButton: {
         onClick: (e) => {
-          let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(value);
+          setShinyValue(e.currentTarget.dataset.val);
           setDisabled(true);
           setIsOpen(false);
         }
@@ -933,8 +937,7 @@ const chakraComponent = (
       },
       RemoveButton: {
         onClick: (e) => {
-          let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(value);
+          setShinyValue(e.currentTarget.dataset.val);
           setIsOpen(false);
           $("#" + props.id).remove();
         }
@@ -955,8 +958,7 @@ const chakraComponent = (
       },
       DisableIconButton: {
         onClick: (e) => {
-          let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(value);
+          setShinyValue(e.currentTarget.dataset.val);
           setDisabled(true);
           setIsOpen(false);
         }
@@ -967,8 +969,7 @@ const chakraComponent = (
       },
       RemoveIconButton: {
         onClick: (e) => {
-          let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(value);
+          setShinyValue(e.currentTarget.dataset.val);
           setIsOpen(false);
           $("#" + props.id).remove();
         }
@@ -992,6 +993,7 @@ const chakraComponent = (
     delete component.widget;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const btnRef = React.useRef();
+    shinyValue.add(props.id, null);
     const setShinyValue = (value) => Shiny.setInputValue(props.id, value);
     patch = {
       OpenButton: {
@@ -1009,7 +1011,10 @@ const chakraComponent = (
       Button: {
         onClick: (e) => {
           let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(value);
+          if(value){
+            setShinyValue(value);
+            shinyValue.set(props.id, value);
+          }
         }
       }
     };  
@@ -1131,8 +1136,7 @@ const chakraComponent = (
     };
     props.className = "chakraTag";
     props["data-shinyinitvalue"] = defaultIndex;
-  }
-  if(props.class === "checkboxWithChildren"){
+  }else if(props.class === "checkboxWithChildren"){
     let state = makeCheckboxWithChildren(component, shinyValue);
     shinyValue.add(props.id, state);
     props.className = "chakraTag";
@@ -1147,8 +1151,7 @@ const chakraComponent = (
     //     <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
     //   ]
     // };
-  }
-  if(
+  }else if(
     component.name === "Checkbox" && 
     //props.shinyValue !== false && 
     !component.dontprocess &&
@@ -1339,7 +1342,7 @@ const chakraComponent = (
         let x = component.hasStates || isJseval(component.children[i]) ? states : {};
         if(props.shinyValue === false && isTag(component.children[i])){
           let attribs = component.children[i].attribs;
-          if(Array.isArray(attribs) && attribs.length === 0){
+          if(isEmptyArray(attribs)){
             attribs = {};
           }        
           attribs.shinyValue = false;

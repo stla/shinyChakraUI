@@ -1267,46 +1267,41 @@ const chakraComponent = (
   }else if(component.name === "Input" && props.id && props.shinyValue !== false){
     props.className = "chakraTag";
     props["data-shinyinitvalue"] = props.value;
+    shinyValue.add(props.id, props.value);
     let f = props.onChange;
     if(Object.keys(states).length){
       // let chakraState = states.chakraState;
       // let stateValue = chakraState.get();
       // stateValue[props.id] = props.value;  
       let chakraState = states["chakra" + props.id];
-      //chakraState.set("a");
-      if(chakraState.get){
-        let setValue;
-        if(chakraState.set){
-          props.value = chakraState.get();
-          setValue = value => {
-            chakraState.set(value);
+      let setValue;
+      if(chakraState.set) {
+        props.value = chakraState.get();
+        setValue = value => {
+          chakraState.set(value);
+          Shiny.setInputValue(props.id, value);
+          shinyValue.set(props.id, value);
+        };
+      }else{
+        const getter = () => {
+          let value = chakraState.get();
+          if(Shiny.shinyapp.isConnected()) {
             Shiny.setInputValue(props.id, value);
-          };
-        }else{
-          const getter = () => {
-            let value = chakraState.get(); 
-            if(Shiny.shinyapp.isConnected()){
-              Shiny.setInputValue(props.id, value);
-            } 
-            return value;
-          };
-          props.value = getter();
-          setValue = value => {};
-        }
-        if(f){
-          props.onChange = (event) => {
-            f(event);
-            setValue(event.target.value);
-          };
-        }else{
-          props.onChange = (event) => {
-            setValue(event.target.value);
-          };
-        }
+          }
+          shinyValue.set(props.id, value);
+          return value;
+        };
+        props.value = getter();
+        setValue = value => { };
+      }
+      if(f){
+        props.onChange = (event) => {
+          f(event);
+          setValue(event.target.value);
+        };
       }else{
         props.onChange = (event) => {
-          Shiny.setInputValue(props.id, event.target.value);
-          f(event);
+          setValue(event.target.value);
         };
       }
       //delete states["chakra" + props.id];
@@ -1318,12 +1313,14 @@ const chakraComponent = (
         props.onChange = (event) => {
           setValue(event.target.value);
           Shiny.setInputValue(props.id, event.target.value);
+          shinyValue.set(props.id, event.target.value);
           f(event);
         };
       }else{
         props.onChange = (event) => {
           setValue(event.target.value);
           Shiny.setInputValue(props.id, event.target.value);
+          shinyValue.set(props.id, event.target.value);
         };
       }
     }

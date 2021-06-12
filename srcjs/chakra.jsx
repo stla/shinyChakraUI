@@ -363,7 +363,9 @@ const makeMenuComponent = (menu, shinyValue) => {
 
 //const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
-const makeCheckboxWithChildren = div => {
+const isEmptyArray = x => (Array.isArray(x) && x.length === 0);
+
+const makeCheckboxWithChildren = (div, shinyValue) => {
   let childCheckboxes = JSON.parse(JSON.stringify(div.children[1].children));
   let n = childCheckboxes.length;
   let state = [];
@@ -371,7 +373,7 @@ const makeCheckboxWithChildren = div => {
   for(let i = 0; i < n; i++){
     indices.push(i);
     let attribs = childCheckboxes[i].attribs;
-    if(Array.isArray(attribs) && attribs.length === 0){
+    if(isEmptyArray(attribs)){
       childCheckboxes[i].attribs = {};
     }
     state.push(attribs.isChecked === true);
@@ -402,7 +404,7 @@ const makeCheckboxWithChildren = div => {
   //   </Checkbox>
 
   let attribs = parentCheckbox.attribs;
-  if(Array.isArray(attribs) && attribs.length === 0){
+  if(isEmptyArray(attribs)){
     parentCheckbox.attribs = {};
     attribs = parentCheckbox.attribs;
   }
@@ -418,6 +420,7 @@ const makeCheckboxWithChildren = div => {
       checkedState[i][1](checked);
     }
     console.log("state", state);
+    shinyValue.set(div.attribs.id, state);
     xsetCheckedItems(state);
     Shiny.setInputValue(inputId, {value: state, widget: "checkboxWithChildren"});
   };
@@ -463,6 +466,7 @@ const makeCheckboxWithChildren = div => {
               setIsChecked(e.target.checked);
               console.log("i", i);
               xcheckedItems[i] = e.target.checked;
+              shinyValue.set(div.attribs.id, xcheckedItems);
               xsetCheckedItems(xcheckedItems);
               Shiny.setInputValue(inputId, {value: xcheckedItems, widget: "checkboxWithChildren"});
             }
@@ -1124,7 +1128,8 @@ const chakraComponent = (
     props["data-shinyinitvalue"] = props.defaultIndex ? props.defaultIndex : 0;
   }
   if(props.class === "checkboxWithChildren"){
-    let state = makeCheckboxWithChildren(component);
+    let state = makeCheckboxWithChildren(component, shinyValue);
+    shinyValue.add(props.id, state);
     props.className = "chakraTag";
     delete props.class;
     props["data-shinyinitvalue"] = JSON.stringify(state);

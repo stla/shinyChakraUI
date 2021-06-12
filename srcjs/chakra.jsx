@@ -703,29 +703,41 @@ const appendStates = (component, states, inputId) => {
   if(component.attribs.id && component.attribs.shinyValue !== false){
     let state = "chakra" + component.attribs.id;
     if(component.name === "Input"){
-      if(!isJseval(component.attribs.value)){
-        states[state] = makeState(component.attribs.value, states, inputId);
-      }else{
-//        if(!component.attribs.onChange){
-          let code = decodeURI(component.attribs.value.__eval);
-          let value = Eval(code, states, Hooks, getState, setState, inputId);
-          if(value.name){ // non, pas logique !
-            console.log("oKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKk");
-            states[state] = states[value.name];
-            component.attribs.value = value.get();
-          }else{
-            component.attribs.value = value;
-            states[state] = {
-              get: () => Eval(code, states, Hooks, getState, setState, inputId), 
-              set: () => {}
-            };
-          }
-          //states[state].get = () => component.attribs.value.eval;
-          //component.reactiveValue = true;
-        // }else{
-        //   states[state] = makeState(component.attribs.value);
-        // }
+      let value = component.attribs.value;
+      if(typeof value === "string"){
+        value = decodeURI(value);
       }
+      states[state] = makeState(value, states, inputId);
+      // let value = component.attribs.value;
+      // if(isJseval(value)){
+      //   let code = decodeURI(value.__eval);
+      //   //value = Eval(code, states, Hooks, getState, setState, inputId);
+      //   states[state] = makeState(Eval(code, states, Hooks, getState, setState, inputId), states, inputId);
+      // }
+//      states[state] = makeState(value, states, inputId);
+//       if(!isJseval(component.attribs.value)){
+//         states[state] = makeState(component.attribs.value, states, inputId);
+//       }else{
+// //        if(!component.attribs.onChange){
+//           let code = decodeURI(component.attribs.value.__eval);
+//           let value = Eval(code, states, Hooks, getState, setState, inputId);
+//           // if(value.name){ // non, pas logique !
+//           //   console.log("oKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKk");
+//           //   states[state] = states[value.name];
+//           //   component.attribs.value = value.get();
+//           // }else{
+//             component.attribs.value = value;
+//             states[state] = {
+//               get: () => Eval(code, states, Hooks, getState, setState, inputId), 
+//               set: () => {}
+//             };
+//           // }
+//           //states[state].get = () => component.attribs.value.eval;
+//           //component.reactiveValue = true;
+//         // }else{
+//         //   states[state] = makeState(component.attribs.value);
+//         // }
+//       }
     }
     // else if(component.name === "Checkbox"){
     //   if(typeof component.attribs.isChecked === "object"){
@@ -1263,24 +1275,28 @@ const chakraComponent = (
       let chakraState = states["chakra" + props.id];
       //chakraState.set("a");
       if(chakraState.get){
-        const getter = () => {
-          let value = chakraState.get(); 
-          setTimeout(function(){Shiny.setInputValue(props.id, value)}); 
-          return value;
-        };
-        props.value = getter();//chakraState.get();
-        const setValue = value => {
-          console.log("ONCHANGE");
-          chakraState.set(value);
-          //Shiny.setInputValue(props.id, value);
-          // let stateValue = chakraState.get();
-          // stateValue[props.id] = value;  
-          // chakraState.set(stateValue);
-        };
+        let setValue;
+        if(chakraState.set){
+          props.value = chakraState.get();
+          setValue = value => {
+            chakraState.set(value);
+            Shiny.setInputValue(props.id, value);
+          };
+        }else{
+          const getter = () => {
+            let value = chakraState.get(); 
+            if(Shiny.shinyapp.isConnected()){
+              Shiny.setInputValue(props.id, value);
+            } 
+            return value;
+          };
+          props.value = getter();
+          setValue = value => {};
+        }
         if(f){
           props.onChange = (event) => {
-            setValue(event.target.value);
             f(event);
+            setValue(event.target.value);
           };
         }else{
           props.onChange = (event) => {
@@ -1293,8 +1309,8 @@ const chakraComponent = (
           f(event);
         };
       }
-      delete states["chakra" + props.id];
-      return React.createElement(Input, props);
+      //delete states["chakra" + props.id];
+      //return React.createElement(Input, props);
     }else{
       const [value, setValue] = React.useState(props.value);
       props.value = value;

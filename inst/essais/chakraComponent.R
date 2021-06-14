@@ -48,6 +48,32 @@ ui <- chakraPage(
       chakraComponent(
         "id",
 
+        Tag$Popover(
+          id = "popover",
+          placement = "top-start",
+          Tag$PopoverTrigger(
+            Tag$Button(
+              "POPOVER"
+            )
+          ),
+          Tag$PopoverContent(
+            Tag$PopoverHeader(
+              fontWeight = "semibold",
+              "Popover placement"
+            ),
+            Tag$PopoverArrow(),
+            Tag$PopoverCloseButton(),
+            Tag$PopoverBody(
+              "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore.",
+              Tag$Button(
+                value = "popover value",
+                "Popover value"
+              )
+            )
+          )
+        ),
+
         withStates(
           Tag$Box(
             bg = "tomato",
@@ -475,15 +501,19 @@ ui <- chakraPage(
             Tag$Input(
               id = "input3",
               value = getState("inputvalue"),#list(eval = "'$' + states.inputvalue.get()"),#getState("inputvalue")
-              onChange = jseval("(event) => setState('inputvalue', event.target.value.replace('$', ''))"),
+              onChange = jseval("(event) => {setState('inputvalue', event.target.value)}"),
               shinyValue = TRUE
             ),
             Tag$Button(
               colorScheme = "orange",
-              onClick = jseval("() => {console.log(Hooks['useDisclosure']); setState('inputvalue', 'IIIIIIIIIIII')}")
+              onClick = jseval("() => {setState('inputvalue', 'IIIIIIIIIIII')}")
+            ),
+            Tag$Button(
+              onClick = jseval("() => console.log(getState('inputvalue'))"),
+              "CONSOLE LOG inputvalue.get()"
             )
           ),
-          states = list(inputvalue = "INPUTVALUE")
+          states = list(inputvalue = "INPUTVALUE => x")
         )
 
 

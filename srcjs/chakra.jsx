@@ -872,7 +872,7 @@ const chakraComponent = (
     // }
   }
   let props = component.attribs;
-  if(Array.isArray(props) && props.length === 0){
+  if(isEmptyArray(props)){
     props = {};
   }
   for(const key in props){
@@ -915,7 +915,7 @@ const chakraComponent = (
     const [isOpen, setIsOpen] = React.useState(false);
     const [disabled, setDisabled] = React.useState(false);
     const setShinyValue = value => {
-      if(value){
+      if(value !== undefined){
         Shiny.setInputValue(props.id, value);
         shinyValue.set(props.id, value);
       }
@@ -1023,7 +1023,7 @@ const chakraComponent = (
       Button: {
         onClick: (e) => {
           let value = e.currentTarget.dataset.val;
-          if(value){
+          if(value !== undefined){
             setShinyValue(value);
             shinyValue.set(props.id, value);
           }
@@ -1130,15 +1130,25 @@ const chakraComponent = (
       }
     }
   }else if(component.name === "Popover" && props.id){
-    const setShinyValue = (value) => Shiny.setInputValue(props.id, value);
+    shinyValue.add(props.id, null);
+    const setShinyValue = (value) => {
+      if(value !== undefined){
+        Shiny.setInputValue(props.id, value);
+        shinyValue.set(props.id, value);
+      }
+    };
     patch = {
       Button: {
         onClick: (e) => {
-          let value = e.currentTarget.dataset.val;
-          if(value) setShinyValue(value);
+          setShinyValue(e.currentTarget.dataset.val);
         }
       }
     };  
+  }else if(component.name === "PopoverTrigger"){
+    let child = chakraComponent(component.children[0], shinyValue, {}, {}, inputId);
+    return <PopoverTrigger>{child}</PopoverTrigger>;
+    // props.children = component.children;
+    // component.children = [];
   }else if(component.name === "Tabs" && props.id){
     let defaultIndex = props.defaultIndex ? props.defaultIndex : 0;
     shinyValue.add(props.id, defaultIndex);
@@ -1388,6 +1398,9 @@ const chakraComponent = (
     // if(newprops.id === "uuuuu"){
     //   alert(JSON.stringify(component));
     //   alert(JSON.stringify(newprops));
+    // }
+    // if(tag === "PopoverTrigger"){
+    //   return React.createElement(ChakraComponents[tag], {children: component.children});
     // }
     if(Array.isArray(component.children) && component.children.length){
       return React.createElement(ChakraComponents[tag], newprops, component.children);

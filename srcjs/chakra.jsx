@@ -779,11 +779,12 @@ function ShinyValue(inputId){
   };
 }
 
-const mergeOnClick = (component, func, states, inputId) => {
+const mergeOnClick = (component, funcs, states, inputId) => {
   for(let i = 0; i < component.children.length; i++){
     let child = component.children[i];
     if(isTag(child)){
-      if(child.name === "Button" || child.name === "IconButton"){
+      if(funcs.hasOwnProperty(child.name)){
+        let func = funcs[child.name];
         if(child.attribs.onClick){
           let f = Eval(decodeURI(child.attribs.onClick.__eval), states, Hooks, getState, setState, inputId);
           child.attribs.onClick = (e) => {
@@ -794,7 +795,7 @@ const mergeOnClick = (component, func, states, inputId) => {
           child.attribs.onClick = func;
         }
       }
-      mergeOnClick(child, func, states, inputId);
+      mergeOnClick(child, funcs, states, inputId);
     }
   }
 };
@@ -948,32 +949,61 @@ const chakraComponent = (
       setIsOpen(false);
     };
     const cancelRef = React.useRef();
-    patch = {
-      Button: {
-        onClick: onCloseButton
+    let funcs = {
+      Button: onCloseButton,
+      IconButton: onCloseButton,
+      OpenButton: () => {setIsOpen(true);},
+      OpenIconButton: () => {setIsOpen(true);},
+      CancelButton: onCloseButton,
+      CancelIconButton: onCloseButton,
+      DisableButton: (e) => {
+        setShinyValue(e.currentTarget.dataset.val);
+        setDisabled(true);
+        setIsOpen(false);
       },
+      DisableIconButton: (e) => {
+        setShinyValue(e.currentTarget.dataset.val);
+        setDisabled(true);
+        setIsOpen(false);
+      },
+      RemoveButton: (e) => {
+        setShinyValue(e.currentTarget.dataset.val);
+        setIsOpen(false);
+        $("#" + props.id).remove();
+      },
+      RemoveIconButton: (e) => {
+        setShinyValue(e.currentTarget.dataset.val);
+        setIsOpen(false);
+        $("#" + props.id).remove();
+      }
+    };
+    mergeOnClick(component, funcs, states, inputId);
+    patch = {
+      // Button: {
+      //   onClick: onCloseButton
+      // },
       OpenButton: {
-        onClick: () => {setIsOpen(true);},
+        // onClick: () => {setIsOpen(true);},
         isDisabled: disabled
       },
-      DisableButton: {
-        onClick: (e) => {
-          setShinyValue(e.currentTarget.dataset.val);
-          setDisabled(true);
-          setIsOpen(false);
-        }
-      },
+      // DisableButton: {
+      //   onClick: (e) => {
+      //     setShinyValue(e.currentTarget.dataset.val);
+      //     setDisabled(true);
+      //     setIsOpen(false);
+      //   }
+      // },
       CancelButton: {
-        ref: cancelRef,
-        onClick: onCloseButton
+        ref: cancelRef
+        // onClick: onCloseButton
       },
-      RemoveButton: {
-        onClick: (e) => {
-          setShinyValue(e.currentTarget.dataset.val);
-          setIsOpen(false);
-          $("#" + props.id).remove();
-        }
-      },
+      // RemoveButton: {
+      //   onClick: (e) => {
+      //     setShinyValue(e.currentTarget.dataset.val);
+      //     setIsOpen(false);
+      //     $("#" + props.id).remove();
+      //   }
+      // },
       // UnmountingButton: {
       //   onClick: (e) => {
       //     let value = e.currentTarget.dataset.val;
@@ -981,31 +1011,31 @@ const chakraComponent = (
       //     unmountComponentAtNode(document.getElementById(props.id));
       //   }
       // },
-      IconButton: {
-        onClick: onCloseButton
-      },
+      // IconButton: {
+      //   onClick: onCloseButton
+      // },
       OpenIconButton: {
-        onClick: () => {setIsOpen(true);},
+        // onClick: () => {setIsOpen(true);},
         isDisabled: disabled
       },
-      DisableIconButton: {
-        onClick: (e) => {
-          setShinyValue(e.currentTarget.dataset.val);
-          setDisabled(true);
-          setIsOpen(false);
-        }
-      },
+      // DisableIconButton: {
+      //   onClick: (e) => {
+      //     setShinyValue(e.currentTarget.dataset.val);
+      //     setDisabled(true);
+      //     setIsOpen(false);
+      //   }
+      // },
       CancelIconButton: {
-        ref: cancelRef,
-        onClick: onCloseButton
+        ref: cancelRef
+        // onClick: onCloseButton
       },
-      RemoveIconButton: {
-        onClick: (e) => {
-          setShinyValue(e.currentTarget.dataset.val);
-          setIsOpen(false);
-          $("#" + props.id).remove();
-        }
-      },
+      // RemoveIconButton: {
+      //   onClick: (e) => {
+      //     setShinyValue(e.currentTarget.dataset.val);
+      //     setIsOpen(false);
+      //     $("#" + props.id).remove();
+      //   }
+      // },
       // UnmountingIconButton: {
       //   onClick: (e) => {
       //     let value = e.currentTarget.dataset.val;
@@ -1157,7 +1187,11 @@ const chakraComponent = (
         shinyValue.set(props.id, value);
       }
     };
-    mergeOnClick(component, (e) => {setShinyValue(e.currentTarget.dataset.val)}, states, inputId);
+    let funcs = {
+      Button: (e) => {setShinyValue(e.currentTarget.dataset.val)},
+      IconButton: (e) => {setShinyValue(e.currentTarget.dataset.val)}
+    };
+    mergeOnClick(component, funcs, states, inputId);
     // patch = {
     //   Button: {
     //     onClick: (e) => {

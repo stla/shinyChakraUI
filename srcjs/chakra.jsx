@@ -783,12 +783,16 @@ const mergeOnClick = (component, func, states, inputId) => {
   for(let i = 0; i < component.children.length; i++){
     let child = component.children[i];
     if(isTag(child)){
-      if((child.name === "Button" || child.name === "IconButton") && child.attribs.onClick){
-        let f = Eval(decodeURI(child.attribs.onClick.__eval), states, Hooks, getState, setState, inputId);
-        child.attribs.onClick = (e) => {
-          f(e);
-          func(e);
-        };
+      if(child.name === "Button" || child.name === "IconButton"){
+        if(child.attribs.onClick){
+          let f = Eval(decodeURI(child.attribs.onClick.__eval), states, Hooks, getState, setState, inputId);
+          child.attribs.onClick = (e) => {
+            f(e);
+            func(e);
+          };
+        }else{
+          child.attribs.onClick = func;
+        }
       }
       mergeOnClick(child, func, states, inputId);
     }

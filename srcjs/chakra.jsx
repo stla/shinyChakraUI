@@ -779,6 +779,22 @@ function ShinyValue(inputId){
   };
 }
 
+const mergeOnClick = (component, func, states, inputId) => {
+  for(let i = 0; i < component.children.length; i++){
+    let child = component.children[i];
+    if(isTag(child)){
+      if((child.name === "Button" || child.name === "IconButton") && child.attribs.onClick){
+        let f = Eval(decodeURI(child.attribs.onClick.__eval), states, Hooks, getState, setState, inputId);
+        child.attribs.onClick = (e) => {
+          f(e);
+          func(e);
+        };
+      }
+      mergeOnClick(child, func, states, inputId);
+    }
+  }
+};
+
 const chakraComponent = (
   component, shinyValue, states, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
 ) => {
@@ -1137,13 +1153,14 @@ const chakraComponent = (
         shinyValue.set(props.id, value);
       }
     };
-    patch = {
-      Button: {
-        onClick: (e) => {
-          setShinyValue(e.currentTarget.dataset.val);
-        }
-      }
-    };  
+    mergeOnClick(component, (e) => {setShinyValue(e.currentTarget.dataset.val)}, states, inputId);
+    // patch = {
+    //   Button: {
+    //     onClick: (e) => {
+    //       setShinyValue(e.currentTarget.dataset.val);
+    //     }
+    //   }
+    // };  
   }else if(component.name === "PopoverTrigger"){
     let child = chakraComponent(component.children[0], shinyValue, {}, {}, inputId);
     return <PopoverTrigger>{child}</PopoverTrigger>;

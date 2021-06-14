@@ -1057,28 +1057,40 @@ const chakraComponent = (
     const btnRef = React.useRef();
     shinyValue.add(props.id, null);
     const setShinyValue = (value) => Shiny.setInputValue(props.id, value);
+    let funcs = {
+      OpenButton: onOpen,
+      ClosingButton: onClose,
+      Button: (e) => {
+        let value = e.currentTarget.dataset.val;
+        if(value !== undefined){
+          setShinyValue(value);
+          shinyValue.set(props.id, value);
+        }
+      }
+    };
+    mergeOnClick(component, funcs, states, inputId);
     patch = {
       OpenButton: {
-        ref: btnRef,
-        onClick: onOpen
+        ref: btnRef
+        // onClick: onOpen
       },
       Drawer: {
         isOpen: isOpen,
         onClose: onClose,
         finalFocusRef: btnRef
-      },
-      ClosingButton: {
-        onClick: onClose
-      },
-      Button: {
-        onClick: (e) => {
-          let value = e.currentTarget.dataset.val;
-          if(value !== undefined){
-            setShinyValue(value);
-            shinyValue.set(props.id, value);
-          }
-        }
       }
+      // ClosingButton: {
+      //   onClick: onClose
+      // },
+      // Button: {
+      //   onClick: (e) => {
+      //     let value = e.currentTarget.dataset.val;
+      //     if(value !== undefined){
+      //       setShinyValue(value);
+      //       shinyValue.set(props.id, value);
+      //     }
+      //   }
+      // }
     };  
   }else if(component.name === "Menu" && component.process !== false){
     component.process = false;

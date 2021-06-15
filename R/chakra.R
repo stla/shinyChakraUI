@@ -81,8 +81,13 @@ useRef <- function(){
 #' @export
 #'
 #' @examples
-useDisclosure <- function(){
-  list("__hook" = "Hooks['useDisclosure']()")
+useDisclosure <- function(defaultIsOpen = FALSE){
+  list(
+    "__hook" = sprintf(
+      "Hooks['useDisclosure']({defaultIsOpen: %s})",
+      ifelse(defaultIsOpen, "true", "false")
+    )
+  )
 }
 
 #' Title

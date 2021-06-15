@@ -1161,12 +1161,19 @@ const chakraComponent = (
       // };
     }else{
       shinyValue.add(props.id, null);
-      patch = $.extend(patch, {MenuItem: {
-        onClick: (e) => {
+      let funcs = {
+        MenuItem: (e) => {
           shinyValue.set(props.id, e.currentTarget.dataset.val);
           Shiny.setInputValue(props.id, e.currentTarget.dataset.val);
         }
-      }});
+      };
+      mergeOnClick(component, funcs, states, inputId);
+      // patch = $.extend(patch, {MenuItem: {
+      //   onClick: (e) => {
+      //     shinyValue.set(props.id, e.currentTarget.dataset.val);
+      //     Shiny.setInputValue(props.id, e.currentTarget.dataset.val);
+      //   }
+      // }});
       let menubutton = component.children[0];
       patch.MenuButton = {
         as: menubutton.attribs.icon ? IconButton : Button

@@ -630,6 +630,17 @@ const appendDisclosure = (component, disclosure) => {
   }
 };
 
+const getHook = (states, inputId) => ((hook, key) => {
+  if(states[hook] === undefined){
+    let root = document.getElementById(inputId);
+    unmountComponentAtNode(root);
+    let app = <InvalidState message={`Invalid hook '${hook}'.`}/>;
+    ReactDOM.render(app, root);
+    throw "";    
+  }
+  return states[hook][key];
+});
+
 const getState = (states, inputId) => ((state) => {
   if(states[state] === undefined){
     let root = document.getElementById(inputId);
@@ -640,6 +651,7 @@ const getState = (states, inputId) => ((state) => {
   }
   return states[state].get();
 });
+
 const setState = (states, inputId) => ((state, value) => {
   if(states[state] === undefined){
     let root = document.getElementById(inputId);
@@ -651,8 +663,10 @@ const setState = (states, inputId) => ((state, value) => {
   states[state].set(value);
 });
 
-const Eval = (ev, states, Hooks, getState, setState, inputId) => {
-  let x = Function("states", "Hooks", "getState", "setState", "return " + ev)(states, Hooks, getState(states, inputId), setState(states, inputId));
+const Eval = (ev, states, Hooks, getState, setState, getHook, inputId) => {
+  let x = Function("states", "Hooks", "getState", "setState", "getHook", "return " + ev)(
+    states, Hooks, getState(states, inputId), setState(states, inputId), getHook(states, inputId)
+  );
   console.log("EEEEEVVVVVAAAAAALLLLLL", x);
   console.log("ev", ev);
   console.log("states", states);
@@ -662,9 +676,9 @@ const Eval = (ev, states, Hooks, getState, setState, inputId) => {
 const makeState = (x, states, inputId) => {
   let aa;
   if(isJseval(x)){
-    return {get: Eval("() => " + x.__eval, states, Hooks, getState, setState, inputId)};
+    return {get: Eval("() => " + x.__eval, states, Hooks, getState, setState, getHook, inputId)};
   }else if(isHook(x)){
-    let hook = Eval(x.__hook, states, Hooks, getState, setState, inputId);
+    let hook = Eval(x.__hook, states, Hooks, getState, setState, getHook, inputId);
     return $.extend(hook, {get: () => hook});
   }
   //   aa = {...x};
@@ -786,7 +800,7 @@ const mergeOnClick = (component, funcs, states, inputId) => {
       if(funcs.hasOwnProperty(child.name)){
         let func = funcs[child.name];
         if(child.attribs.onClick){
-          let f = Eval(decodeURI(child.attribs.onClick.__eval), states, Hooks, getState, setState, inputId);
+          let f = Eval(decodeURI(child.attribs.onClick.__eval), states, Hooks, getState, setState, getHook, inputId);
           child.attribs.onClick = (e) => {
             f(e);
             func(e);
@@ -818,7 +832,7 @@ const chakraComponent = (
     return ReactHtmlParser(unescapeHtml(decodeURI(component.__html)));
   }
   if(isJseval(component)){
-    let ev = Eval(decodeURI(component.__eval), states, Hooks, getState, setState, inputId);
+    let ev = Eval(decodeURI(component.__eval), states, Hooks, getState, setState, getHook, inputId);
     if(isHTML(ev)){
       return ReactHtmlParser(unescapeHtml(decodeURI(ev.__html)));
     }
@@ -905,7 +919,7 @@ const chakraComponent = (
       // throw "" ;
       //let disclosure = component.disclosure; 
       props[key] = 
-        Eval(decodeURI(props[key].__eval), states, Hooks, getState, setState, inputId);
+        Eval(decodeURI(props[key].__eval), states, Hooks, getState, setState, getHook, inputId);
     }
   }
   if(component.disclosure){
@@ -928,7 +942,7 @@ const chakraComponent = (
   //   props.onClick = eval(decodeURI(props.onClick));
   // }
   if(typeof props.onClick === "string"){
-    props.onClick = Eval(props.onClick, states, Hooks, getState, setState, inputId);
+    props.onClick = Eval(props.onClick, states, Hooks, getState, setState, getHook, inputId);
   }
   if(component.widget === "alertdialog"){
     delete component.widget;

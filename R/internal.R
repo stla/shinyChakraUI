@@ -179,6 +179,23 @@ unclassComponent <- function(component, inputId, call){
       makeScriptTag(script)
     )
   }else if(
+    isShinyTag(component) &&
+    "class" %in% names(component[["attribs"]]) &&
+    grepl("shiny-date-input", component[["attribs"]][["class"]]) &&
+    !isTRUE(component[["dontprocess"]])
+  ){
+    dependencies <-
+      evalHtmlDependencies(component[["children"]][[3L]])
+    component[["children"]] <- component[["children"]][c(1L,2L)]
+    script <- sprintf(
+      "Shiny.inputBindings.bindingNames['shiny.dateInput'].binding.initialize(document.getElementById('%s'));",
+      component[["attribs"]][["id"]]
+    )
+    component[["dontprocess"]] <- TRUE
+    component <- Tag$Fragment(
+      component, makeScriptTag(script)
+    )
+  }else if(
     inherits(component, "shiny.tag") && !is.null(htmlDependencies(component))
   ){
     dependencies <- evalHtmlDependencies(htmlDependencies(component))
@@ -188,15 +205,6 @@ unclassComponent <- function(component, inputId, call){
       script <- sprintf(
         "Shiny.inputBindings.bindingNames['shiny.selectInput'].binding.initialize(document.getElementById('%s'));",
         id
-      )
-      htmltools::htmlDependencies(component) <- NULL
-      component <- Tag$Fragment(
-        component, makeScriptTag(script)
-      )
-    }else if(grepl("shiny-date-input", component[["attribs"]][["class"]])){
-      script <- sprintf(
-        "Shiny.inputBindings.bindingNames['shiny.dateInput'].binding.initialize(document.getElementById('%s'));",
-        component[["attribs"]][["id"]]
       )
       htmltools::htmlDependencies(component) <- NULL
       component <- Tag$Fragment(

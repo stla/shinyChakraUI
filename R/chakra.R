@@ -101,7 +101,8 @@ useDisclosure <- function(defaultIsOpen = FALSE){
 #' @examples
 getHook <- function(state, value){
   assign(state, NULL, envir = usedStatesEnvir)
-  jseval(sprintf("states.%s.%s", state, value))
+  #jseval(sprintf("states.%s.%s", state, value))
+  jseval(sprintf("getHook('%s', '%s')", state, value))
 }
 
 #' Title

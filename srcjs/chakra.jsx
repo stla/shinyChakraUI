@@ -64,7 +64,14 @@ import {
   Fade, 
   ScaleFade, 
   Slide, 
-  SlideFade
+  SlideFade,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -276,7 +283,14 @@ const ChakraComponents = {
   Fade, 
   ScaleFade, 
   Slide, 
-  SlideFade
+  SlideFade,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -364,6 +378,8 @@ const makeMenuComponent = (menu, shinyValue) => {
 //const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 const isEmptyArray = x => (Array.isArray(x) && x.length === 0);
+
+const isNonEmptyArray = x => (Array.isArray(x) && x.length);
 
 const makeCheckboxWithChildren = (div, shinyValue) => {
   let childCheckboxes = JSON.parse(JSON.stringify(div.children[1].children));
@@ -634,7 +650,7 @@ const getHookProperty = (states, inputId) => ((hook, key) => {
   if(states[hook] === undefined){
     let root = document.getElementById(inputId);
     unmountComponentAtNode(root);
-    let app = <InvalidState message={`Invalid hook '${hook}'.`}/>;
+    let app = <InvalidState message={`Hook '${hook}' not found.`}/>;
     ReactDOM.render(app, root);
     throw "";    
   }
@@ -652,7 +668,7 @@ const getState = (states, inputId) => ((state) => {
   if(states[state] === undefined){
     let root = document.getElementById(inputId);
     unmountComponentAtNode(root);
-    let app = <InvalidState message={`Invalid state '${state}'.`}/>;
+    let app = <InvalidState message={`State '${state}' not found.`}/>;
     ReactDOM.render(app, root);
     throw "";    
   }
@@ -663,7 +679,14 @@ const setState = (states, inputId) => ((state, value) => {
   if(states[state] === undefined){
     let root = document.getElementById(inputId);
     unmountComponentAtNode(root);
-    let app = <InvalidState message={`Invalid state '${state}'.`}/>;
+    let app = <InvalidState message={`State '${state}' not found.`}/>;
+    ReactDOM.render(app, root);
+    throw "";    
+  }
+  if(!states[state].hasOwnProperty("set")){
+    let root = document.getElementById(inputId);
+    unmountComponentAtNode(root);
+    let app = <InvalidState message={`State '${state}' has no 'set' method.`}/>;
     ReactDOM.render(app, root);
     throw "";    
   }
@@ -807,7 +830,10 @@ const mergeOnClick = (component, funcs, states, inputId) => {
       if(funcs.hasOwnProperty(child.name)){
         let func = funcs[child.name];
         if(child.attribs.onClick){
-          let f = Eval(decodeURI(child.attribs.onClick.__eval), states, Hooks, getState, setState, getHookProperty, inputId);
+          let f = Eval(
+            decodeURI(child.attribs.onClick.__eval), states, Hooks, getState, setState, 
+            getHookProperty, inputId
+          );
           child.attribs.onClick = (e) => {
             f(e);
             func(e);
@@ -1326,7 +1352,7 @@ const chakraComponent = (
   }else if(component.name === "CheckboxGroup" && component.processed !== true){
     component.processed = true;
     let divattrs = {id: props.id};
-    if(props.defaultValue){
+    if(props.hasOwnProperty("defaultValue")){
       props.defaultValue = props.defaultValue.map(decodeURI);
       divattrs.className = "chakraTag";
       divattrs["data-shinyinitvalue"] = JSON.stringify(props.defaultValue);
@@ -1380,7 +1406,7 @@ const chakraComponent = (
       // stateValue[props.id] = props.value;  
       let chakraState = states["chakra" + props.id];
       let setValue;
-      if(chakraState.set) {
+      if(chakraState.hasOwnProperty("set")){
         props.value = chakraState.get();
         setValue = value => {
           chakraState.set(value);
@@ -1497,14 +1523,14 @@ const chakraComponent = (
     // if(tag === "PopoverTrigger"){
     //   return React.createElement(ChakraComponents[tag], {children: component.children});
     // }
-    if(Array.isArray(component.children) && component.children.length){
+    if(isNonEmptyArray(component.children)){
       return React.createElement(ChakraComponents[tag], newprops, component.children);
     }else{
       return React.createElement(ChakraComponents[tag], newprops);
     }
   }else{
     fixTagAttribs(newprops);
-    if(Array.isArray(component.children) && component.children.length){
+    if(isNonEmptyArray(component.children)){
       return React.createElement(tag, newprops, component.children);
     }else{
       return React.createElement(tag, newprops);

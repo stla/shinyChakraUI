@@ -69,10 +69,17 @@ useClipboard <- function(value){
 #'
 #' @return
 #' @export
+#' @importFrom jsonlite toJSON
 #'
 #' @examples
-useRef <- function(){
-  jseval("React.useRef()")
+useRef <- function(initialValue = NA){
+  jseval(sprintf(
+    "React.useRef(%s)",
+    ifelse(
+      is.na(initialValue), "",
+      toJSON(initialValue, null = "null", digits = NA, auto_unbox = TRUE)
+    )
+  ))
 }
 
 #' Title

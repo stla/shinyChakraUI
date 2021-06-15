@@ -4,7 +4,7 @@
 \alias{useDisclosure}
 \title{Title}
 \usage{
-useDisclosure()
+useDisclosure(defaultIsOpen = FALSE)
 }
 \value{
 

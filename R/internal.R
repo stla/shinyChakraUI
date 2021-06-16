@@ -568,7 +568,8 @@ unclassComponent <- function(component, inputId, call){
       }else if(
         is.list(child) &&
         !inherits(child, "shiny.tag") &&
-        is.null(child[["__html"]])
+        is.null(child[["__html"]]) &&
+        is.null(child[["__jsx"]])
       ){
         unlist(child) # this handles actionButton
       }else if(inherits(child, "shiny.tag")){

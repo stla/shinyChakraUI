@@ -41,12 +41,38 @@ ui <- chakraPage(
 
   # tags$div(id="app"),
   #tags$div(id="cc"),
+  # dateInput("date2", "Date2:", value = "2012-02-29"),
 
   fluidRow(
     column(
       6,
       chakraComponent(
         "id",
+
+        jsx(
+          "<Popover>
+  <PopoverTrigger>
+    <Button>Trigger</Button>
+  </PopoverTrigger>
+  <PopoverContent>
+    <PopoverArrow />
+    <PopoverCloseButton />
+    <PopoverHeader>Confirmation!</PopoverHeader>
+    <PopoverBody>Are you sure you want to have that milkshake?</PopoverBody>
+  </PopoverContent>
+</Popover>"
+        ),
+
+        dateRangeInput("daterange1", "Date range:",
+                       start = "2001-01-01",
+                       end   = "2010-12-31"),
+
+        dateInput("date1", "Date:", value = "2012-02-29"),
+
+        conditionalPanel(
+          condition = "input.popover !== 'popover value'",
+          Tag$Box("CONDITIONAL")
+        ),
 
         Tag$Popover(
           id = "popover",
@@ -68,7 +94,12 @@ ui <- chakraPage(
         tempor incididunt ut labore et dolore.",
               Tag$Button(
                 value = "popover value",
+                onClick = jseval("() => {alert('Y')}"),
                 "Popover value"
+              ),
+              Tag$Button(
+                value = "other value",
+                "other popover vaue"
               )
             )
           )
@@ -195,25 +226,25 @@ ui <- chakraPage(
         #   )
         # ),
 
-        # withStates(
-        #   Tag$Stack(
-        #     Tag$Input(
-        #       className = "not",
-        #       value = getState("helloworld"),
-        #       isReadOnly = TRUE,
-        #       placeholder="Welcome"
-        #     ),
-        #     Tag$Button(
-        #       onClick = list(eval = "states.clipboard.onCopy"),
-        #       ml = 2,
-        #       list(eval = "states.clipboard.hasCopied ? 'Copied' : 'Copy'")
-        #     )
-        #   ),
-        #   states = list(
-        #     helloworld = "Hello World",
-        #     clipboard = useClipboard(getState("helloworld"))
-        #   )
-        # ),
+        withStates(
+          Tag$Stack(
+            Tag$Input(
+#              className = "not",
+              value = getState("helloworld"),
+              isReadOnly = TRUE,
+              placeholder="Welcome"
+            ),
+            Tag$Button(
+              onClick = getHookProperty("clipboard", "onCopy"),
+              ml = 2,
+              jseval("getHookProperty('clipboard','hasCopied') ? 'Copied' : 'Copy'")
+            )
+          ),
+          states = list(
+            helloworld = "Hello World",
+            clipboard = useClipboard(getState("helloworld"))
+          )
+        ),
 
         # withDisclosure(
         #   Tag$Fragment(
@@ -243,11 +274,11 @@ ui <- chakraPage(
               "TYPEOF"
             ),
             Tag$Button(
-              onClick =  getHook("disclosure", "onToggle"),
+              onClick =  getHookProperty("disclosure", "onToggle"),
               "Click me!!!!!!!!!!!!!!!!!"
             ),
             Tag$Fade(
-              "in" = getHook("disclosure", "isOpen"),
+              "in" = getHookProperty("disclosure", "isOpen"),
               Tag$Box(
                 p="40px",
                 color="white",
@@ -259,7 +290,7 @@ ui <- chakraPage(
               )
             )
           ),
-          states = list(disclosure = useDisclosure())
+          states = list(disclosure = useDisclosure(TRUE))
         ),
 
         Tag$Tabs(
@@ -452,7 +483,7 @@ ui <- chakraPage(
         chakraAlertDialog(
           inputId = "alert",
           openButton = Tag$Button(
-            "Delete customer",
+            "ALERT - Delete customer",
             colorScheme = "red"
           ),
           header = Tag$AlertDialogHeader(
@@ -551,6 +582,11 @@ ui <- chakraPage(
 #   actionButton("button", "Click me")
 # )
 
+# ui <- fluidPage(
+#   dateInput("date1", "Date:", value = "2012-02-29"),
+#   sliderInput("s","Slidr",0,2,1),
+#   numericInput("num","Numeric",5)
+# )
 
 server <- function(input, output, session){
 

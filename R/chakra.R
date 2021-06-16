@@ -6,6 +6,19 @@
 #' @export
 #'
 #' @examples
+jsx <- function(code){
+  stopifnot(is.character(code))
+  list("__jsx" = URLencode(code))
+}
+
+#' Title
+#'
+#' @param code
+#'
+#' @return
+#' @export
+#'
+#' @examples
 jseval <- function(code){
   stopifnot(is.character(code))
   list("__eval" = URLencode(code))

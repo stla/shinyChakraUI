@@ -2,6 +2,12 @@ import { reactShinyInput, hydrate } from 'reactR';
 import * as React from 'react';
 import { unmountComponentAtNode } from "react-dom";
 import ReactDOM from 'react-dom';
+//import { parse } from "@babel/parser";
+//import generate from "@babel/generator";
+//import JsxParser from 'react-jsx-parser';
+//import { transform } from '@babel/standalone';
+import babelPluginTransformJsx from '@babel/plugin-transform-react-jsx';
+import { transform } from '@babel/core';
 import {
   useDisclosure,
   useClipboard,
@@ -555,6 +561,10 @@ const isHTML = x => {
   return (typeof x === "object") && x.hasOwnProperty("__html");
 };
 
+const isJSX = x => {
+  return (typeof x === "object") && x.hasOwnProperty("__jsx");
+};
+
 /* const chakraComponent = (component, patch) => {
   let props = component.attribs;
   if(Array.isArray(props) && props.length === 0){
@@ -847,6 +857,70 @@ const mergeOnClick = (component, funcs, states, inputId) => {
   }
 };
 
+// Object.assign(walk.base, {
+//   JSXAttribute(node, state, callback) {
+//       if (node.value !== null) {
+//           callback(node.value, state);
+//       }
+//   },
+
+//   JSXElement(node, state, callback) {
+//       node.openingElement.attributes.forEach(attribute => {
+//           callback(attribute, state);
+//       });
+//       node.children.forEach(node => {
+//           callback(node, state);
+//       });
+//   },
+
+//   JSXExpressionContainer(node, state, callback) {
+//       callback(node.expression, state);
+//   },
+
+//   JSXFragment(node, state, callback) {
+//       node.children.forEach(node => {
+//           callback(node, state);
+//       });
+//   },
+
+//   JSXSpreadAttribute(node, state, callback) {
+//       callback(node.argument, state);
+//   },
+
+//   JSXText() {}
+// });
+
+// window.WALK = walk;
+// window.ESCODEGEN = escodegen;
+// window.PARSER = acorn.Parser.extend(jsx()).parse;
+// window.BABELPARSER = parse;
+// window.BABELGENERATOR = generate;
+
+const transformSrc = code => {
+  const result = transform(code, {
+    plugins: [babelPluginTransformJsx]
+  });
+  return result.code.replace(/\n/g, "");
+};
+
+const jsxParser = (jsxString) => {
+  //let jsxString = "<Button onClick={() => {alert(\"JSX\")}}>JJJJJJJJJJSX</Button>";
+  const transformedCode = transformSrc(decodeURI(jsxString));
+  console.log("transformedCode", transformedCode);
+  const scope = $.extend({React}, ChakraComponents);
+  const scopeKeys = Object.keys(scope);
+  const scopeValues = Object.values(scope);
+  const fn = new Function(
+    ...scopeKeys,
+    "return " + transformedCode
+  );
+  return fn(...scopeValues);
+  // let x = Function(ChakraTags.join(","), "return " + jsxString)
+  //   .apply(null, ChakraTags.map(tag => ChakraComponents[tag]));
+  // return x; 
+};
+
+
 const chakraComponent = (
   component, shinyValue, states, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
 ) => {
@@ -864,8 +938,13 @@ const chakraComponent = (
     console.log(component.__html);
     return ReactHtmlParser(unescapeHtml(decodeURI(component.__html)));
   }
+  if(isJSX(component)){
+    return jsxParser(component.__jsx);
+  }
   if(isJseval(component)){
-    let ev = Eval(decodeURI(component.__eval), states, Hooks, getState, setState, getHookProperty, inputId);
+    let ev = Eval(
+      decodeURI(component.__eval), states, Hooks, getState, setState, getHookProperty, inputId
+    );
     if(isHTML(ev)){
       return ReactHtmlParser(unescapeHtml(decodeURI(ev.__html)));
     }
@@ -884,6 +963,40 @@ const chakraComponent = (
   }
   if(tagName === "input"){
     console.log("INPUT", component);
+    // const fn = new Function(
+    //   "React, " + ChakraTags.join(","),
+    //   `return ${transformedCode}`
+    // );
+    // return fn.apply(null, [React].concat(ChakraTags.map(tag => ChakraComponents[tag])));
+
+//     let rr = Function("React, " + ChakraTags.join(","), 
+//       `const ___Component = () => (${jsxString}); return React.createElement(___Component)`)
+//       .apply(null, [React].concat(ChakraTags.map(tag => ChakraComponents[tag])));
+//     //let rr = jsxParser("<Button onClick={() => {alert(\"JSX\")}}>JSX</Button>");
+//     console.log("rr", rr);
+//     return rr;
+//     let r = <JsxParser
+//       components={ChakraComponents}
+//       jsx={`
+//     <Button onClick={() => {alert("JSX")}}>JSX</Button>
+//         `}
+//     />;
+//     //return r;
+//     console.log("JSXPARSER", r);
+//     console.log("BABELPARSER", 
+//       parse("<Button onClick={() => {alert(\"JSX\")}}>JSX</Button>", {plugins: ["jsx"]}));
+//     let JSX = acorn.Parser.extend(jsx()).parse("my(<jsx/>, '<Button onClick={() => {alert(\"JSX\")}}>JSX</Button>');");
+//     console.log("JSX", JSX);
+//     let JSX2 = acorn.Parser.extend(jsx()).parse("<Button onClick={() => {alert(\"JSX\")}}>JSX</Button>");
+// console.log("JSX2", JSX2);
+// let w = walk.simple(JSX2, {
+//       CallExpression: (node) => {
+//           console.log("NODE", node);
+//       }
+//   }, walk.base);
+//   console.log(w);
+//   //console.log("ESCODEGEN", escodegen.generate(JSX2, {parse: acorn.Parser.extend(jsx()).parse}));
+//     throw "";
   }
   let States = {};
   if(component.statesGroup && states.done !== true){
@@ -946,13 +1059,14 @@ const chakraComponent = (
   for(const key in props){
     if(typeof props[key] === "string"){
       props[key] = decodeURI(props[key]);
-    }
-    if(isJseval(props[key])){
+    }else if(isJseval(props[key])){
       // ReactDOM.render(<InvalidState/>, document.getElementById("invalidstate"));
       // throw "" ;
       //let disclosure = component.disclosure; 
       props[key] = 
         Eval(decodeURI(props[key].__eval), states, Hooks, getState, setState, getHookProperty, inputId);
+    }else if(isJSX(props[key])){
+      props[key] = jsxParser(props[key].__jsx);
     }
   }
   if(component.disclosure){

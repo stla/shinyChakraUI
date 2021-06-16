@@ -6,9 +6,10 @@
 #' @export
 #'
 #' @examples
-jsx <- function(code){
-  stopifnot(is.character(code))
-  list("__jsx" = URLencode(code))
+jsx <- function(component, preamble = ""){
+  stopifnot(is.character(component))
+  stopifnot(is.character(preamble))
+  list("__jsx" = URLencode(component), "__preamble" = URLencode(preamble))
 }
 
 #' Title

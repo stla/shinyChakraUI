@@ -903,16 +903,16 @@ const transformSrc = code => {
   return result.code.replace(/\n/g, "");
 };
 
-const jsxParser = (jsxString) => {
+const jsxParser = (jsxString, preamble) => {
   //let jsxString = "<Button onClick={() => {alert(\"JSX\")}}>JJJJJJJJJJSX</Button>";
   const transformedCode = transformSrc(decodeURI(jsxString));
   console.log("transformedCode", transformedCode);
-  const scope = $.extend({React}, ChakraComponents);
+  const scope = $.extend({React}, ChakraComponents, Hooks);
   const scopeKeys = Object.keys(scope);
   const scopeValues = Object.values(scope);
   const fn = new Function(
     ...scopeKeys,
-    "return " + transformedCode
+    (preamble ? decodeURI(preamble) + "; " : "") + "return " + transformedCode
   );
   return fn(...scopeValues);
   // let x = Function(ChakraTags.join(","), "return " + jsxString)
@@ -939,7 +939,7 @@ const chakraComponent = (
     return ReactHtmlParser(unescapeHtml(decodeURI(component.__html)));
   }
   if(isJSX(component)){
-    return jsxParser(component.__jsx);
+    return jsxParser(component.__jsx, component.__preamble);
   }
   if(isJseval(component)){
     let ev = Eval(
@@ -1066,7 +1066,7 @@ const chakraComponent = (
       props[key] = 
         Eval(decodeURI(props[key].__eval), states, Hooks, getState, setState, getHookProperty, inputId);
     }else if(isJSX(props[key])){
-      props[key] = jsxParser(props[key].__jsx);
+      props[key] = jsxParser(props[key].__jsx, props[key].__preamble);
     }
   }
   if(component.disclosure){

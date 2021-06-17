@@ -2,6 +2,8 @@ import { reactShinyInput, hydrate } from 'reactR';
 import * as React from 'react';
 import { unmountComponentAtNode } from "react-dom";
 import ReactDOM from 'react-dom';
+//import prettier from "prettier/standalone";
+import parserBabel from "prettier/parser-babel";
 //import { parse } from "@babel/parser";
 //import generate from "@babel/generator";
 //import JsxParser from 'react-jsx-parser';
@@ -77,7 +79,9 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton
+  ModalCloseButton,
+  Code,
+  Divider
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -296,7 +300,9 @@ const ChakraComponents = {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton
+  ModalCloseButton,
+  Code,
+  Divider
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -817,6 +823,16 @@ const InvalidState = ({message}) => {
   );
 };
 
+const ErrorApp = ({message, code}) => {
+  return (
+    <ChakraProvider>
+      <div>{message}</div>
+      <Divider />
+      <pre><Code>{code}</Code></pre>
+    </ChakraProvider>
+  );
+};
+
 function ShinyValue(inputId){
   let $el = $("#" + inputId);
   this.add = (key, v, force) => {
@@ -896,6 +912,12 @@ const mergeOnClick = (component, funcs, states, inputId) => {
 // window.BABELPARSER = parse;
 // window.BABELGENERATOR = generate;
 
+const Modules = {
+  acorn,
+  acornjsx,
+  prettier
+};
+
 const transformSrc = code => {
   const result = transform(code, {
     plugins: [babelPluginTransformJsx]
@@ -903,11 +925,21 @@ const transformSrc = code => {
   return result.code.replace(/\n/g, "");
 };
 
-const jsxParser = (jsxString, preamble) => {
+const jsxParser = (jsxString, preamble, inputId) => {
   //let jsxString = "<Button onClick={() => {alert(\"JSX\")}}>JJJJJJJJJJSX</Button>";
-  const transformedCode = transformSrc(decodeURI(jsxString));
+  jsxString = decodeURI(jsxString);
+  try {
+    let p = prettier.format(jsxString, { parser: "babel", plugins: [parserBabel]});
+  } catch (error) {
+    let root = document.getElementById(inputId);
+    unmountComponentAtNode(root);
+    let app = <ErrorApp message="Error in `jsx()`." code={error.message}/>;
+    ReactDOM.render(app, root);
+    throw "";    
+  }
+  const transformedCode = transformSrc(jsxString);
   console.log("transformedCode", transformedCode);
-  const scope = $.extend({React}, ChakraComponents, Hooks);
+  const scope = $.extend({React}, ChakraComponents, Hooks, Modules);
   const scopeKeys = Object.keys(scope);
   const scopeValues = Object.values(scope);
   const fn = new Function(
@@ -939,7 +971,7 @@ const chakraComponent = (
     return ReactHtmlParser(unescapeHtml(decodeURI(component.__html)));
   }
   if(isJSX(component)){
-    return jsxParser(component.__jsx, component.__preamble);
+    return jsxParser(component.__jsx, component.__preamble, inputId);
   }
   if(isJseval(component)){
     let ev = Eval(
@@ -1066,7 +1098,7 @@ const chakraComponent = (
       props[key] = 
         Eval(decodeURI(props[key].__eval), states, Hooks, getState, setState, getHookProperty, inputId);
     }else if(isJSX(props[key])){
-      props[key] = jsxParser(props[key].__jsx, props[key].__preamble);
+      props[key] = jsxParser(props[key].__jsx, props[key].__preamble, inputId);
     }
   }
   if(component.disclosure){

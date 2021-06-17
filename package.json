@@ -11,6 +11,7 @@
     "babel-runtime": "^6.26.0",
     "escodegen": "^2.0.0",
     "framer-motion": "^4.0.0",
+    "prettier": "^2.3.1",
     "react-html-parser": "^2.0.0",
     "react-icons": "^4.0.0",
     "react-script-tag": "^1.1.2"

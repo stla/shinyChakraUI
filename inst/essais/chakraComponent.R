@@ -50,6 +50,15 @@ ui <- chakraPage(
         "id",
 
         jsx(
+          "<>
+          <Button onClick={f}>Submit</Button>
+          <textarea id='tt'></textarea>
+          </>
+          ",
+          preamble = "const f = () => {let code = $('#tt').val(); try{let p = acorn.Parser.extend(acornjsx()).parse(code); console.log(p)}catch(err){console.warn(err.message)}}"
+        ),
+
+        jsx(
           "<Popover>
   <PopoverTrigger>
     <Button>Trigger</Button>

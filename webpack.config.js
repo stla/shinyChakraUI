@@ -36,17 +36,26 @@ module.exports = {
       }
     ]
   },
-  externals: {
-    react: "window.React",
-    "react-dom": "window.ReactDOM",
-    reactR: "window.reactR"
-  },
+  externals: [
+    {
+      react: "window.React",
+      "react-dom": "window.ReactDOM",
+      reactR: "window.reactR"
+    },
+    function (context, request, callback) {
+      if (/parser-/.test(request) && !/babel/.test(request)) {
+        return callback(null, "commonjs " + request);
+      }
+      callback();
+    }
+  ],
   plugins: [
     new webpack.ProvidePlugin({
       acorn: "acorn",
-      jsx: "acorn-jsx",
+      acornjsx: "acorn-jsx",
       walk: "acorn-walk",
-      escodegen: "escodegen"
+      escodegen: "escodegen",
+      prettier: "prettier"
     })
   ],
   stats: {

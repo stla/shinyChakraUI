@@ -976,7 +976,7 @@ const jsxParser = (jsxString, preamble, inputId) => {
       let p = prettier.format(decodeURI(preamble), { parser: "babel", plugins: [parserBabel]});
     } catch (error) {
       let message = "Error in `jsx()` preamble.";
-      let code = error.message;
+      let code = error.name + ": " + error.message;
       let root = document.getElementById(inputId);
       unmountComponentAtNode(root);
       let app = <ErrorApp message={message} code={code}/>;
@@ -991,7 +991,19 @@ const jsxParser = (jsxString, preamble, inputId) => {
     ...scopeKeys,
     (preamble ? decodeURI(preamble) + "; " : "") + "return " + transformedCode
   );
-  return fn(...scopeValues);
+  let output;
+  try {
+    output = fn(...scopeValues);
+  } catch (error) {
+    let message = "Error in `jsx()`.";
+    let code = error.name + ": " + error.message;
+    let root = document.getElementById(inputId);
+    unmountComponentAtNode(root);
+    let app = <ErrorApp message={message} code={code}/>;
+    ReactDOM.render(app, root);
+    throw "";      
+  }
+  return output;
   // let x = Function(ChakraTags.join(","), "return " + jsxString)
   //   .apply(null, ChakraTags.map(tag => ChakraComponents[tag]));
   // return x; 

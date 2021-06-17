@@ -72,6 +72,10 @@ isHook <- function(x){
   is.list(x) && identical(names(x), "__hook")
 }
 
+isJSX <- function(x){
+  is.list(x) && identical(names(x), c("__jsx", "__preamble"))
+}
+
 isSlider <- function(x){
   inherits(x, "shiny.tag") &&
     length(x[["children"]]) == 2L &&

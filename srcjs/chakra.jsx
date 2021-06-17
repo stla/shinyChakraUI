@@ -1122,6 +1122,8 @@ const chakraComponent = (
         //states.done = true;
         states[x.state].set(undefined);
         bind = true;
+      }else if(x.type === "jsx"){
+        x.value = jsxParser(x.value.__jsx, x.value.__preamble, inputId);
       }
 //      ReactDOM.render(x.value, document.getElementById("cc"));
       states[x.state].set(x.value);

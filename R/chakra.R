@@ -169,6 +169,8 @@ setReactState <- function(session, inputId, stateName, value){
     value <- unclassComponent(value, NULL, "setReactState")[["component"]]
     value[["hasStates"]] <- TRUE
     value[["force"]] <- TRUE
+  }else if(isJSX(value)){
+    type <- "jsx"
   }
   session$sendCustomMessage(
     statesEnvir[[inputId]][[stateName]],

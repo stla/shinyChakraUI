@@ -826,12 +826,29 @@ const InvalidState = ({message}) => {
 const ErrorApp = ({message, code}) => {
   return (
     <ChakraProvider>
-      <div>{message}</div>
+      <Box bg="tomato" p={4} color="white">{message}</Box>
       <Divider />
       <pre><Code>{code}</Code></pre>
     </ChakraProvider>
   );
 };
+
+const isJSXElement = (ast) => {
+  let body = ast.body;
+  if(body.length !== 1){
+    return false;
+  }
+  let node = body[0];
+  if(node.type !== "ExpressionStatement"){
+    return false;
+  }
+  let expressionType = node.expression.type;
+  if(expressionType !== "JSXElement" && expressionType !== "JSXFragment"){
+    return false;
+  }
+  return true;
+};
+
 
 function ShinyValue(inputId){
   let $el = $("#" + inputId);
@@ -929,16 +946,44 @@ const jsxParser = (jsxString, preamble, inputId) => {
   //let jsxString = "<Button onClick={() => {alert(\"JSX\")}}>JJJJJJJJJJSX</Button>";
   jsxString = decodeURI(jsxString);
   try {
-    let p = prettier.format(jsxString, { parser: "babel", plugins: [parserBabel]});
+    let ast = acorn.Parser.extend(acornjsx()).parse(jsxString);
+    if(!isJSXElement(ast)){
+      throw "notjsx";
+    }
   } catch (error) {
+    let message, code;
+    if(error === "notjsx"){
+      message = "Error in `jsx()`: not a JSX component.";
+      code = jsxString;
+    }else{
+      try {
+        let p = prettier.format(jsxString, { parser: "babel", plugins: [parserBabel]});
+      } catch (err) {
+        message = "Error in `jsx()`.";
+        code = err.message;
+      }
+    }
     let root = document.getElementById(inputId);
     unmountComponentAtNode(root);
-    let app = <ErrorApp message="Error in `jsx()`." code={error.message}/>;
+    let app = <ErrorApp message={message} code={code}/>;
     ReactDOM.render(app, root);
     throw "";    
   }
   const transformedCode = transformSrc(jsxString);
   console.log("transformedCode", transformedCode);
+  if(preamble){
+    try {
+      let p = prettier.format(decodeURI(preamble), { parser: "babel", plugins: [parserBabel]});
+    } catch (error) {
+      let message = "Error in `jsx()` preamble.";
+      let code = error.message;
+      let root = document.getElementById(inputId);
+      unmountComponentAtNode(root);
+      let app = <ErrorApp message={message} code={code}/>;
+      ReactDOM.render(app, root);
+      throw "";    
+    }
+  }
   const scope = $.extend({React}, ChakraComponents, Hooks, Modules);
   const scopeKeys = Object.keys(scope);
   const scopeValues = Object.values(scope);

@@ -644,18 +644,23 @@ server <- function(input, output, session){
       scripttag[["hasStates"]] = TRUE
       component <- Tag$Fragment(scripttag,checkbox)
       setReactState(session, "id", "boxtext",
-                    Tag$Fragment(
-                      #tags$div(list(eval = "$(getState('span')).trigger('xx')")),
-                      Tag$Button(
-                        onClick = jseval("() => {$('#myspan').text('SSSSSSSS')}"),
-                        paste0("SETSTATEAA", input[["button"]])
-                      ),
-                    Tag$Checkbox(
-                      id = "uuuuu",
-                      isChecked = TRUE,
-                      onChange = jseval("(event) => {setState('AA','LLL');alert(states.AA.get())}"),
-                      HTML("<span id='myspan'>SPAN</span>") #getState('boxtext2')
-                    ))
+
+                    jsx(
+                      "<Button colorScheme='red'>BBBUUUTTTOOONNN</Button>"
+                    )
+
+                    # Tag$Fragment(
+                    #   #tags$div(list(eval = "$(getState('span')).trigger('xx')")),
+                    #   Tag$Button(
+                    #     onClick = jseval("() => {$('#myspan').text('SSSSSSSS')}"),
+                    #     paste0("SETSTATEAA", input[["button"]])
+                    #   ),
+                    # Tag$Checkbox(
+                    #   id = "uuuuu",
+                    #   isChecked = TRUE,
+                    #   onChange = jseval("(event) => {setState('AA','LLL');alert(states.AA.get())}"),
+                    #   HTML("<span id='myspan'>SPAN</span>") #getState('boxtext2')
+                    # ))
 
                     # Tag$CheckboxGroup(
                     #   id = "zzz",

@@ -823,12 +823,18 @@ const InvalidState = ({message}) => {
   );
 };
 
-const ErrorApp = ({message, code}) => {
+const ErrorApp = ({ message, code }) => {
   return (
     <ChakraProvider>
-      <Box bg="tomato" p={4} color="white">{message}</Box>
-      <Divider />
-      <pre><Code>{code}</Code></pre>
+      <Alert status="error">
+        <AlertIcon />
+        <Box flex="1">
+          <AlertTitle mr={2}>{message}</AlertTitle>
+          <AlertDescription>
+            <pre><Code>{code}</Code></pre>
+          </AlertDescription>
+        </Box>
+      </Alert>
     </ChakraProvider>
   );
 };

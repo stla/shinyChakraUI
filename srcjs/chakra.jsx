@@ -948,6 +948,13 @@ const transformSrc = code => {
   return result.code.replace(/\n/g, "");
 };
 
+const throwApp = (inputId, app) => {
+  let root = document.getElementById(inputId);
+  unmountComponentAtNode(root);
+  ReactDOM.render(app, root);
+  throw "";    
+};
+
 const jsxParser = (jsxString, preamble, inputId) => {
   //let jsxString = "<Button onClick={() => {alert(\"JSX\")}}>JJJJJJJJJJSX</Button>";
   jsxString = decodeURI(jsxString);
@@ -969,11 +976,12 @@ const jsxParser = (jsxString, preamble, inputId) => {
         code = err.message;
       }
     }
-    let root = document.getElementById(inputId);
-    unmountComponentAtNode(root);
-    let app = <ErrorApp message={message} code={code}/>;
-    ReactDOM.render(app, root);
-    throw "";    
+    throwApp(inputId, <ErrorApp message={message} code={code}/>);
+    // let root = document.getElementById(inputId);
+    // unmountComponentAtNode(root);
+    // let app = <ErrorApp message={message} code={code}/>;
+    // ReactDOM.render(app, root);
+    // throw "";    
   }
   const transformedCode = transformSrc(jsxString);
   console.log("transformedCode", transformedCode);

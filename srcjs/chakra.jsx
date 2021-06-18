@@ -664,47 +664,27 @@ const appendDisclosure = (component, disclosure) => {
 
 const getHookProperty = (states, inputId) => ((hook, key) => {
   if(states[hook] === undefined){
-    let root = document.getElementById(inputId);
-    unmountComponentAtNode(root);
-    let app = <InvalidState message={`Hook '${hook}' not found.`}/>;
-    ReactDOM.render(app, root);
-    throw "";    
+    throwApp(inputId, <InvalidState message={`Hook '${hook}' not found.`}/>);
   }
   if(!states[hook].hasOwnProperty(key)){
-    let root = document.getElementById(inputId);
-    unmountComponentAtNode(root);
-    let app = <InvalidState message={`Hook '${hook}' has no property '${key}'.`}/>;
-    ReactDOM.render(app, root);
-    throw "";    
+    throwApp(inputId, <InvalidState message={`Hook '${hook}' has no property '${key}'.`}/>);
   }
   return states[hook][key];
 });
 
 const getState = (states, inputId) => ((state) => {
   if(states[state] === undefined){
-    let root = document.getElementById(inputId);
-    unmountComponentAtNode(root);
-    let app = <InvalidState message={`State '${state}' not found.`}/>;
-    ReactDOM.render(app, root);
-    throw "";    
+    throwApp(inputId, <InvalidState message={`State '${state}' not found.`}/>);
   }
   return states[state].get();
 });
 
 const setState = (states, inputId) => ((state, value) => {
   if(states[state] === undefined){
-    let root = document.getElementById(inputId);
-    unmountComponentAtNode(root);
-    let app = <InvalidState message={`State '${state}' not found.`}/>;
-    ReactDOM.render(app, root);
-    throw "";    
+    throwApp(inputId, <InvalidState message={`State '${state}' not found.`}/>);
   }
   if(!states[state].hasOwnProperty("set")){
-    let root = document.getElementById(inputId);
-    unmountComponentAtNode(root);
-    let app = <InvalidState message={`State '${state}' has no 'set' method.`}/>;
-    ReactDOM.render(app, root);
-    throw "";    
+    throwApp(inputId, <InvalidState message={`State '${state}' has no 'set' method.`}/>);
   }
   states[state].set(value);
 });
@@ -997,11 +977,7 @@ const jsxParser = (jsxString, preamble, inputId) => {
     } catch (error) {
       let message = "Error in `jsx()` preamble.";
       let code = error.name + ": " + error.message;
-      let root = document.getElementById(inputId);
-      unmountComponentAtNode(root);
-      let app = <ErrorApp message={message} code={code}/>;
-      ReactDOM.render(app, root);
-      throw "";    
+      throwApp(inputId, <ErrorApp message={message} code={code}/>);
     }
   }
   const scope = $.extend({React}, ChakraComponents, Hooks, Modules);
@@ -1017,11 +993,7 @@ const jsxParser = (jsxString, preamble, inputId) => {
   } catch (error) {
     let message = "Error in `jsx()`.";
     let code = error.name + ": " + error.message;
-    let root = document.getElementById(inputId);
-    unmountComponentAtNode(root);
-    let app = <ErrorApp message={message} code={code}/>;
-    ReactDOM.render(app, root);
-    throw "";      
+    throwApp(inputId, <ErrorApp message={message} code={code}/>);
   }
   return output;
   // let x = Function(ChakraTags.join(","), "return " + jsxString)

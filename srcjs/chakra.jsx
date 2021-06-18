@@ -713,6 +713,8 @@ const makeState = (x, states, inputId) => {
   }else if(isHook(x)){
     let hook = Eval(x.__hook, states, inputId);
     return $.extend(hook, {get: () => hook});
+  }else if(isJSX(x)){
+    x = jsxParser(x.__jsx, x.__preamble, inputId);
   }
   //   aa = {...x};
   //   console.log("x",x);

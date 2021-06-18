@@ -1,3 +1,11 @@
+isString <- function(x){
+  is.character(x) && (length(x) == 1L) && !is.na(x)
+}
+
+isBoolean <- function(x){
+  is.logical(x) && (length(x) == 1L) && !is.na(x)
+}
+
 emptyNamedList <- `names<-`(list(), character(0L))
 
 randomString <- function(size){
@@ -284,7 +292,7 @@ unclassComponent <- function(component, inputId, call){
   }
   for(attribname in names(component[["attribs"]])){
     attrib <- component[["attribs"]][[attribname]]
-    if(is.character(attrib) && attribname != "defaultValue"){
+    if(isString(attrib) && attribname != "defaultValue"){
       component[["attribs"]][[attribname]] <- URLencode(attrib)
     }
     if(isReactComponent(attrib) && grepl("Icon$", attrib[["name"]])){
@@ -586,7 +594,7 @@ unclassComponent <- function(component, inputId, call){
         x[["component"]]
       }else if(inherits(child, "html")){
         list("__html" = URLencode(as.character(child)))
-      }else if(is.character(child)){
+      }else if(isString(child)){
         URLencode(child)
       }else{
         child

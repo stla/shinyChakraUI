@@ -4,11 +4,21 @@
 #'
 #' @return
 #' @export
+#' @importFrom stringr str_trim
 #'
 #' @examples
 jsx <- function(component, preamble = ""){
-  stopifnot(is.character(component))
-  stopifnot(is.character(preamble))
+  stopifnot(isString(component))
+  stopifnot(isString(preamble))
+  component <- str_trim(component)
+  firstChar <- substring(component, 1L, 1L)
+  if(firstChar != "<"){
+    stop("Invalid JSX component.", call. = TRUE)
+  }
+  lastChar <- substring(component, nchar(component))
+  if(lastChar != ">"){
+    stop("Invalid JSX component.", call. = TRUE)
+  }
   list("__jsx" = URLencode(component), "__preamble" = URLencode(preamble))
 }
 
@@ -21,7 +31,7 @@ jsx <- function(component, preamble = ""){
 #'
 #' @examples
 jseval <- function(code){
-  stopifnot(is.character(code))
+  stopifnot(isString(code))
   list("__eval" = URLencode(code))
 }
 
@@ -69,6 +79,7 @@ setState <- function(state, value){
 #'
 #' @examples
 useClipboard <- function(value){
+  stopifnot(isString(value) || isJseval(value))
   if(is.character(value)){
     value <- paste0("'", value, "'")
   }else{
@@ -103,6 +114,7 @@ useRef <- function(initialValue = NA){
 #'
 #' @examples
 useDisclosure <- function(defaultIsOpen = FALSE){
+  stopifnot(isBoolean(defaultIsOpen))
   list(
     "__hook" = sprintf(
       "useDisclosure({defaultIsOpen: %s})",

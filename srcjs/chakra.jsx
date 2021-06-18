@@ -714,7 +714,7 @@ const makeState = (x, states, inputId) => {
     let hook = Eval(x.__hook, states, inputId);
     return $.extend(hook, {get: () => hook});
   }else if(isJSX(x)){
-    x = jsxParser(x.__jsx, x.__preamble, inputId);
+    x = jsxParser(x.__jsx, x.__preamble, inputId, states);
   }
   //   aa = {...x};
   //   console.log("x",x);
@@ -943,7 +943,7 @@ const throwApp = (inputId, app) => {
   throw "";    
 };
 
-const jsxParser = (jsxString, preamble, inputId) => {
+const jsxParser = (jsxString, preamble, inputId, states) => {
   //let jsxString = "<Button onClick={() => {alert(\"JSX\")}}>JJJJJJJJJJSX</Button>";
   jsxString = decodeURI(jsxString);
   try {
@@ -982,7 +982,18 @@ const jsxParser = (jsxString, preamble, inputId) => {
       throwApp(inputId, <ErrorApp message={message} code={code}/>);
     }
   }
-  const scope = $.extend({React}, ChakraComponents, Hooks, Modules);
+  const scope = $.extend(
+    {React}, 
+    {
+      states: states,
+      getState: getState(states, inputId),
+      setState: setState(states, inputId),
+      getHookProperty: getHookProperty(states, inputId)
+    },
+    ChakraComponents, 
+    Hooks, 
+    Modules
+  );
   const scopeKeys = Object.keys(scope);
   const scopeValues = Object.values(scope);
   const fn = new Function(
@@ -1022,7 +1033,7 @@ const chakraComponent = (
     return ReactHtmlParser(unescapeHtml(decodeURI(component.__html)));
   }
   if(isJSX(component)){
-    return jsxParser(component.__jsx, component.__preamble, inputId);
+    return jsxParser(component.__jsx, component.__preamble, inputId, states);
   }
   if(isJseval(component)){
     let ev = Eval(
@@ -1117,7 +1128,7 @@ const chakraComponent = (
         states[x.state].set(undefined);
         bind = true;
       }else if(x.type === "jsx"){
-        x.value = jsxParser(x.value.__jsx, x.value.__preamble, inputId);
+        x.value = jsxParser(x.value.__jsx, x.value.__preamble, inputId, states);
       }
 //      ReactDOM.render(x.value, document.getElementById("cc"));
       states[x.state].set(x.value);
@@ -1151,7 +1162,7 @@ const chakraComponent = (
       props[key] = 
         Eval(decodeURI(props[key].__eval), states, inputId);
     }else if(isJSX(props[key])){
-      props[key] = jsxParser(props[key].__jsx, props[key].__preamble, inputId);
+      props[key] = jsxParser(props[key].__jsx, props[key].__preamble, inputId, states);
     }
   }
   if(component.disclosure){

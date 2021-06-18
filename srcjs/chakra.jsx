@@ -808,7 +808,15 @@ const appendStates = (component, states, inputId) => {
 
 const InvalidState = ({message}) => {
   return (
-    <div>{message}</div>
+    <ChakraProvider>
+      <Alert status="error">
+        <AlertIcon />
+        <AlertTitle mr={2}>Error.</AlertTitle>
+        <AlertDescription>
+          {message}
+        </AlertDescription>
+      </Alert>
+    </ChakraProvider>
   );
 };
 

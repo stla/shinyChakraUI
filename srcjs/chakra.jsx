@@ -709,10 +709,17 @@ const setState = (states, inputId) => ((state, value) => {
   states[state].set(value);
 });
 
-const Eval = (ev, states, Hooks, getState, setState, getHookProperty, inputId) => {
-  let x = Function("states", "Hooks", "getState", "setState", "getHookProperty", "return " + ev)(
-    states, Hooks, getState(states, inputId), setState(states, inputId), getHookProperty(states, inputId)
-  );
+const Eval = (ev, states, inputId) => {
+  const scope = $.extend(Hooks, {
+    states: states,
+    getState: getState(states, inputId),
+    setState: setState(states, inputId),
+    getHookProperty: getHookProperty(states, inputId)
+  });
+  const scopeKeys = Object.keys(scope);
+  const scopeValues = Object.values(scope);
+  const fn = new Function(...scopeKeys, "return " + ev);
+  let x = fn(...scopeValues);
   console.log("EEEEEVVVVVAAAAAALLLLLL", x);
   console.log("ev", ev);
   console.log("states", states);
@@ -722,9 +729,9 @@ const Eval = (ev, states, Hooks, getState, setState, getHookProperty, inputId) =
 const makeState = (x, states, inputId) => {
   let aa;
   if(isJseval(x)){
-    return {get: Eval("() => " + x.__eval, states, Hooks, getState, setState, getHookProperty, inputId)};
+    return {get: Eval("() => " + x.__eval, states, inputId)};
   }else if(isHook(x)){
-    let hook = Eval(x.__hook, states, Hooks, getState, setState, getHookProperty, inputId);
+    let hook = Eval(x.__hook, states, inputId);
     return $.extend(hook, {get: () => hook});
   }
   //   aa = {...x};
@@ -880,8 +887,7 @@ const mergeOnClick = (component, funcs, states, inputId) => {
         let func = funcs[child.name];
         if(child.attribs.onClick){
           let f = Eval(
-            decodeURI(child.attribs.onClick.__eval), states, Hooks, getState, setState, 
-            getHookProperty, inputId
+            decodeURI(child.attribs.onClick.__eval), states, inputId
           );
           child.attribs.onClick = (e) => {
             f(e);
@@ -1046,7 +1052,7 @@ const chakraComponent = (
   }
   if(isJseval(component)){
     let ev = Eval(
-      decodeURI(component.__eval), states, Hooks, getState, setState, getHookProperty, inputId
+      decodeURI(component.__eval), states, inputId
     );
     if(isHTML(ev)){
       return ReactHtmlParser(unescapeHtml(decodeURI(ev.__html)));
@@ -1169,7 +1175,7 @@ const chakraComponent = (
       // throw "" ;
       //let disclosure = component.disclosure; 
       props[key] = 
-        Eval(decodeURI(props[key].__eval), states, Hooks, getState, setState, getHookProperty, inputId);
+        Eval(decodeURI(props[key].__eval), states, inputId);
     }else if(isJSX(props[key])){
       props[key] = jsxParser(props[key].__jsx, props[key].__preamble, inputId);
     }
@@ -1194,7 +1200,7 @@ const chakraComponent = (
   //   props.onClick = eval(decodeURI(props.onClick));
   // }
   if(typeof props.onClick === "string"){
-    props.onClick = Eval(props.onClick, states, Hooks, getState, setState, getHookProperty, inputId);
+    props.onClick = Eval(props.onClick, states, inputId);
   }
   if(component.widget === "alertdialog"){
     delete component.widget;

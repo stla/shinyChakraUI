@@ -75,7 +75,7 @@ useClipboard <- function(value){
     value <- value[["__eval"]]
   }
   list(
-    "__hook" = sprintf("Hooks['useClipboard'](%s)", value)
+    "__hook" = sprintf("useClipboard(%s)", value)
   )
 }
 
@@ -105,7 +105,7 @@ useRef <- function(initialValue = NA){
 useDisclosure <- function(defaultIsOpen = FALSE){
   list(
     "__hook" = sprintf(
-      "Hooks['useDisclosure']({defaultIsOpen: %s})",
+      "useDisclosure({defaultIsOpen: %s})",
       ifelse(defaultIsOpen, "true", "false")
     )
   )

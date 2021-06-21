@@ -84,7 +84,8 @@ import {
   ModalBody,
   ModalCloseButton,
   Code,
-  Divider
+  Divider,
+  Switch
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -305,7 +306,8 @@ const ChakraComponents = {
   ModalBody,
   ModalCloseButton,
   Code,
-  Divider
+  Divider,
+  Switch
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -1545,6 +1547,27 @@ const chakraComponent = (
     //     <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
     //   ]
     // };
+  }else if(
+    component.name === "Switch" && 
+    //props.shinyValue !== false && 
+    props.hasOwnProperty("id")
+  ){
+    if(typeof props.isChecked !== "object"){
+      if(props.defaultChecked === undefined){
+        props.defaultChecked = props.isChecked === true;
+      }
+      delete props.isChecked;
+      shinyValue.add(props.id, props.defaultChecked, component.force);
+      let f = props.onChange;
+      if(f){
+        props.onChange = event => {
+          shinyValue.set(props.id, event.target.checked);
+          f(event);
+        }
+      }else{
+        props.onChange = event => shinyValue.set(props.id, event.target.checked)
+      }
+    }
   }else if(
     component.name === "Checkbox" && 
     //props.shinyValue !== false && 

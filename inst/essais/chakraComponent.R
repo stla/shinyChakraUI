@@ -14,6 +14,27 @@ htmltools::htmlDependencies(xxx) <- NULL
 
 ui <- chakraPage(
 
+  chakraComponent(
+    "iid",
+
+    jsx(
+      '    <Button
+      onClick={() => {alert("hii");
+        ttoast({
+          title: "Account created.",
+          description: "Weve created your account for you.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        })}
+      }
+    >
+      SSSSSSSShow Toastttttttttttttt
+    </Button>
+ ', preamble = "let ttoast = useToast()"
+    )
+  ),
+
   # tags$div(id="invalidstate"),
   # class = "container-fluid",
   # tags$head(
@@ -48,6 +69,50 @@ ui <- chakraPage(
       6,
       chakraComponent(
         "id",
+
+
+ withStates(
+   Tag$Fragment(
+     Tag$Button(
+       onClick = jseval("() => console.log(getState('stoast'))"),
+       "getStandaloneToast"
+     ),
+     Tag$Button(
+       onClick = jseval('() => {let stoast=getState("stoast"); stoast({
+          title: "Account created.",
+          description: "We ve created your account for you.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+          id: "to",
+          onCloseComplete: () => alert("closecomlete")
+        })}'),
+       "Show standalone toast"
+     )),
+   states = list(stoast = createStandaloneToast())
+ ),
+
+        withStates(
+          Tag$Fragment(
+            Tag$Button(
+              onClick = jseval("() => console.log(getState('ttoast'))"),
+              "getToast"
+            ),
+          Tag$Button(
+            # onClick = jseval("() => console.log(getState('toast'))"),
+            onClick = jseval('() => {let ttoast=getState("ttoast"); if (!ttoast.isActive("to")) {ttoast({
+          title: "Account created.",
+          description: "We ve created your account for you.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+          id: "to",
+          onCloseComplete: () => alert("closecomlete")
+        })}}'),
+            "Show toast"
+          )),
+          states = list(ttoast = useToast())
+        ),
 
         jsx(
           "<>
@@ -144,13 +209,17 @@ ui <- chakraPage(
             bg = "tomato",
             borderWidth = "4px",
             getState("thebutton"),
-            getState("yellowtext")
+            getState("yellowtext"),
+            getState("thejsx"),
+            jsx("<Button colorScheme='yellow' onClick={() => setState('yellowtext', 'BBBBBBBBBB')}>{getState('xx')}</Button>")
           ),
           states = list(
             thebutton = Tag$Checkbox(
               id = "boxcheckbox", isChecked = TRUE, "BOXCHECKBOX"
             ),
-            yellowtext = HTML("<p style='color:yellow'>YELLOW TEXT</p>")
+            yellowtext = HTML("<p style='color:yellow'>YELLOW TEXT</p>"),
+            xx = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            thejsx = jsx("<Button colorScheme='pink' onClick={() => setState('xx', 'YYYYYYYYYYYY')}>THEBUTTON</Button>")
           )
         ),
 
@@ -622,6 +691,107 @@ ui <- chakraPage(
 #   numericInput("num","Numeric",5)
 # )
 
+# ui <- tags$div(
+#
+#   tags$div(id="uu"),
+#
+#   chakraComponent(
+#     "iid",
+#
+#
+#     Tag$Fragment(
+#       jseval('(() => {let ToastExample = function() {
+#   const toast = useToast();
+#   return (
+#     React.createElement("button",
+#       {onClick: () =>
+#         toast({
+#           title: "Account created.",
+#           description: "Weve created your account for you.",
+#           status: "success",
+#           duration: null,
+#           isClosable: true,
+#         })
+#       },
+#     "Show Toast")
+#   )
+# }; ReactDOM.render(React.createElement(ToastExample,null),document.getElementById("uu"))})()')
+#     )
+#   )
+# )
+
+#ui <- tags$div(chakraComponent("uuu", tags$div("e")))
+
+ui <- chakraPage(
+
+  chakraComponent(
+    "iid",
+
+    Tag$Editable(
+      id = "editable",
+      defaultValue = "Take some chakra",
+      Tag$EditablePreview(),
+      Tag$EditableInput()
+    ),
+
+    jsx(
+      '<Editable
+      textAlign="center"
+      defaultValue="Rasengan"
+      fontSize="2xl"
+      isPreviewFocusable={false}
+    >
+      <EditablePreview />
+      <EditableInput />
+      <EditableControls />
+    </Editable>',
+      preamble = paste(
+        'function EditableControls() {',
+          'const {',
+            'isEditing,',
+            'getSubmitButtonProps,',
+            'getCancelButtonProps,',
+            'getEditButtonProps,',
+          '} = useEditableControls();',
+          'return isEditing ? (',
+            '<ButtonGroup justifyContent="center" size="sm">',
+              '<IconButton icon={<CheckIcon />} {...getSubmitButtonProps()} />',
+              '<IconButton icon={<CloseIcon />} {...getCancelButtonProps()} />',
+              '</ButtonGroup>',
+          ') : (',
+            '<Flex justifyContent="center">',
+              '<IconButton size="sm" icon={<EditIcon />} {...getEditButtonProps()} />',
+              '</Flex>',
+          ')',
+        '}',
+        sep = "\n"
+      )
+    ),
+
+    Tag$Switch(
+      id = "switch",
+      size = "lg"
+    ),
+
+    jsx(
+      '    <Button
+      onClick={() => {alert("hii");
+        ttoast({
+          title: "Account created.",
+          description: "Weve created your account for you.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        })}
+      }
+    >
+      SSSSSSSShow Toastttttttttttttt
+    </Button>
+ ', preamble = "let ttoast = createStandaloneToast()"
+    )
+  )
+)
+
 server <- function(input, output, session){
 
 #  observeEvent(input[["button"]],{
@@ -646,8 +816,25 @@ server <- function(input, output, session){
       setReactState(session, "id", "boxtext",
 
                     jsx(
-                      "<Button colorScheme='red'>BBBUUUTTTOOONNN</Button>"
+                      '    <Button
+      onClick={() =>
+        toast({
+          title: "Account created.",
+          description: "Weve created your account for you.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        })
+      }
+    >
+      Show ToasttttttttttttttXXXX
+    </Button>
+ ', preamble = "const toast = useToast()"
                     )
+
+                    # jsx(
+                    #   "<Button colorScheme='red'>BBBUUUTTTOOONNN</Button>"
+                    # )
 
                     # Tag$Fragment(
                     #   #tags$div(list(eval = "$(getState('span')).trigger('xx')")),

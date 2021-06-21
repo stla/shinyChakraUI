@@ -93,7 +93,9 @@ import {
   FormHelperText,
   Editable, 
   EditableInput, 
-  EditablePreview
+  EditablePreview,
+  Flex,
+  ButtonGroup
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -322,7 +324,9 @@ const ChakraComponents = {
   FormHelperText,
   Editable, 
   EditableInput, 
-  EditablePreview
+  EditablePreview,
+  Flex,
+  ButtonGroup
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -1031,8 +1035,9 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
   const transformedCode = transformSrc(jsxString);
   console.log("transformedCode", transformedCode);
   if(preamble){
+    preamble = decodeURI(preamble);
     try {
-      let p = prettier.format(decodeURI(preamble), { parser: "babel", plugins: [parserBabel]});
+      let p = prettier.format(preamble, { parser: "babel", plugins: [parserBabel]});
     } catch (error) {
       let message = "Error in `jsx()` preamble.";
       let code = error.name + ": " + error.message;
@@ -1055,7 +1060,7 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
   const scopeValues = Object.values(scope);
   const fn = new Function(
     ...scopeKeys,
-    (preamble ? decodeURI(preamble) + "; " : "") + "return " + transformedCode
+    (preamble ? transformSrc(preamble) + "; " : "") + "return " + transformedCode
   );
   let output;
   try {

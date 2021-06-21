@@ -730,10 +730,11 @@ ui <- chakraPage(
     withStates(
       Tag$Fragment(
         Tag$NumberInput(
+          id = "numberinput",
           defaultValue = 15,
           precision = 2,
           step = 0.2,
-          onChange = jseval("(value) => setState('number', value)"),
+          onChange = jseval("(valueAsString, valueAsNumber) => setState('number', valueAsString)"),
           Tag$NumberInputField(),
           Tag$NumberInputStepper(
             Tag$NumberIncrementStepper(),

@@ -1599,11 +1599,11 @@ const chakraComponent = (
     let f = props.onChange || (() => {});
     const [value, setValue] = React.useState(defaultValue);
     props.value = value;
-    props.onChange = (val) => {
-      shinyValue.set(props.id, val);
-      Shiny.setInputValue(props.id, val);
-      setValue(val);
-      f(val);
+    props.onChange = (valueAsString, valueAsNumber) => {
+      shinyValue.set(props.id, valueAsNumber);
+      Shiny.setInputValue(props.id, valueAsNumber);
+      setValue(valueAsNumber);
+      f(valueAsString, valueAsNumber);
     };
   }else if(
     component.name === "Switch" && 

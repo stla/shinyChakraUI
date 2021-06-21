@@ -1805,6 +1805,23 @@ const chakraComponent = (
         };
       }
     }
+  }else if(component.widget === "slider"){
+    let defaultValue = props.defaultValue;
+    props.className = "chakraTag";
+    props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
+    shinyValue.add(props.id, defaultValue);
+    const [value, setValue] = React.useState(defaultValue);
+    props.value = value;
+    const fOnChange = (val) => {
+      setValue(val);
+      Shiny.setInputValue(props.id, val);
+      shinyValue.set(props.id, val);
+    };
+    if(component.shinyValueOn === "end"){
+      props.onChangeEnd = fOnChange;
+    }else{
+      props.onChange = fOnChange;
+    }
   }
   for(const key in props){
     if(isTag(props[key])){

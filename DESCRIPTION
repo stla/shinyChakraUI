@@ -18,4 +18,6 @@ Imports:
     reactR,
     shiny,
     jsonlite,
-    rlang
+    rlang,
+    stringr,
+    grDevices

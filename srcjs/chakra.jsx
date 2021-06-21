@@ -1,5 +1,5 @@
 import { reactShinyInput, hydrate } from 'reactR';
-import * as React from 'react';
+//import * as React from 'react';
 import { unmountComponentAtNode } from "react-dom";
 import ReactDOM from 'react-dom';
 //import prettier from "prettier/standalone";
@@ -13,6 +13,9 @@ import { transform } from '@babel/core';
 import {
   useDisclosure,
   useClipboard,
+  useToast,
+  toast,
+  createStandaloneToast,
   ChakraProvider,
   Button,
   IconButton,
@@ -306,6 +309,31 @@ const ChakraComponents = {
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
+
+//console.log("useToast", useToast);
+
+//window.USETOAST = useToast;
+//window.TOASTMANAGER = toast;
+
+// function ToastExample() {
+//   //const Toaster = new toast.constructor();
+//   const ttoast = useToast();
+//   return (
+//     <Button
+//       onClick={() =>
+//         ttoast({
+//           title: "TitLE",
+//           description: "body",
+//           status: 'success',
+//           duration: null,
+//           isClosable: true
+//         })
+//       }
+//     >
+//       Show Toast
+//     </Button>
+//   );
+// }
 
 const getMenuOptionGroupSelections = menuoptiongroup => {
   let type = menuoptiongroup.attribs.type;
@@ -712,7 +740,11 @@ const makeState = (x, states, inputId) => {
     return {get: Eval("() => " + x.__eval, states, inputId)};
   }else if(isHook(x)){
     let hook = Eval(x.__hook, states, inputId);
-    return $.extend(hook, {get: () => hook});
+    if(typeof hook === "function"){
+      return {get: () => hook};
+    }else{
+      return $.extend(hook, {get: () => hook});
+    }
   }else if(isJSX(x)){
     x = jsxParser(x.__jsx, x.__preamble, inputId, states);
   }
@@ -1063,8 +1095,9 @@ const chakraComponent = (
   if(tagName[0] === tagName[0].toUpperCase() && !ChakraTags.includes(tagName)){
     return invalidComponent(`component '${tagName}'`);
   }
-  if(tagName === "input"){
+  if(tagName === "input" && component.attribs.id === "ii"){
     console.log("INPUT", component);
+//    return <ToastExample/>;
     // const fn = new Function(
     //   "React, " + ChakraTags.join(","),
     //   `return ${transformedCode}`
@@ -1987,7 +2020,9 @@ const ChakraInput = ({ configuration, value, setValue }) => {
 
 const Hooks = {
   useDisclosure,
-  useClipboard
+  useClipboard,
+  useToast, toast,
+  createStandaloneToast
 };
 
 const ChakraComponent = ({ configuration, value, setValue }) => {

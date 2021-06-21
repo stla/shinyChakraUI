@@ -125,6 +125,26 @@ useDisclosure <- function(defaultIsOpen = FALSE){
 
 #' Title
 #'
+#' @return
+#' @export
+#'
+#' @examples
+useToast <- function(){
+  list("__hook" = "useToast()")
+}
+
+#' Title
+#'
+#' @return
+#' @export
+#'
+#' @examples
+createStandaloneToast <- function(){
+  list("__hook" = "createStandaloneToast()")
+}
+
+#' Title
+#'
 #' @param state
 #' @param value
 #'

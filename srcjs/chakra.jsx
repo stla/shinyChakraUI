@@ -106,7 +106,11 @@ import {
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
-  NumberDecrementStepper
+  NumberDecrementStepper,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -348,7 +352,11 @@ const ChakraComponents = {
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
-  NumberDecrementStepper
+  NumberDecrementStepper,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -1810,10 +1818,10 @@ const chakraComponent = (
     props.className = "chakraTag";
     props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
     shinyValue.add(props.id, defaultValue);
-    const [value, setValue] = React.useState(defaultValue);
-    props.value = value;
+    // const [value, setValue] = React.useState(defaultValue);
+    // props.value = value;
     const fOnChange = (val) => {
-      setValue(val);
+      // setValue(val);
       Shiny.setInputValue(props.id, val);
       shinyValue.set(props.id, val);
     };

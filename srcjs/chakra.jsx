@@ -95,7 +95,18 @@ import {
   EditableInput, 
   EditablePreview,
   Flex,
-  ButtonGroup
+  ButtonGroup,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -326,7 +337,18 @@ const ChakraComponents = {
   EditableInput, 
   EditablePreview,
   Flex,
-  ButtonGroup
+  ButtonGroup,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -1518,7 +1540,7 @@ const chakraComponent = (
         return component;  
       }
     }
-  }else if(component.name === "Popover" && props.id){
+  }else if(component.name === "Popover" && props.hasOwnProperty("id")){
     shinyValue.add(props.id, null);
     const setShinyValue = (value) => {
       if(value !== undefined){
@@ -1543,7 +1565,7 @@ const chakraComponent = (
     return <PopoverTrigger>{child}</PopoverTrigger>;
     // props.children = component.children;
     // component.children = [];
-  }else if(component.name === "Tabs" && props.id){
+  }else if(component.name === "Tabs" && props.hasOwnProperty("id")){
     let defaultIndex = props.defaultIndex ? props.defaultIndex : 0;
     shinyValue.add(props.id, defaultIndex);
     props.onChange = index => {

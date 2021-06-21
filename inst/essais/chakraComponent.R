@@ -42,7 +42,7 @@ ui <- chakraPage(
   #   tags$link(rel = "stylesheet", href = "chakra.css")
   # ),
 
-#  sliderInput("slider", "Slider", 0, 10, 5),
+  #  sliderInput("slider", "Slider", 0, 10, 5),
   # tags$head(
   #   tags$script(
   #     HTML(
@@ -71,14 +71,14 @@ ui <- chakraPage(
         "id",
 
 
- withStates(
-   Tag$Fragment(
-     Tag$Button(
-       onClick = jseval("() => console.log(getState('stoast'))"),
-       "getStandaloneToast"
-     ),
-     Tag$Button(
-       onClick = jseval('() => {let stoast=getState("stoast"); stoast({
+        withStates(
+          Tag$Fragment(
+            Tag$Button(
+              onClick = jseval("() => console.log(getState('stoast'))"),
+              "getStandaloneToast"
+            ),
+            Tag$Button(
+              onClick = jseval('() => {let stoast=getState("stoast"); stoast({
           title: "Account created.",
           description: "We ve created your account for you.",
           status: "success",
@@ -87,10 +87,10 @@ ui <- chakraPage(
           id: "to",
           onCloseComplete: () => alert("closecomlete")
         })}'),
-       "Show standalone toast"
-     )),
-   states = list(stoast = createStandaloneToast())
- ),
+              "Show standalone toast"
+            )),
+          states = list(stoast = createStandaloneToast())
+        ),
 
         withStates(
           Tag$Fragment(
@@ -98,9 +98,9 @@ ui <- chakraPage(
               onClick = jseval("() => console.log(getState('ttoast'))"),
               "getToast"
             ),
-          Tag$Button(
-            # onClick = jseval("() => console.log(getState('toast'))"),
-            onClick = jseval('() => {let ttoast=getState("ttoast"); if (!ttoast.isActive("to")) {ttoast({
+            Tag$Button(
+              # onClick = jseval("() => console.log(getState('toast'))"),
+              onClick = jseval('() => {let ttoast=getState("ttoast"); if (!ttoast.isActive("to")) {ttoast({
           title: "Account created.",
           description: "We ve created your account for you.",
           status: "success",
@@ -109,8 +109,8 @@ ui <- chakraPage(
           id: "to",
           onCloseComplete: () => alert("closecomlete")
         })}}'),
-            "Show toast"
-          )),
+              "Show toast"
+            )),
           states = list(ttoast = useToast())
         ),
 
@@ -160,7 +160,7 @@ ui <- chakraPage(
         </ModalContent>
       </Modal>
     </>',
-      preamble = "const { isOpen, onOpen, onClose } = useDisclosure()"),
+          preamble = "const { isOpen, onOpen, onClose } = useDisclosure()"),
 
         dateRangeInput("daterange1", "Date range:",
                        start = "2001-01-01",
@@ -332,7 +332,7 @@ ui <- chakraPage(
         withStates(
           Tag$Stack(
             Tag$Input(
-#              className = "not",
+              #              className = "not",
               value = getState("helloworld"),
               isReadOnly = TRUE,
               placeholder="Welcome"
@@ -660,21 +660,21 @@ ui <- chakraPage(
       verbatimTextOutput("inputs")
     )
   )
-# tags$script(HTML('
-#   ReactDOM.render(app, document.getElementById("app"));
-#   const el = document.getElementById("id");
-#   console.log(el);
-#   $(el).data("configuration", JSON.parse($(el).next().next().text()));
-#   const element = React.createElement(ChakraComponent, {
-#     configuration: $(el).data("configuration")
-#   });
-#   ReactDOM.render(element, el);
-# '))
+  # tags$script(HTML('
+  #   ReactDOM.render(app, document.getElementById("app"));
+  #   const el = document.getElementById("id");
+  #   console.log(el);
+  #   $(el).data("configuration", JSON.parse($(el).next().next().text()));
+  #   const element = React.createElement(ChakraComponent, {
+  #     configuration: $(el).data("configuration")
+  #   });
+  #   ReactDOM.render(element, el);
+  # '))
 
 
 
 
-#  )
+  #  )
 )
 
 #     )
@@ -727,12 +727,49 @@ ui <- chakraPage(
   chakraComponent(
     "iid",
 
-    Tag$Editable(
-      id = "editable",
-      defaultValue = "Take some chakra",
-      Tag$EditablePreview(),
-      Tag$EditableInput()
+    withStates(
+      Tag$Fragment(
+        Tag$NumberInput(
+          defaultValue = 15,
+          precision = 2,
+          step = 0.2,
+          onChange = jseval("(value) => setState('number', value)"),
+          Tag$NumberInputField(),
+          Tag$NumberInputStepper(
+            Tag$NumberIncrementStepper(),
+            Tag$NumberDecrementStepper()
+          )
+        ),
+        #
+        Tag$Stat(
+          bg = "tomato",
+          Tag$StatLabel(
+            "Collected Fees"
+          ),
+          Tag$StatNumber(
+            getState("number")
+          ),
+          Tag$StatHelpText(
+            "Feb 12 - Feb 28"
+          )
+        )
+      ),
+      states = list(number = 15)
     ),
+
+    Tag$Divider(),
+
+    Tag$Box(
+      borderWidth = "2px",
+      Tag$Editable(
+        id = "editable",
+        defaultValue = "Take some chakra",
+        Tag$EditablePreview(),
+        Tag$EditableInput()
+      )
+    ),
+
+    Tag$Divider(),
 
     jsx(
       '<Editable
@@ -747,31 +784,35 @@ ui <- chakraPage(
     </Editable>',
       preamble = paste(
         'function EditableControls() {',
-          'const {',
-            'isEditing,',
-            'getSubmitButtonProps,',
-            'getCancelButtonProps,',
-            'getEditButtonProps,',
-          '} = useEditableControls();',
-          'return isEditing ? (',
-            '<ButtonGroup justifyContent="center" size="sm">',
-              '<IconButton icon={<CheckIcon />} {...getSubmitButtonProps()} />',
-              '<IconButton icon={<CloseIcon />} {...getCancelButtonProps()} />',
-              '</ButtonGroup>',
-          ') : (',
-            '<Flex justifyContent="center">',
-              '<IconButton size="sm" icon={<EditIcon />} {...getEditButtonProps()} />',
-              '</Flex>',
-          ')',
+        'const {',
+        'isEditing,',
+        'getSubmitButtonProps,',
+        'getCancelButtonProps,',
+        'getEditButtonProps,',
+        '} = useEditableControls();',
+        'return isEditing ? (',
+        '<ButtonGroup justifyContent="center" size="sm">',
+        '<IconButton icon={<CheckIcon />} {...getSubmitButtonProps()} />',
+        '<IconButton icon={<CloseIcon />} {...getCancelButtonProps()} />',
+        '</ButtonGroup>',
+        ') : (',
+        '<Flex justifyContent="center">',
+        '<IconButton size="sm" icon={<EditIcon />} {...getEditButtonProps()} />',
+        '</Flex>',
+        ')',
         '}',
         sep = "\n"
       )
     ),
 
+    Tag$Divider(),
+
     Tag$Switch(
       id = "switch",
       size = "lg"
     ),
+
+    Tag$Divider(),
 
     jsx(
       '    <Button
@@ -794,29 +835,29 @@ ui <- chakraPage(
 
 server <- function(input, output, session){
 
-#  observeEvent(input[["button"]],{
-    output[["ui"]] <- renderUI({
-#      chakraComponent("iiii", Tag$Button("TEST"))
-      actionButton("red", "CHAKRA BUTTON")
-    })
- # })
+  #  observeEvent(input[["button"]],{
+  output[["ui"]] <- renderUI({
+    #      chakraComponent("iiii", Tag$Button("TEST"))
+    actionButton("red", "CHAKRA BUTTON")
+  })
+  # })
 
-    observeEvent(input[["button"]],{
-      print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
-      checkbox <- Tag$Checkbox(
-        id = "zzz",
-        onChange = list(eval = "(event) => {alert(states.chakrazzz)}"),
-        "NEWCHECKBOX"
-      )
-      checkbox[["hasStates"]] = TRUE
-      scripttag <- Tag$ScriptTag(dangerouslySetInnerHTML = list(eval="{__html: 'console.log(\"SSSTTTAAATTTEEES\", states)'}"))
-      scripttag <- tags$div(list(eval = '(() => {if(!states.chakrazzz){states.chakrazzz = STATE};console.log(\"SSSTTTAAATTTEEES\", states)})()'))
-      scripttag[["hasStates"]] = TRUE
-      component <- Tag$Fragment(scripttag,checkbox)
-      setReactState(session, "id", "boxtext",
+  observeEvent(input[["button"]],{
+    print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+    checkbox <- Tag$Checkbox(
+      id = "zzz",
+      onChange = list(eval = "(event) => {alert(states.chakrazzz)}"),
+      "NEWCHECKBOX"
+    )
+    checkbox[["hasStates"]] = TRUE
+    scripttag <- Tag$ScriptTag(dangerouslySetInnerHTML = list(eval="{__html: 'console.log(\"SSSTTTAAATTTEEES\", states)'}"))
+    scripttag <- tags$div(list(eval = '(() => {if(!states.chakrazzz){states.chakrazzz = STATE};console.log(\"SSSTTTAAATTTEEES\", states)})()'))
+    scripttag[["hasStates"]] = TRUE
+    component <- Tag$Fragment(scripttag,checkbox)
+    setReactState(session, "id", "boxtext",
 
-                    jsx(
-                      '    <Button
+                  jsx(
+                    '    <Button
       onClick={() =>
         toast({
           title: "Account created.",
@@ -830,104 +871,104 @@ server <- function(input, output, session){
       Show ToasttttttttttttttXXXX
     </Button>
  ', preamble = "const toast = useToast()"
-                    )
+                  )
 
-                    # jsx(
-                    #   "<Button colorScheme='red'>BBBUUUTTTOOONNN</Button>"
-                    # )
+                  # jsx(
+                  #   "<Button colorScheme='red'>BBBUUUTTTOOONNN</Button>"
+                  # )
 
-                    # Tag$Fragment(
-                    #   #tags$div(list(eval = "$(getState('span')).trigger('xx')")),
-                    #   Tag$Button(
-                    #     onClick = jseval("() => {$('#myspan').text('SSSSSSSS')}"),
-                    #     paste0("SETSTATEAA", input[["button"]])
-                    #   ),
-                    # Tag$Checkbox(
-                    #   id = "uuuuu",
-                    #   isChecked = TRUE,
-                    #   onChange = jseval("(event) => {setState('AA','LLL');alert(states.AA.get())}"),
-                    #   HTML("<span id='myspan'>SPAN</span>") #getState('boxtext2')
-                    # ))
+                  # Tag$Fragment(
+                  #   #tags$div(list(eval = "$(getState('span')).trigger('xx')")),
+                  #   Tag$Button(
+                  #     onClick = jseval("() => {$('#myspan').text('SSSSSSSS')}"),
+                  #     paste0("SETSTATEAA", input[["button"]])
+                  #   ),
+                  # Tag$Checkbox(
+                  #   id = "uuuuu",
+                  #   isChecked = TRUE,
+                  #   onChange = jseval("(event) => {setState('AA','LLL');alert(states.AA.get())}"),
+                  #   HTML("<span id='myspan'>SPAN</span>") #getState('boxtext2')
+                  # ))
 
-                    # Tag$CheckboxGroup(
-                    #   id = "zzz",
-                    #   defaultValue = c("nar => uto", "sasuke"),
-                    #   Tag$HStack(
-                    #     Tag$Checkbox(
-                    #       value = "nar => uto",
-                    #       "Naruto"
-                    #     ),
-                    #     Tag$Checkbox(
-                    #       value = "sasuke",
-                    #       "Sasuke"
-                    #     )
-                    #   )
-                    # )
-                    #list(react = shinyChakraUI:::unclassComponent(component)[["component"]])                    # React$Button(
-                    #   colorScheme = "red",
-                    #   onClick = list(eval = "() => states.boxtext.set('YYYOOOO')"),
-                    #   "QQQQQQQQQ"
-                    # )
-                    # Tag$Input(
-                    #   id = "xxxxxxxxxxxxxxxxxx",
-                    #   placeholder = "AAAAAAAAAAAAAAAAAAAA",
-                    #   value = "x"
-                    # )
-                    # Tag$Stack(
-                    #   Tag$Button(
-                    #     onClick = list(eval = "() => states.boxtext.set('YYYOOOO')"),
-                    #     "OOOOOOOO"
-                    #   ),
-                    #   withStates(
-                    #     Tag$Box(
-                    #       "AAAA"#list(eval = "states.boxtext2.get()")
-                    #     ), states = NULL#list(boxtext2 = "IIIIIIIII")
-                    #   ),
-                    #   actionButton("aaaa", "UUUU")
-                    # )
-      )
-      # showModal(modalDialog(
-      #   title = "Important message",
-      #   "This is an important message!",
-      #   footer =
-      #     chakraComponent("xx", Tag$Button("data-dismiss" = "modal", "Dismiss"))
-      # ))
-    })
+                  # Tag$CheckboxGroup(
+                  #   id = "zzz",
+                  #   defaultValue = c("nar => uto", "sasuke"),
+                  #   Tag$HStack(
+                  #     Tag$Checkbox(
+                  #       value = "nar => uto",
+                  #       "Naruto"
+                  #     ),
+                  #     Tag$Checkbox(
+                  #       value = "sasuke",
+                  #       "Sasuke"
+                  #     )
+                  #   )
+                  # )
+                  #list(react = shinyChakraUI:::unclassComponent(component)[["component"]])                    # React$Button(
+                  #   colorScheme = "red",
+                  #   onClick = list(eval = "() => states.boxtext.set('YYYOOOO')"),
+                  #   "QQQQQQQQQ"
+                  # )
+                  # Tag$Input(
+                  #   id = "xxxxxxxxxxxxxxxxxx",
+                  #   placeholder = "AAAAAAAAAAAAAAAAAAAA",
+                  #   value = "x"
+                  # )
+                  # Tag$Stack(
+                  #   Tag$Button(
+                  #     onClick = list(eval = "() => states.boxtext.set('YYYOOOO')"),
+                  #     "OOOOOOOO"
+                  #   ),
+                  #   withStates(
+                  #     Tag$Box(
+                  #       "AAAA"#list(eval = "states.boxtext2.get()")
+                  #     ), states = NULL#list(boxtext2 = "IIIIIIIII")
+                  #   ),
+                  #   actionButton("aaaa", "UUUU")
+                  # )
+    )
+    # showModal(modalDialog(
+    #   title = "Important message",
+    #   "This is an important message!",
+    #   footer =
+    #     chakraComponent("xx", Tag$Button("data-dismiss" = "modal", "Dismiss"))
+    # ))
+  })
 
-    inputs <- reactiveVal()
+  inputs <- reactiveVal()
 
-    observers <- NULL
-    observeEvent(names(input), {
-      lapply(observers, function(o) o$destroy())
-      observers <<- lapply(names(input), function(inputName){
-        #inputIds[[inputName]] <- input[[inputName]]
-        observeEvent(input[[inputName]], {
-          cat(inputName, "\n")
-          print(input[[inputName]])
-        })
+  observers <- NULL
+  observeEvent(names(input), {
+    lapply(observers, function(o) o$destroy())
+    observers <<- lapply(names(input), function(inputName){
+      #inputIds[[inputName]] <- input[[inputName]]
+      observeEvent(input[[inputName]], {
+        cat(inputName, "\n")
+        print(input[[inputName]])
       })
-      # xx <<- reactiveValuesToList(inputIds)
     })
+    # xx <<- reactiveValuesToList(inputIds)
+  })
 
-    output[["inputs"]] <- renderPrint({
-      inputs <- reactiveValuesToList(input)
-      toJSON(inputs, auto_unbox = TRUE, pretty = TRUE)
-    })
-    # lapply(xx, function(id){
-    #   observe({
-    #     cat(id, "\n")
-    #     print(input[[id]])
-    #   })
-    # })
+  output[["inputs"]] <- renderPrint({
+    inputs <- reactiveValuesToList(input)
+    toJSON(inputs, auto_unbox = TRUE, pretty = TRUE)
+  })
+  # lapply(xx, function(id){
+  #   observe({
+  #     cat(id, "\n")
+  #     print(input[[id]])
+  #   })
+  # })
 
-    # printinput <- function(id){
-    #   cat(id, "\n")
-    #   print(input[[id]])
-    # }
-    #
-    # lapply(names(input), function(id){
-    #   observe({printinput(id)})
-    # })
+  # printinput <- function(id){
+  #   cat(id, "\n")
+  #   print(input[[id]])
+  # }
+  #
+  # lapply(names(input), function(id){
+  #   observe({printinput(id)})
+  # })
 
   # observe({
   #   print(input[["menu"]])

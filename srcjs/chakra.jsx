@@ -1590,6 +1590,22 @@ const chakraComponent = (
     //   ]
     // };
   }else if(
+    component.name === "NumberInput" && 
+    //props.shinyValue !== false && 
+    props.hasOwnProperty("id")
+  ){
+    let defaultValue = props.hasOwnProperty("defaultValue") ? props.defaultValue : 0;
+    shinyValue.add(props.id, defaultValue);
+    let f = props.onChange || (() => {});
+    const [value, setValue] = React.useState(defaultValue);
+    props.value = value;
+    props.onChange = (val) => {
+      shinyValue.set(props.id, val);
+      Shiny.setInputValue(props.id, val);
+      setValue(val);
+      f(val);
+    };
+  }else if(
     component.name === "Switch" && 
     //props.shinyValue !== false && 
     props.hasOwnProperty("id")

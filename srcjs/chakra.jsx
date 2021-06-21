@@ -14,7 +14,7 @@ import {
   useDisclosure,
   useClipboard,
   useToast,
-  toast,
+  //toast,
   createStandaloneToast,
   ChakraProvider,
   Button,
@@ -2021,7 +2021,7 @@ const ChakraInput = ({ configuration, value, setValue }) => {
 const Hooks = {
   useDisclosure,
   useClipboard,
-  useToast, toast,
+  useToast, 
   createStandaloneToast
 };
 

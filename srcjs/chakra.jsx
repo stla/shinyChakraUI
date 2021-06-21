@@ -16,6 +16,7 @@ import {
   useToast,
   //toast,
   createStandaloneToast,
+  useEditableControls,
   ChakraProvider,
   Button,
   IconButton,
@@ -85,7 +86,14 @@ import {
   ModalCloseButton,
   Code,
   Divider,
-  Switch
+  Switch,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+  Editable, 
+  EditableInput, 
+  EditablePreview
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -307,7 +315,14 @@ const ChakraComponents = {
   ModalCloseButton,
   Code,
   Divider,
-  Switch
+  Switch,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+  Editable, 
+  EditableInput, 
+  EditablePreview
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -1058,7 +1073,7 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
 
 
 const chakraComponent = (
-  component, shinyValue, states, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+  component, shinyValue, states, patch, inputId, radiogroupValues, setRadiogroupValues
 ) => {
 //  console.log("XXXXXXXXXXX");
   console.log("COMPONENT", component);
@@ -1669,6 +1684,24 @@ const chakraComponent = (
   }else if(component.name === "ScriptTag" && component.decoded !== true){
     props.dangerouslySetInnerHTML.__html = decodeURI(props.dangerouslySetInnerHTML.__html);
     component.decoded = true;
+  }else if(component.name === "Editable" && props.hasOwnProperty("id") && props.shinyValue !== false){
+    let defaultValue = props.hasOwnProperty("defaultValue") ? props.defaultValue : "";
+    props.className = "chakraTag";
+    props["data-shinyinitvalue"] = defaultValue;
+    shinyValue.add(props.id, defaultValue);
+    let f = props.onChange || (() => {});
+    const [value, setValue] = React.useState(defaultValue);
+    props.value = value;
+    const onChange_onCancel = (val) => {
+      setValue(val);
+      Shiny.setInputValue(props.id, val);
+      shinyValue.set(props.id, val);
+    };
+    props.onChange = (val) => {
+      onChange_onCancel(val);
+      f(val);
+    };
+    props.onCancel = onChange_onCancel;
   }else if(component.name === "Input" && props.id && props.shinyValue !== false){
     props.className = "chakraTag";
     props["data-shinyinitvalue"] = props.value;
@@ -1766,7 +1799,7 @@ const chakraComponent = (
           attribs.shinyValue = false;
         }
         let cc = chakraComponent(
-          component.children[i], shinyValue, x, patch, inputId, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
+          component.children[i], shinyValue, x, patch, inputId, radiogroupValues, setRadiogroupValues
         );
         component.children[i] = cc; 
         // newpropsChildren[i] = chakraComponent(
@@ -2045,7 +2078,8 @@ const Hooks = {
   useDisclosure,
   useClipboard,
   useToast, 
-  createStandaloneToast
+  createStandaloneToast,
+  useEditableControls
 };
 
 const ChakraComponent = ({ configuration, value, setValue }) => {
@@ -2083,19 +2117,19 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
   //   });
   // }
   // Checkbox elements
-  const [checkedItems, setCheckedItems] = React.useState(configuration.Checkboxes);
-  const checkboxOnChange = (e) => {
-    let obj = {};
-    for(let key in checkedItems){
-      if(key === e.currentTarget.id){
-        obj[key] = e.target.checked;
-      }else{
-        obj[key] = checkedItems[key];
-      }
-    }
-    setCheckedItems(obj);
-    Shiny.setInputValue(e.currentTarget.id, e.target.checked);    
-  };
+  // const [checkedItems, setCheckedItems] = React.useState(configuration.Checkboxes);
+  // const checkboxOnChange = (e) => {
+  //   let obj = {};
+  //   for(let key in checkedItems){
+  //     if(key === e.currentTarget.id){
+  //       obj[key] = e.target.checked;
+  //     }else{
+  //       obj[key] = checkedItems[key];
+  //     }
+  //   }
+  //   setCheckedItems(obj);
+  //   Shiny.setInputValue(e.currentTarget.id, e.target.checked);    
+  // };
   // RadioGroup
   let RadioGroups = configuration.RadioGroups; 
   if(RadioGroups){
@@ -2116,8 +2150,8 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
         {},
         patch,
         configuration.inputId,
-        null,//checkedItems,
-        null,//checkboxOnChange,
+        // null,//checkedItems,
+        // null,//checkboxOnChange,
         radiogroupValues,
         setRadiogroupValues
       )

@@ -292,7 +292,7 @@ unclassComponent <- function(component, inputId, call){
   }
   for(attribname in names(component[["attribs"]])){
     attrib <- component[["attribs"]][[attribname]]
-    if(isString(attrib) && attribname != "defaultValue"){
+    if(isString(attrib)){ #&& attribname != "defaultValue"){
       component[["attribs"]][[attribname]] <- URLencode(attrib)
     }
     if(isReactComponent(attrib) && grepl("Icon$", attrib[["name"]])){

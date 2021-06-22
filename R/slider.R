@@ -35,6 +35,49 @@ sliderThumbOptions <- function(
 
 #' Title
 #'
+#' @param textAlign
+#' @param backgroundColor
+#' @param textColor
+#' @param margin
+#' @param padding
+#' @param width
+#' @param ...
+#'
+#' @return
+#' @export
+#' @importFrom htmltools validateCssUnit
+#'
+#' @examples
+sliderMarkoptions <- function(
+  textAlign = "center",
+  backgroundColor = "blue.500",
+  textColor = "white",
+  margin = "-35px 0 0 -25px",
+  padding = "0 10px",
+  width = "50px",
+  ...
+){
+  if(length(dots <- list(...))){
+    namesDots <- names(dots)
+    if(is.null(namesDots) || ("" %in% namesDots)){
+      stop(
+        "The arguments given in `...` must be named.", call. = TRUE
+      )
+    }
+  }
+  list(
+    textAlign = textAlign,
+    backgroundColor = validateColor(backgroundColor),
+    color = validateColor(textColor),
+    margin = margin,
+    padding = padding,
+    width = validateCssUnit(width),
+    ...
+  )
+}
+
+#' Title
+#'
 #' @param id
 #' @param label
 #' @param value
@@ -62,8 +105,16 @@ chakraSlider <- function(
   step = NULL,
   width = NULL,
   size = "md",
+  colorScheme = "blue",
+  orientation = "horizontal",
+  focusThumbOnChange = TRUE,
+  isDisabled = FALSE,
+  isReadOnly = FALSE,
+  isReversed = FALSE,
   trackColor = NULL,
   filledTrackColor = NULL,
+  mark = TRUE,
+  markOptions = sliderMarkOptions(),
   thumbOptions = sliderThumbOptions(),
   shinyValueOn = "end")
 {
@@ -74,7 +125,14 @@ chakraSlider <- function(
     max = max,
     step = step,
     width = validateCssUnit(width),
-    size = match.arg(size, c("sm", "md", "lg"))
+    size = match.arg(size, c("sm", "md", "lg")),
+    colorScheme = match.arg(colorScheme, chakraColorSchemes()),
+    orientation = orientation,
+    focusThumbOnChange = focusThumbOnChange,
+    isDisabled = isDisabled,
+    isReadOnly = isReadOnly,
+    isReversed = isReversed,
+    display = "block"
   ))
   track <- asShinyTag(
     list(
@@ -91,6 +149,17 @@ chakraSlider <- function(
       )
     )
   )
+  if(mark){
+    mark <- asShinyTag(
+      list(
+        name = "SliderMark",
+        attribs = dropNulls(sliderMarkoptions()),
+        children = list()
+      )
+    )
+  }else{
+    mark <- NULL
+  }
   thumb <- asShinyTag(
     list(
       name = "SliderThumb",
@@ -102,10 +171,11 @@ chakraSlider <- function(
     list(
       name = "Slider",
       attribs = attribs,
-      children = list(
+      children = dropNulls(list(
         track,
+        mark,
         thumb
-      ),
+      )),
       shinyValueOn = match.arg(shinyValueOn, c("end", "drag")),
       widget = "slider"
     )

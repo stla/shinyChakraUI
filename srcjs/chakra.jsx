@@ -110,7 +110,8 @@ import {
   Slider,
   SliderTrack,
   SliderFilledTrack,
-  SliderThumb
+  SliderThumb,
+  SliderMark
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -356,7 +357,8 @@ const ChakraComponents = {
   Slider,
   SliderTrack,
   SliderFilledTrack,
-  SliderThumb
+  SliderThumb,
+  SliderMark
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -1818,17 +1820,30 @@ const chakraComponent = (
     props.className = "chakraTag";
     props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
     shinyValue.add(props.id, defaultValue);
-    // const [value, setValue] = React.useState(defaultValue);
-    // props.value = value;
-    const fOnChange = (val) => {
-      // setValue(val);
-      Shiny.setInputValue(props.id, val);
-      shinyValue.set(props.id, val);
-    };
+    const sliderMark = component.children.length === 3;
+    let sliderValue = null;
+    let setSliderValue = () => {};
+    if(sliderMark){
+      [sliderValue, setSliderValue] = React.useState(defaultValue);
+      component.children[1].attribs.value = sliderValue;
+      component.children[1].children = [sliderValue];
+    }
     if(component.shinyValueOn === "end"){
-      props.onChangeEnd = fOnChange;
+      props.onChangeEnd = (val) => {
+        Shiny.setInputValue(props.id, val);
+        shinyValue.set(props.id, val);
+      };
+      if(sliderMark){
+        props.onChange = (val) => {
+          setSliderValue(val);
+        };  
+      }
     }else{
-      props.onChange = fOnChange;
+      props.onChange = (val) => {
+        Shiny.setInputValue(props.id, val);
+        shinyValue.set(props.id, val);
+        setSliderValue(val);
+      };
     }
   }
   for(const key in props){

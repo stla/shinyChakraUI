@@ -21,8 +21,8 @@ sliderThumbOptions <- function(
   list(
     width = validateCssUnit(width),
     height = validateCssUnit(height),
-    bg = color2hex(color),
-    borderColor = color2hex(borderColor),
+    bg = validateColor(color),
+    borderColor = validateColor(borderColor),
     borderWidth = if(!is.null(borderWidth)){
       if(borderWidth %in% c("medium", "thick", "thin")){
         borderWidth
@@ -78,12 +78,12 @@ chakraSlider <- function(
   track <- asShinyTag(
     list(
       name = "SliderTrack",
-      attribs = dropNulls(list(bg = color2hex(trackColor))),
+      attribs = dropNulls(list(bg = validateColor(trackColor))),
       children = list(
         asShinyTag(
           list(
             name = "SliderFilledTrack",
-            attribs = dropNulls(list(bg = color2hex(filledTrackColor))),
+            attribs = dropNulls(list(bg = validateColor(filledTrackColor))),
             children = list()
           )
         )

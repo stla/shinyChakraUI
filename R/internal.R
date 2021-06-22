@@ -1,9 +1,40 @@
+isChakraColor <- function(x){
+  grepl("(^whiteAlpha|^blackAlpha|^gray|^red|^orange|^yellow|^green|^teal|^blue|^cyan|^purple|^pink|^linkedin|^facebook|^messenger|^whatsapp|^twitter|^telegram)\\.(50$|100$|200$|300$|400$|500$|600$|700$|800$|900$)", x)
+}
+
 #' @importFrom grDevices col2rgb rgb
 #' @noRd
 color2hex <- function(color){
-  if(is.null(color)) return(NULL)
   RGB <- col2rgb(color)[,1]
   rgb(RGB["red"], RGB["green"], RGB["blue"], maxColorValue = 255)
+}
+
+#' Title
+#'
+#' @param color
+#'
+#' @return
+#' @export
+#' @importFrom htmltools parseCssColors
+#'
+#' @examples
+validateColor <- function(color){
+  if(is.null(color)) return(NULL)
+  stopifnot(isString(color))
+  if(color == "currentColor") return("currentColor")
+  if(isChakraColor(color)){
+    return(color)
+  }
+  cssColor <- try(parseCssColors(color), silent = TRUE)
+  if(!inherits(cssColor, "try-error")){
+    return(cssColor)
+  }
+  Rcolor <- try(color2hex(color), silent = TRUE)
+  if(inherits(Rcolor, "try-error")){
+    stop(sprintf("Invalid color '%s'.", color), call. = FALSE)
+  }else{
+    Rcolor
+  }
 }
 
 isString <- function(x){

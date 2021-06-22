@@ -50,6 +50,7 @@ sliderThumbOptions <- function(
 #'
 #' @return
 #' @export
+#' @importFrom htmltools validateCssUnit tags
 #'
 #' @examples
 chakraSlider <- function(
@@ -59,7 +60,7 @@ chakraSlider <- function(
   min,
   max,
   step = NULL,
-  width = "100%",
+  width = NULL,
   size = "md",
   trackColor = NULL,
   filledTrackColor = NULL,
@@ -97,7 +98,7 @@ chakraSlider <- function(
       children = list()
     )
   )
-  asShinyTag(
+  component <- asShinyTag(
     list(
       name = "Slider",
       attribs = attribs,
@@ -109,4 +110,12 @@ chakraSlider <- function(
       widget = "slider"
     )
   )
+  if(!is.null(label)){
+    component <- tags$div(
+      class = "form-group",
+      tags$label(label),
+      component
+    )
+  }
+  component
 }

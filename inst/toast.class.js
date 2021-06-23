@@ -1,4 +1,16 @@
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
 
 import { isBrowser } from "@chakra-ui/utils";
 import * as React from "react";
@@ -29,7 +41,7 @@ class Toaster {
 
     _defineProperty(this, "isToastActive", void 0);
 
-    _defineProperty(this, "bindFunctions", methods => {
+    _defineProperty(this, "bindFunctions", (methods) => {
       this.createToast = methods.notify;
       this.removeAll = methods.closeAll;
       this.closeToast = methods.close;
@@ -42,19 +54,25 @@ class Toaster {
         options = {};
       }
 
-      return _this.createToast == null ? void 0 : _this.createToast(message, options);
+      return _this.createToast == null
+        ? void 0
+        : _this.createToast(message, options);
     });
 
-    _defineProperty(this, "close", id => {
+    _defineProperty(this, "close", (id) => {
       var _this$closeToast;
 
-      (_this$closeToast = this.closeToast) == null ? void 0 : _this$closeToast.call(this, id);
+      (_this$closeToast = this.closeToast) == null
+        ? void 0
+        : _this$closeToast.call(this, id);
     });
 
-    _defineProperty(this, "closeAll", options => {
+    _defineProperty(this, "closeAll", (options) => {
       var _this$removeAll;
 
-      (_this$removeAll = this.removeAll) == null ? void 0 : _this$removeAll.call(this, options);
+      (_this$removeAll = this.removeAll) == null
+        ? void 0
+        : _this$removeAll.call(this, options);
     });
 
     _defineProperty(this, "update", function (id, options) {
@@ -65,58 +83,55 @@ class Toaster {
       _this.updateToast == null ? void 0 : _this.updateToast(id, options);
     });
 
-    _defineProperty(this, "isActive", id => {
+    _defineProperty(this, "isActive", (id) => {
       var _this$isToastActive;
 
-      return (_this$isToastActive = this.isToastActive) == null ? void 0 : _this$isToastActive.call(this, id);
+      return (_this$isToastActive = this.isToastActive) == null
+        ? void 0
+        : _this$isToastActive.call(this, id);
     });
 
-    //if (!isBrowser) return;
+    ////
+    console.warn("isBrowser", isBrowser);
+    ////
+
+    if (!isBrowser) return;
+
     var portal;
     var existingPortal = document.getElementById(portalId);
 
-    var childAppended = false;
-
     ////
-    console.warn("existingportal",existingPortal);
-
-    if (existingPortal) {
-      portal = existingPortal;
-      childAppended = true;
-    } else {
-      var _document$body;
-
-      var div = document.createElement("div");
-      div.id = portalId;
-      ////
-      console.warn("document.body", document.body);
-      if(document.body){
-        document.body.appendChild(div);
-        childAppended = true;
-      }
-//      (_document$body = document.body) == null ? void 0 : _document$body.appendChild(div);
-      portal = div;
-    }
-
+    console.warn("existingportal", existingPortal);
     ////
+
     var elem = React.createElement(ToastManager, {
       notify: this.bindFunctions
     });
-    if(childAppended){
+
+    if (existingPortal) {
+      portal = existingPortal;
       render(elem, portal);
-    }else{
-      setTimeout(function(){
-        document.body.appendChild(portal);
-        childAppended = true;
+    } else {
+      document.addEventListener("DOMContentLoaded", function () {
+        var _document$body;
+        var div = document.createElement("div");
+        div.id = portalId;
+
+        ////
+        console.warn("document.body", document.body);
+        ////
+
+        (_document$body = document.body) == null
+          ? void 0
+          : _document$body.appendChild(div);
+        portal = div;
         render(elem, portal);
       });
     }
-//    render( /*#__PURE__*/React.createElement(ToastManager, {
-//      notify: this.bindFunctions
-//    }), portal);
-
   }
-
+  //    render( /*#__PURE__*/React.createElement(ToastManager, {
+  //      notify: this.bindFunctions
+  //    }), portal);
 }
 
 export var toast = new Toaster();

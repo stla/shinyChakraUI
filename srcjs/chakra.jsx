@@ -474,6 +474,8 @@ const isEmptyArray = x => (Array.isArray(x) && x.length === 0);
 
 const isNonEmptyArray = x => (Array.isArray(x) && x.length);
 
+const isNotEmpty = x => Object.keys(x).length > 0;
+
 const makeCheckboxWithChildren = (div, shinyValue) => {
   let childCheckboxes = JSON.parse(JSON.stringify(div.children[1].children));
   let n = childCheckboxes.length;
@@ -1755,12 +1757,26 @@ const chakraComponent = (
       f(val);
     };
     props.onCancel = onChange_onCancel;
-  }else if(component.name === "Input" && props.id && props.shinyValue !== false){
+  }else if(component.name === "Input" && props.hasOwnProperty("id") && props.shinyValue !== false){
     props.className = "chakraTag";
-    props["data-shinyinitvalue"] = props.value;
-    shinyValue.add(props.id, props.value);
+
+    let inputValue;
+    const hasDefaultValue = props.hasOwnProperty("defaultValue");
+    if(hasDefaultValue){
+      inputValue = props.defaultValue;
+    }else if(props.hasOwnProperty("value")){
+      inputValue = props.value;
+      props.defaultValue = inputValue;
+    }else{
+      inputValue = "";
+      props.defaultValue = inputValue;
+    }
+    props["data-shinyinitvalue"] = inputValue;
+    shinyValue.add(props.id, inputValue);
+    delete props.value;
+
     let f = props.onChange;
-    if(Object.keys(states).length){
+    if(isNotEmpty(states)){
       // let chakraState = states.chakraState;
       // let stateValue = chakraState.get();
       // stateValue[props.id] = props.value;  
@@ -1798,18 +1814,18 @@ const chakraComponent = (
       //delete states["chakra" + props.id];
       //return React.createElement(Input, props);
     }else{
-      const [value, setValue] = React.useState(props.value);
-      props.value = value;
+      //const [value, setValue] = React.useState(props.value);
+      //props.value = value;
       if(f){
         props.onChange = (event) => {
-          setValue(event.target.value);
+          //setValue(event.target.value);
           Shiny.setInputValue(props.id, event.target.value);
           shinyValue.set(props.id, event.target.value);
           f(event);
         };
       }else{
         props.onChange = (event) => {
-          setValue(event.target.value);
+          //setValue(event.target.value);
           Shiny.setInputValue(props.id, event.target.value);
           shinyValue.set(props.id, event.target.value);
         };
@@ -2166,6 +2182,8 @@ const Hooks = {
 };
 
 const ChakraComponent = ({ configuration, value, setValue }) => {
+  console.log("DOCBODY - ChakraComponent", JSON.stringify(document.body));
+
   let patch = {
     // MenuButton: {
     //   as: Button
@@ -2333,10 +2351,8 @@ Shiny.inputBindings.register(new class extends Shiny.InputBinding {
     return $(scope).find(".chakracomponent");
   }
   getValue(el) {
-    const element = React.createElement(ChakraComponent, {
-      configuration: $(el).data("configuration")
-    });
-    ReactDOM.render(element, el);  
+    console.log("DOCBODY - getValue", JSON.stringify(document.body));
+
 
     return $(el).data("value");
   }
@@ -2365,10 +2381,18 @@ Shiny.inputBindings.register(new class extends Shiny.InputBinding {
     }
   }
   initialize(el) {
+    console.log("DOCBODY - initialize", JSON.stringify(document.body));
     //$(el).data('value', JSON.parse($(el).next().text()));
     $(el).data('configuration', JSON.parse($(el).next().next().text()));
   }
   subscribe(el, callback) {
+//    $(document).ready(function(){
+      console.log("DOCBODY - subscribe", JSON.stringify(document.body));
+      const element = React.createElement(ChakraComponent, {
+        configuration: $(el).data("configuration")
+      });
+      ReactDOM.render(element, el);
+//    });
   }
   unsubscribe(el) {
     ReactDOM.render(null, el);

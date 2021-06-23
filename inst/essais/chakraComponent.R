@@ -12,7 +12,7 @@ xxx <- selectizeInput("sel", "label", choices=c("a=>b","b","c"))
 htmltools::htmlDependencies(xxx) <- NULL
 
 
-ui <- chakraPage(
+ui1 <- chakraPage(
 
   chakraComponent(
     "iid",
@@ -722,10 +722,28 @@ ui <- chakraPage(
 
 #ui <- tags$div(chakraComponent("uuu", tags$div("e")))
 
-ui <- chakraPage(
+ui2 <- chakraPage(
 
   chakraComponent(
     "iid",
+
+    sliderInput("oo", "Label", 0, 10, 5),
+
+    chakraSlider(
+      "slider",
+      label = HTML("<span style='color:red'>Hello slider!</span>"),
+      value = 5,
+      min = 0,
+      max = 10,
+      width = "50%",
+      tooltip = TRUE,
+      # thumbOptions = sliderThumbOptions(
+      #   width = "15px", height = "10px"
+      # ),
+      shinyValueOn = "end"
+    ),
+
+    Tag$Divider(),
 
     withStates(
       Tag$Fragment(
@@ -830,7 +848,29 @@ ui <- chakraPage(
       SSSSSSSShow Toastttttttttttttt
     </Button>
  ', preamble = "let ttoast = createStandaloneToast()"
+    ),
+
+    Tag$Divider(),
+
+    jsx(
+      '<Slider
+        w="80%"
+        mx="10%"
+        my={200}
+        aria-label="slider-ex-5"
+        onChange={(val) => setSliderValue(val)}
+        focusThumbOnChange={true}
+      >
+        <SliderTrack>
+          <SliderFilledTrack />
+        </SliderTrack>
+        <Tooltip hasArrow label={sliderValue} bg="red.600" placement="top" closeOnClick={false} isOpen>
+        <SliderThumb />
+        </Tooltip>
+      </Slider>',
+      preamble = 'const [sliderValue, setSliderValue] = React.useState(50);'
     )
+
   )
 )
 
@@ -999,5 +1039,5 @@ server <- function(input, output, session){
   # })
 }
 
-shinyApp(ui, server)
+shinyApp(ui2, server)
 

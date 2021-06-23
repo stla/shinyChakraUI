@@ -111,7 +111,8 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  SliderMark
+  SliderMark,
+  Tooltip
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -358,7 +359,8 @@ const ChakraComponents = {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  SliderMark
+  SliderMark,
+  Tooltip
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -1837,19 +1839,27 @@ const chakraComponent = (
     props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
     shinyValue.add(props.id, defaultValue);
     const sliderMark = component.children.length === 3;
+    const tooltip = component.children[1].name === "Tooltip";
     let sliderValue = null;
     let setSliderValue = () => {};
-    if(sliderMark){
+    if(sliderMark || tooltip){
       [sliderValue, setSliderValue] = React.useState(defaultValue);
-      component.children[1].attribs.value = sliderValue;
-      component.children[1].children = [sliderValue];
+      let child1 = component.children[1]; 
+      if(sliderMark){
+        child1.attribs.value = sliderValue;
+        child1.children = [sliderValue];
+      }else{ // tooltip
+        const tooltipAttribs = $.extend(child1.attribs, {label: sliderValue});
+        const thumbAttribs = child1.children[0].attribs;
+        component.children[1] = <Tooltip {...tooltipAttribs}><SliderThumb {...thumbAttribs}/></Tooltip>;
+      }
     }
     if(component.shinyValueOn === "end"){
       props.onChangeEnd = (val) => {
         Shiny.setInputValue(props.id, val);
         shinyValue.set(props.id, val);
       };
-      if(sliderMark){
+      if(sliderMark || tooltip){
         props.onChange = (val) => {
           setSliderValue(val);
         };  

@@ -78,6 +78,46 @@ sliderMarkOptions <- function(
 
 #' Title
 #'
+#' @param hasArrow
+#' @param backgroundColor
+#' @param placement
+#' @param closeOnClick
+#' @param isOpen
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
+sliderTooltipOptions <- function(
+  hasArrow = TRUE,
+  #label={sliderValue}
+  backgroundColor = "red.600",
+  placement = "top",
+  closeOnClick = FALSE,
+  isOpen = TRUE,
+  ...
+){
+  if(length(dots <- list(...))){
+    namesDots <- names(dots)
+    if(is.null(namesDots) || ("" %in% namesDots)){
+      stop(
+        "The arguments given in `...` must be named.", call. = TRUE
+      )
+    }
+  }
+  list(
+    hasArrow = hasArrow,
+    bg = validateColor(backgroundColor),
+    placement = placement,
+    closeOnClick = closeOnClick,
+    isOpen = isOpen,
+    ...
+  )
+}
+
+#' Title
+#'
 #' @param id
 #' @param label
 #' @param value
@@ -113,8 +153,10 @@ chakraSlider <- function(
   isReversed = FALSE,
   trackColor = NULL,
   filledTrackColor = NULL,
-  mark = TRUE,
+  mark = FALSE,
   markOptions = sliderMarkOptions(),
+  tooltip = TRUE,
+  tooltipOptions = sliderTooltipOptions(),
   thumbOptions = sliderThumbOptions(),
   shinyValueOn = "end",
   ...)
@@ -159,6 +201,9 @@ chakraSlider <- function(
       )
     )
   )
+  if(mark && tooltip){
+    stop("You cannot use both `mark` and `tooltip`.", call. = TRUE)
+  }
   if(mark){
     mark <- asShinyTag(
       list(
@@ -177,6 +222,15 @@ chakraSlider <- function(
       children = list()
     )
   )
+  if(tooltip){
+    thumb <- asShinyTag(
+      list(
+        name = "Tooltip",
+        attribs = dropNulls(tooltipOptions),
+        children = list(thumb)
+      )
+    )
+  }
   component <- asShinyTag(
     list(
       name = "Slider",

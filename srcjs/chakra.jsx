@@ -838,14 +838,33 @@ const makeState = (x, states, inputId) => {
 };
 
 const appendStates = (component, states, inputId) => {
-  if(component.attribs.id && component.attribs.shinyValue !== false){
-    let state = "chakra" + component.attribs.id;
+
+  let attribs = component.attribs;
+
+  if(attribs.hasOwnProperty("id") && attribs.shinyValue !== false){
+    const stateName = "chakra" + attribs.id;
     if(component.name === "Input"){
-      let value = component.attribs.value;
-      if(typeof value === "string"){
-        value = decodeURI(value);
+      let defaultValue = attribs.hasOwnProperty("defaultValue") ? decodeURI(attribs.defaultValue) : null;
+      if(defaultValue === null){
+        const hasValue = attribs.hasOwnProperty("value");
+        const value = hasValue ? attribs.value : null;
+        if(hasValue){
+          if(!isJseval(value)){
+            defaultValue = decodeURI(value);
+          }else{
+            states[stateName] = makeState(value, states, inputId);
+          }
+        }else{
+          defaultValue = "";
+        }
       }
-      states[state] = makeState(value, states, inputId);
+      if(defaultValue !== null){
+        attribs.defaultValue = defaultValue;
+      }
+      // if(typeof value === "string"){
+      //   value = decodeURI(value);
+      // }
+      // states[state] = makeState(value, states, inputId);
       // let value = component.attribs.value;
       // if(isJseval(value)){
       //   let code = decodeURI(value.__eval);
@@ -1041,7 +1060,6 @@ const throwApp = (inputId, app) => {
 };
 
 const jsxParser = (jsxString, preamble, inputId, states) => {
-  //let jsxString = "<Button onClick={() => {alert(\"JSX\")}}>JJJJJJJJJJSX</Button>";
   jsxString = decodeURI(jsxString);
   try {
     let ast = acorn.Parser.extend(acornjsx()).parse(jsxString);
@@ -1062,11 +1080,6 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
       }
     }
     throwApp(inputId, <ErrorApp message={message} code={code}/>);
-    // let root = document.getElementById(inputId);
-    // unmountComponentAtNode(root);
-    // let app = <ErrorApp message={message} code={code}/>;
-    // ReactDOM.render(app, root);
-    // throw "";    
   }
   const transformedCode = transformSrc(jsxString);
   console.log("transformedCode", transformedCode);
@@ -1220,8 +1233,6 @@ const chakraComponent = (
         x.value = ReactHtmlParser(decodeURI(x.value));
         bind = true;
       }else if(x.type === "component"){
-        // let s = {...states.boxtext2};
-        // states.boxtext2.get = () => {alert(component.name); return s.get()};
         x.value = chakraComponent(JSON.parse(JSON.stringify(x.value)), shinyValue, states, {}, inputId);
         //states.done = true;
         states[x.state].set(undefined);
@@ -1229,9 +1240,7 @@ const chakraComponent = (
       }else if(x.type === "jsx"){
         x.value = jsxParser(x.value.__jsx, x.value.__preamble, inputId, states);
       }
-//      ReactDOM.render(x.value, document.getElementById("cc"));
       states[x.state].set(x.value);
-      //states.boxtext2.set("MMMMMMMMMMMMMMMMMMMMMMMMMM");
       if(bind) Shiny.bindAll();
     });
 //    States[component.statesGroup] = states;
@@ -1761,77 +1770,40 @@ const chakraComponent = (
     props.onCancel = onChange_onCancel;
   }else if(component.name === "Input" && props.hasOwnProperty("id") && props.shinyValue !== false){
     props.className = "chakraTag";
-
-    let inputValue;
-    const hasDefaultValue = props.hasOwnProperty("defaultValue");
-    if(hasDefaultValue){
-      inputValue = props.defaultValue;
-    }else if(props.hasOwnProperty("value")){
-      inputValue = props.value;
-      props.defaultValue = inputValue;
-    }else{
-      inputValue = "";
-      props.defaultValue = inputValue;
-    }
-    props["data-shinyinitvalue"] = inputValue;
-    shinyValue.add(props.id, inputValue);
-    delete props.value;
-
-    let f = props.onChange;
-    if(isNotEmpty(states)){
-      // let chakraState = states.chakraState;
-      // let stateValue = chakraState.get();
-      // stateValue[props.id] = props.value;  
+    if(isNotEmpty(states) && states.hasOwnProperty("chakra" + props.id)){
       let chakraState = states["chakra" + props.id];
-      let setValue;
-      if(chakraState.hasOwnProperty("set")){
-        props.value = chakraState.get();
-        setValue = value => {
-          chakraState.set(value);
+      props["data-shinyinitvalue"] = chakraState.get();  
+      const getter = () => {
+        let value = chakraState.get();
+        if(Shiny.shinyapp.isConnected()) {
           Shiny.setInputValue(props.id, value);
-          shinyValue.set(props.id, value);
-        };
-      }else{
-        const getter = () => {
-          let value = chakraState.get();
-          if(Shiny.shinyapp.isConnected()) {
-            Shiny.setInputValue(props.id, value);
-          }
-          shinyValue.set(props.id, value);
-          return value;
-        };
-        props.value = getter();
-        setValue = value => { };
-      }
-      if(f){
-        props.onChange = (event) => {
-          f(event);
-          setValue(event.target.value);
-        };
-      }else{
-        props.onChange = (event) => {
-          setValue(event.target.value);
-        };
-      }
-      //delete states["chakra" + props.id];
-      //return React.createElement(Input, props);
+        }
+        shinyValue.set(props.id, value);
+        return value;
+      };
+      props.value = getter();
     }else{
-      //const [value, setValue] = React.useState(props.value);
-      //props.value = value;
+      const defaultValue = props.hasOwnProperty("defaultValue") ? 
+        props.defaultValue : 
+        (props.hasOwnProperty("value") ? props.value : "");
+      const inputValue = defaultValue;
+      props.defaultValue = inputValue;
+      props["data-shinyinitvalue"] = inputValue;
+      shinyValue.add(props.id, inputValue);
+      delete props.value;
+      const f = props.onChange;
       if(f){
         props.onChange = (event) => {
-          //setValue(event.target.value);
           Shiny.setInputValue(props.id, event.target.value);
           shinyValue.set(props.id, event.target.value);
           f(event);
         };
       }else{
         props.onChange = (event) => {
-          //setValue(event.target.value);
           Shiny.setInputValue(props.id, event.target.value);
           shinyValue.set(props.id, event.target.value);
         };
-      }
+      }  
     }
   }else if(component.widget === "slider"){
     let defaultValue = props.defaultValue;

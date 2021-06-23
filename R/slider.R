@@ -91,7 +91,6 @@ sliderMarkOptions <- function(
 #' @examples
 sliderTooltipOptions <- function(
   hasArrow = TRUE,
-  #label={sliderValue}
   backgroundColor = "red.600",
   placement = "top",
   closeOnClick = FALSE,

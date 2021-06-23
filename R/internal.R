@@ -598,20 +598,21 @@ unclassComponent <- function(component, inputId, call){
       )
     }
     component[["attribs"]][["text"]] <- lapply(text, URLencode)
-  }else if(
-    component[["name"]] == "Input" &&
-    "id" %in% attribsNames &&
-    !isFALSE(attribs[["shinyValue"]]) &&
-    is.null(attribs[["value"]])
-  ){
-    # if(is.null(attribs[["id"]])){
-    #   stop(
-    #     "Please provide an `id` attribute to `Input` components.",
-    #     call. = FALSE
-    #   )
-    # }
-    component[["attribs"]][["value"]] <- ""
   }
+  # else if(
+  #   component[["name"]] == "Input" &&
+  #   "id" %in% attribsNames &&
+  #   !isFALSE(attribs[["shinyValue"]]) &&
+  #   is.null(attribs[["value"]])
+  # ){
+  #   # if(is.null(attribs[["id"]])){
+  #   #   stop(
+  #   #     "Please provide an `id` attribute to `Input` components.",
+  #   #     call. = FALSE
+  #   #   )
+  #   # }
+  #   component[["attribs"]][["value"]] <- ""
+  # }
   if(length(component[["children"]])){
     component[["children"]] <- lapply(component[["children"]], function(child){
       if(isJseval(child)){

@@ -48,7 +48,7 @@ sliderThumbOptions <- function(
 #' @importFrom htmltools validateCssUnit
 #'
 #' @examples
-sliderMarkoptions <- function(
+sliderMarkOptions <- function(
   textAlign = "center",
   backgroundColor = "blue.500",
   textColor = "white",
@@ -116,8 +116,17 @@ chakraSlider <- function(
   mark = TRUE,
   markOptions = sliderMarkOptions(),
   thumbOptions = sliderThumbOptions(),
-  shinyValueOn = "end")
+  shinyValueOn = "end",
+  ...)
 {
+  if(length(dots <- list(...))){
+    namesDots <- names(dots)
+    if(is.null(namesDots) || ("" %in% namesDots)){
+      stop(
+        "The arguments given in `...` must be named.", call. = TRUE
+      )
+    }
+  }
   attribs <- dropNulls(list(
     id = id,
     defaultValue = value,
@@ -132,7 +141,8 @@ chakraSlider <- function(
     isDisabled = isDisabled,
     isReadOnly = isReadOnly,
     isReversed = isReversed,
-    display = "block"
+    display = "block",
+    ...
   ))
   track <- asShinyTag(
     list(
@@ -153,7 +163,7 @@ chakraSlider <- function(
     mark <- asShinyTag(
       list(
         name = "SliderMark",
-        attribs = dropNulls(sliderMarkoptions()),
+        attribs = dropNulls(markOptions),
         children = list()
       )
     )

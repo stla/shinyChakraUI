@@ -2334,8 +2334,10 @@ Shiny.inputBindings.register(new class extends Shiny.InputBinding {
   }
   getValue(el) {
     console.log("DOCBODY - getValue", JSON.stringify(document.body));
-
-
+    const element = React.createElement(ChakraComponent, {
+      configuration: $(el).data("configuration")
+    });
+    ReactDOM.render(element, el);
     return $(el).data("value");
   }
   setValue(el, value, rateLimited = false) {
@@ -2370,10 +2372,6 @@ Shiny.inputBindings.register(new class extends Shiny.InputBinding {
   subscribe(el, callback) {
 //    $(document).ready(function(){
       console.log("DOCBODY - subscribe", JSON.stringify(document.body));
-      const element = React.createElement(ChakraComponent, {
-        configuration: $(el).data("configuration")
-      });
-      ReactDOM.render(element, el);
 //    });
   }
   unsubscribe(el) {

@@ -798,7 +798,7 @@ const makeState = (x, states, inputId) => {
   if(isJseval(x)){
     return {get: Eval("() => " + decodeURI(x.__eval), states, inputId)};
   }else if(isHook(x)){
-    let hook = Eval(x.__hook, states, inputId);
+    let hook = Eval(decodeURI(x.__hook), states, inputId);
     if(typeof hook === "function"){
       return {get: () => hook};
     }else{

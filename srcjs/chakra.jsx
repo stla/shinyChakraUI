@@ -390,6 +390,8 @@ const ChakraTags = Object.keys(ChakraComponents);
 //   );
 // }
 
+const isCapitalized = (word) => (word[0] === word[0].toUpperCase());
+
 const getMenuOptionGroupSelections = menuoptiongroup => {
   let type = menuoptiongroup.attribs.type;
   let selections = [];
@@ -794,7 +796,7 @@ const Eval = (ev, states, inputId) => {
 const makeState = (x, states, inputId) => {
   let aa;
   if(isJseval(x)){
-    return {get: Eval("() => " + x.__eval, states, inputId)};
+    return {get: Eval("() => " + decodeURI(x.__eval), states, inputId)};
   }else if(isHook(x)){
     let hook = Eval(x.__hook, states, inputId);
     if(typeof hook === "function"){
@@ -861,49 +863,25 @@ const appendStates = (component, states, inputId) => {
       if(defaultValue !== null){
         attribs.defaultValue = defaultValue;
       }
-      // if(typeof value === "string"){
-      //   value = decodeURI(value);
-      // }
-      // states[state] = makeState(value, states, inputId);
-      // let value = component.attribs.value;
-      // if(isJseval(value)){
-      //   let code = decodeURI(value.__eval);
-      //   //value = Eval(code, states, Hooks, getState, setState, inputId);
-      //   states[state] = makeState(Eval(code, states, Hooks, getState, setState, inputId), states, inputId);
-      // }
-//      states[state] = makeState(value, states, inputId);
-//       if(!isJseval(component.attribs.value)){
-//         states[state] = makeState(component.attribs.value, states, inputId);
-//       }else{
-// //        if(!component.attribs.onChange){
-//           let code = decodeURI(component.attribs.value.__eval);
-//           let value = Eval(code, states, Hooks, getState, setState, inputId);
-//           // if(value.name){ // non, pas logique !
-//           //   console.log("oKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKk");
-//           //   states[state] = states[value.name];
-//           //   component.attribs.value = value.get();
-//           // }else{
-//             component.attribs.value = value;
-//             states[state] = {
-//               get: () => Eval(code, states, Hooks, getState, setState, inputId), 
-//               set: () => {}
-//             };
-//           // }
-//           //states[state].get = () => component.attribs.value.eval;
-//           //component.reactiveValue = true;
-//         // }else{
-//         //   states[state] = makeState(component.attribs.value);
-//         // }
-//       }
+    }else if(component.name === "NumberInput"){
+      let defaultValue = attribs.hasOwnProperty("defaultValue") ? attribs.defaultValue : null;
+      if(defaultValue === null){
+        const hasValue = attribs.hasOwnProperty("value");
+        const value = hasValue ? attribs.value : null;
+        if(hasValue){
+          if(!isJseval(value)){
+            defaultValue = value;
+          }else{
+            states[stateName] = makeState(value, states, inputId);
+          }
+        }else{
+          defaultValue = 0;
+        }
+      }
+      if(defaultValue !== null){
+        attribs.defaultValue = defaultValue;
+      }
     }
-    // else if(component.name === "Checkbox"){
-    //   if(typeof component.attribs.isChecked === "object"){
-    //     component.dontprocess = true;
-    //   }else{
-    //     states[state] = component.attribs.isChecked === true;
-    //     states[state] = makeState(states[state], states);
-    //   }
-    // }
   }
   for(let i = 0; i < component.children.length; i++){
     if(isTag(component.children[i])){
@@ -1163,7 +1141,7 @@ const chakraComponent = (
     return component;
   }
   let tagName = component.name;
-  if(tagName[0] === tagName[0].toUpperCase() && !ChakraTags.includes(tagName)){
+  if(isCapitalized(tagName) && !ChakraTags.includes(tagName)){
     return invalidComponent(`component '${tagName}'`);
   }
   if(tagName === "input" && component.attribs.id === "ii"){
@@ -1564,6 +1542,8 @@ const chakraComponent = (
       }
     }
   }else if(component.name === "Popover" && props.hasOwnProperty("id")){
+    props.className = "chakraTag";
+    props["data-shinyinitvalue"] = JSON.stringify(null);
     shinyValue.add(props.id, null);
     const setShinyValue = (value) => {
       if(value !== undefined){
@@ -1571,7 +1551,7 @@ const chakraComponent = (
         shinyValue.set(props.id, value);
       }
     };
-    let funcs = {
+    const funcs = {
       Button: (e) => {setShinyValue(e.currentTarget.dataset.val)},
       IconButton: (e) => {setShinyValue(e.currentTarget.dataset.val)}
     };
@@ -1586,8 +1566,6 @@ const chakraComponent = (
   }else if(component.name === "PopoverTrigger"){
     let child = chakraComponent(component.children[0], shinyValue, {}, {}, inputId);
     return <PopoverTrigger>{child}</PopoverTrigger>;
-    // props.children = component.children;
-    // component.children = [];
   }else if(component.name === "Tabs" && props.hasOwnProperty("id")){
     let defaultIndex = props.defaultIndex ? props.defaultIndex : 0;
     shinyValue.add(props.id, defaultIndex);
@@ -1617,17 +1595,31 @@ const chakraComponent = (
     //props.shinyValue !== false && 
     props.hasOwnProperty("id")
   ){
-    let defaultValue = props.hasOwnProperty("defaultValue") ? props.defaultValue : 0;
-    shinyValue.add(props.id, defaultValue);
-    let f = props.onChange || (() => {});
-    const [value, setValue] = React.useState(defaultValue);
-    props.value = value;
-    props.onChange = (valueAsString, valueAsNumber) => {
-      shinyValue.set(props.id, valueAsNumber);
-      Shiny.setInputValue(props.id, valueAsNumber);
-      setValue(valueAsNumber);
-      f(valueAsString, valueAsNumber);
-    };
+    if(isNotEmpty(states) && states.hasOwnProperty("chakra" + props.id)){
+      const chakraState = states["chakra" + props.id];
+      //props["data-shinyinitvalue"] = chakraState.get();
+      const getter = () => {
+        let value = chakraState.get();
+        if(Shiny.shinyapp.isConnected()){
+          Shiny.setInputValue(props.id, value);
+        }
+        shinyValue.set(props.id, value);
+        return value;
+      };
+      props.value = getter();
+    } else {
+      let defaultValue = props.hasOwnProperty("defaultValue") ? props.defaultValue : 0;
+      shinyValue.add(props.id, defaultValue);
+      let f = props.onChange || (() => { });
+      const [value, setValue] = React.useState(defaultValue);
+      props.value = value;
+      props.onChange = (valueAsString, valueAsNumber) => {
+        shinyValue.set(props.id, valueAsNumber);
+        Shiny.setInputValue(props.id, valueAsNumber);
+        setValue(valueAsNumber);
+        f(valueAsString, valueAsNumber);
+      };
+    }
   }else if(
     component.name === "Switch" && 
     //props.shinyValue !== false && 
@@ -1771,7 +1763,7 @@ const chakraComponent = (
   }else if(component.name === "Input" && props.hasOwnProperty("id") && props.shinyValue !== false){
     props.className = "chakraTag";
     if(isNotEmpty(states) && states.hasOwnProperty("chakra" + props.id)){
-      let chakraState = states["chakra" + props.id];
+      const chakraState = states["chakra" + props.id];
       props["data-shinyinitvalue"] = chakraState.get();  
       const getter = () => {
         let value = chakraState.get();
@@ -1846,8 +1838,8 @@ const chakraComponent = (
   }
   for(const key in props){
     if(isTag(props[key])){
-      let name = props[key].name; 
-      if(name[0] === name[0].toUpperCase()){
+      const name = props[key].name; 
+      if(isCapitalized(name)){
         if(!ChakraTags.includes(name)){
           let x = `'${name}' in attribute '${key}' of component '${component.name}'`;
           return invalidComponent(x);

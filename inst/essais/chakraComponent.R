@@ -727,7 +727,26 @@ ui2 <- chakraPage(
   chakraComponent(
     "iid",
 
-    sliderInput("oo", "Label", 0, 10, 5),
+    withStates(
+      Tag$NumberInput(
+        id = "ninput",
+        value = jseval('"$" + getState("value")'),
+        onChange =
+          jseval('(valueString) => setState("value", valueString.replace(/^\\$/, ""))'),
+        precision = 2,
+        step = 0.2,
+        Tag$NumberInputField(),
+        Tag$NumberInputStepper(
+          Tag$NumberIncrementStepper(),
+          Tag$NumberDecrementStepper()
+        )
+      ),
+      states = list(value = 4)
+    ),
+
+    br(),
+    Tag$Divider(),
+    br(),
 
     chakraSlider(
       "slider",
@@ -1039,5 +1058,5 @@ server <- function(input, output, session){
   # })
 }
 
-shinyApp(ui1, server)
+shinyApp(ui2, server)
 

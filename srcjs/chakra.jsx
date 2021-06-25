@@ -112,7 +112,17 @@ import {
   SliderFilledTrack,
   SliderThumb,
   SliderMark,
-  Tooltip
+  Tooltip,
+  AspectRatio,
+  Center, 
+  Square, 
+  Circle,
+  Container,
+  Spacer,
+  Grid, 
+  GridItem,
+  SimpleGrid,
+  VStack
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -176,7 +186,6 @@ import {
 } from "@chakra-ui/icons";
 import ReactHtmlParser from "react-html-parser";
 import ScriptTag from "react-script-tag";
-//const evalComponent = new Function("React", "component", "return component");
 
 const Fragment = React.Fragment;
 const CancelButton = Button;
@@ -360,7 +369,17 @@ const ChakraComponents = {
   SliderFilledTrack,
   SliderThumb,
   SliderMark,
-  Tooltip
+  Tooltip,
+  AspectRatio,
+  Center, 
+  Square, 
+  Circle,
+  Container,
+  Spacer,
+  Grid, 
+  GridItem,
+  SimpleGrid,
+  VStack
 };
 
 const ChakraTags = Object.keys(ChakraComponents);

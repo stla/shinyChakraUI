@@ -122,7 +122,13 @@ import {
   Grid, 
   GridItem,
   SimpleGrid,
-  VStack
+  VStack,
+  Wrap,
+  WrapItem,
+  PinInput, 
+  PinInputField,
+  Select,
+  Textarea
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -379,7 +385,13 @@ const ChakraComponents = {
   Grid, 
   GridItem,
   SimpleGrid,
-  VStack
+  VStack,
+  Wrap,
+  WrapItem,
+  PinInput, 
+  PinInputField,
+  Select,
+  Textarea
 };
 
 const ChakraTags = Object.keys(ChakraComponents);

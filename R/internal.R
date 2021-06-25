@@ -9,15 +9,8 @@ color2hex <- function(color){
   rgb(RGB["red"], RGB["green"], RGB["blue"], maxColorValue = 255)
 }
 
-#' Title
-#'
-#' @param color
-#'
-#' @return
-#' @export
 #' @importFrom htmltools parseCssColors
-#'
-#' @examples
+#' @noRd
 validateColor <- function(color){
   if(is.null(color)) return(NULL)
   stopifnot(isString(color))

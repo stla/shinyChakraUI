@@ -1058,5 +1058,5 @@ server <- function(input, output, session){
   # })
 }
 
-shinyApp(ui2, server)
+shinyApp(ui1, server)
 

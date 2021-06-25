@@ -5,6 +5,7 @@
 #' @return
 #' @export
 #' @importFrom stringr str_trim
+#' @importFrom utils URLencode
 #'
 #' @examples
 jsx <- function(component, preamble = ""){
@@ -28,6 +29,7 @@ jsx <- function(component, preamble = ""){
 #'
 #' @return
 #' @export
+#' @importFrom utils URLencode
 #'
 #' @examples
 jseval <- function(code){
@@ -76,6 +78,7 @@ setState <- function(state, value){
 #'
 #' @return
 #' @export
+#' @importFrom utils URLencode
 #'
 #' @examples
 useClipboard <- function(value){
@@ -86,7 +89,7 @@ useClipboard <- function(value){
     value <- value[["__eval"]]
   }
   list(
-    "__hook" = sprintf("useClipboard(%s)", value)
+    "__hook" = URLencode(sprintf("useClipboard(%s)", value))
   )
 }
 
@@ -111,15 +114,16 @@ useRef <- function(initialValue = NA){
 #'
 #' @return
 #' @export
+#' @importFrom utils URLencode
 #'
 #' @examples
 useDisclosure <- function(defaultIsOpen = FALSE){
   stopifnot(isBoolean(defaultIsOpen))
   list(
-    "__hook" = sprintf(
+    "__hook" = URLencode(sprintf(
       "useDisclosure({defaultIsOpen: %s})",
       ifelse(defaultIsOpen, "true", "false")
-    )
+    ))
   )
 }
 
@@ -127,20 +131,22 @@ useDisclosure <- function(defaultIsOpen = FALSE){
 #'
 #' @return
 #' @export
+#' @importFrom utils URLencode
 #'
 #' @examples
 useToast <- function(){
-  list("__hook" = "useToast()")
+  list("__hook" = URLencode("useToast()"))
 }
 
 #' Title
 #'
 #' @return
 #' @export
+#' @importFrom utils URLencode
 #'
 #' @examples
 createStandaloneToast <- function(){
-  list("__hook" = "createStandaloneToast()")
+  list("__hook" = URLencode("createStandaloneToast()"))
 }
 
 #' Title
@@ -167,6 +173,7 @@ getHookProperty <- function(state, value){
 #'
 #' @return
 #' @export
+#' @importFrom utils URLencode
 #'
 #' @examples
 setReactState <- function(session, inputId, stateName, value){

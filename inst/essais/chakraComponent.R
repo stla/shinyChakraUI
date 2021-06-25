@@ -138,29 +138,29 @@ ui1 <- chakraPage(
           preamble = ""
         ),
 
-        jsx(
-          '<>
-      <Button onClick={onOpen}>Open Modal</Button>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Sit nulla est ex deserunt exercitation anim occaecat. Nostrud ullamco deserunt aute id consequat veniam incididunt duis in sint irure nisi. Mollit officia cillum Lorem ullamco minim nostrud elit officia tempor esse quis
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>',
-          preamble = "const { isOpen, onOpen, onClose } = useDisclosure()"),
+        jsx(paste(
+          '<>',
+          '  <Button onClick={onOpen}>Open Modal</Button>',
+          '  <Modal isOpen={isOpen} onClose={onClose}>',
+          '    <ModalOverlay />',
+          '    <ModalContent>',
+          '      <ModalHeader>Modal Title</ModalHeader>',
+          '      <ModalCloseButton />',
+          '      <ModalBody>',
+          '        Sit nulla est ex deserunt exercitation anim occaecat.',
+          '      </ModalBody>',
+          '      <ModalFooter>',
+          '        <Button colorScheme="blue" mr={3} onClick={onClose}>',
+          '          Close',
+          '        </Button>',
+          '        <Button variant="ghost">Secondary Action</Button>',
+          '      </ModalFooter>',
+          '    </ModalContent>',
+          '  </Modal>',
+          '</>',
+          sep = "\n"
+        ),
+        preamble = "const { isOpen, onOpen, onClose } = useDisclosure()"),
 
         dateRangeInput("daterange1", "Date range:",
                        start = "2001-01-01",

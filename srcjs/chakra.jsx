@@ -743,9 +743,6 @@ const isJSX = x => {
 };
  */
 
-const invalidComponent = x => {
-  return ReactHtmlParser(`<div style="color:red;">INVALID COMPONENT (${x})</div>`);
-};
 
 function unescapeHtml(html) {
   var el = document.createElement('div');
@@ -767,7 +764,7 @@ const getArguments = f => {
 }; 
 
 console.log("ARGUMENTS", getArguments(unescapeHtml));
-console.log("ARGUMENTS", getArguments(invalidComponent));
+//console.log("ARGUMENTS", getArguments(invalidComponent));
 //console.log("ARGUMENTS", getArguments(() => 0));
 //window.Acorn = acorn;
 
@@ -825,7 +822,6 @@ const Eval = (ev, states, inputId) => {
 };
 
 const makeState = (x, states, inputId) => {
-  let aa;
   if(isJseval(x)){
     return {get: Eval("() => " + decodeURI(x.__eval), states, inputId)};
   }else if(isHook(x)){
@@ -838,35 +834,7 @@ const makeState = (x, states, inputId) => {
   }else if(isJSX(x)){
     x = jsxParser(x.__jsx, x.__preamble, inputId, states);
   }
-  //   aa = {...x};
-  //   console.log("x",x);
-  //   console.log("eval", x.eval);
-  //   x = Eval("() => " + x.eval, states, Hooks, getState, setState, inputId);
-  //   console.log("x()", x());
-  //   if(x().isHook){
-  //     x = x();
-  //     let hook = {...x};
-  //     delete hook.isHook;
-  //     x.get = () => hook;
-  //     return x;
-  //   }else{
-  //     return {get: x};
-  //   }
-  // }
-//  let ru = React.useState(x);
   let [reactState, setReactState] = React.useState(x);
-  // if(reactState == 2){
-  //   console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
-  //   console.log("ru", ru);
-  //   console.log("window.SSTATE", window.SSTATE);
-  //   console.log("x", x);
-  //   console.log("states", states);
-  //   console.log("aa", aa);
-  //   console.log("name", name);
-  //   console.log("setReactState", setReactState);
-  //   throw "";
-  // }
-  //return {get: () => ({name: name, get: () => state}), set: setState};
   return {get: () => reactState, set: setReactState};
 };
 
@@ -922,6 +890,20 @@ const appendStates = (component, states, inputId) => {
   }
 };
 
+const InvalidTag = ({message}) => {
+  const text = `INVALID TAG (${message})`;
+  return (
+    <ChakraProvider>
+      <Alert status="error">
+        <AlertIcon />
+        <AlertTitle mr={2}>Error.</AlertTitle>
+        <AlertDescription>
+          {text}
+        </AlertDescription>
+      </Alert>
+    </ChakraProvider>
+  );
+};
 
 const InvalidState = ({message}) => {
   return (
@@ -971,7 +953,7 @@ const isJSXElement = (ast) => {
 
 
 function ShinyValue(inputId){
-  let $el = $("#" + inputId);
+  const $el = $("#" + inputId);
   this.add = (key, v, force) => {
     let value = $el.data("value");
     if(force || value === undefined || value[key] === undefined){
@@ -992,7 +974,7 @@ const mergeOnClick = (component, funcs, states, inputId) => {
     if(isTag(child)){
       if(funcs.hasOwnProperty(child.name)){
         let func = funcs[child.name];
-        if(child.attribs.onClick){
+        if(child.attribs.hasOwnProperty("onClick")){
           let f = Eval(
             decodeURI(child.attribs.onClick.__eval), states, inputId
           );
@@ -1173,7 +1155,7 @@ const chakraComponent = (
   }
   let tagName = component.name;
   if(isCapitalized(tagName) && !ChakraTags.includes(tagName)){
-    return invalidComponent(`component '${tagName}'`);
+    throwApp(inputId, <InvalidTag message={`tag '${tagName}'`} />);
   }
   if(tagName === "input" && component.attribs.id === "ii"){
     console.log("INPUT", component);
@@ -1872,8 +1854,8 @@ const chakraComponent = (
       const name = props[key].name; 
       if(isCapitalized(name)){
         if(!ChakraTags.includes(name)){
-          let x = `'${name}' in attribute '${key}' of component '${component.name}'`;
-          return invalidComponent(x);
+          const x = `'${name}' in attribute '${key}' of component '${component.name}'`;
+          throwApp(inputId, <InvalidTag message={x} />);
         }
         props[key] = React.createElement(ChakraComponents[name], props[key].attribs);
       }else{

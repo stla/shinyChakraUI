@@ -1,22 +1,46 @@
 library(shiny)
 library(shinyChakraUI)
 
-ui <- fluidPage(
-  chakraDrawerInput(
-    "drawer",
-    openButton = chakraButton("Open"),
-    options = chakraDrawerOptions(placement = "right"),
-    header = React$DrawerHeader("I'm the header"),
-    body = React$DrawerBody(
-      chakraBox("I'm the body")
-    ),
-    footer = React$DrawerFooter(
-      chakraButton("Close", action = "close", variant = "outline")
+ui <- chakraPage(
+
+  br(),
+
+  chakraComponent(
+    "mycomponent",
+
+    chakraDrawer(
+      "drawer",
+      openButton = Tag$Button("Open Drawer"),
+      options = chakraDrawerOptions(placement = "right"),
+      header = Tag$DrawerHeader("I'm the header"),
+      body = Tag$DrawerBody(
+        Tag$Box("I'm the body")
+      ),
+      footer = Tag$DrawerFooter(
+        Tag$ButtonGroup(
+          spacing = "6",
+          Tag$Button(
+            value = "try me",
+            "Try me"
+          ),
+          Tag$Button(
+            action = "close",
+            variant = "outline",
+            "Close"
+          )
+        )
+      )
     )
+
   )
+
 )
 
 server <- function(input, output, session){
+
+  observe({
+    print(input[["drawer"]])
+  })
 
 }
 

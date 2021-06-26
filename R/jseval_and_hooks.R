@@ -190,13 +190,12 @@ useClipboard <- function(value){
   )
 }
 
-#' Title
+#' @title The `useRef` hook
+#' @description The React `useRef` hook.
+#' @param initialValue optional initial value
 #'
-#' @return
 #' @export
 #' @importFrom jsonlite toJSON
-#'
-#' @examples
 useRef <- function(initialValue = NA){
   jseval(sprintf(
     "React.useRef(%s)",
@@ -207,13 +206,62 @@ useRef <- function(initialValue = NA){
   ))
 }
 
-#' Title
+#' @title The `useDisclosure` hook
+#' @description  The `useDisclosure` hook.
 #'
-#' @return
+#' @param defaultIsOpen Boolean, the initial value of the \code{isOpen} property
+#'
 #' @export
 #' @importFrom utils URLencode
 #'
 #' @examples
+#' library(shiny)
+#' library(shinyChakraUI)
+#'
+#' ui <- chakraPage(
+#'
+#'   br(),
+#'
+#'   chakraComponent(
+#'     "mycomponent",
+#'
+#'     withStates(
+#'       Tag$Fragment(
+#'
+#'         Tag$Button(
+#'           colorScheme = "teal",
+#'           variant = "outline",
+#'           onClick = getHookProperty("disclosure", "onToggle"),
+#'           "Click me!"
+#'         ),
+#'
+#'         Tag$Fade(
+#'           "in" = getHookProperty("disclosure", "isOpen"),
+#'           Tag$Box(
+#'             p = "40px",
+#'             color = "white",
+#'             mt = "4",
+#'             bg = "teal.500",
+#'             rounded = "md",
+#'             shadow = "md",
+#'             "Fade"
+#'           )
+#'         )
+#'
+#'       ),
+#'
+#'       states = list(disclosure = useDisclosure())
+#'     )
+#'
+#'   )
+#'
+#' )
+#'
+#' server <- function(input, output, session){}
+#'
+#' if(interactive()){
+#'   shinyApp(ui, server)
+#' }
 useDisclosure <- function(defaultIsOpen = FALSE){
   stopifnot(isBoolean(defaultIsOpen))
   list(

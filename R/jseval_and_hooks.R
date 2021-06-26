@@ -339,17 +339,20 @@ createStandaloneToast <- function(){
   list("__hook" = URLencode("createStandaloneToast()"))
 }
 
-#' Title
+#' @title Get hook property
+#' @description Chakra hooks are JavaScript objects; this function allows to
+#'   get a property (key) of a hook. See \code{\link{useDisclosure}} for an
+#'   example.
 #'
-#' @param state
-#' @param value
+#' @param hook the name of the hook, usually created in the \code{states} list
+#'   of the \code{\link{withStates}} function
+#' @param property the hook property you want to get
 #'
-#' @return
 #' @export
-#'
-#' @examples
-getHookProperty <- function(state, value){
-  assign(state, NULL, envir = usedStatesEnvir)
+getHookProperty <- function(hook, property){
+  #assign(state, NULL, envir = usedStatesEnvir)
   #jseval(sprintf("states.%s.%s", state, value))
-  jseval(sprintf("getHookProperty('%s', '%s')", state, value))
+  stopifnot(isString(hook))
+  stopifnot(isString(property))
+  jseval(sprintf("getHookProperty('%s', '%s')", hook, property))
 }

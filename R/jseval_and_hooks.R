@@ -1,12 +1,36 @@
-#' Title
+#' @title Evaluate JS code
+#' @description Evaluate JavaScript code.
 #'
-#' @param code
+#' @param code JavaScript code
 #'
-#' @return
 #' @export
 #' @importFrom utils URLencode
 #'
 #' @examples
+#' library(shiny)
+#' library(shinyChakraUI)
+#'
+#' ui <- chakraPage(
+#'
+#'   chakraComponent(
+#'     "mycomponent",
+#'
+#'     Tag$Button(
+#'       colorScheme = "pink",
+#'       size = "lg",
+#'       onClick = jseval('() => alert("Hello Chakra")'),
+#'       "Trigger alert"
+#'     )
+#'
+#'   )
+#'
+#' )
+#'
+#' server <- function(input, output, session){}
+#'
+#' if(interactive()){
+#'   shinyApp(ui, server)
+#' }
 jseval <- function(code){
   stopifnot(isString(code))
   list("__eval" = URLencode(code))

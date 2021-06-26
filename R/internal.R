@@ -1,3 +1,7 @@
+`%notin%` <- function(x, set){
+  !is.element(x, set)
+}
+
 isChakraColor <- function(x){
   grepl("(^whiteAlpha|^blackAlpha|^gray|^red|^orange|^yellow|^green|^teal|^blue|^cyan|^purple|^pink|^linkedin|^facebook|^messenger|^whatsapp|^twitter|^telegram)\\.(50$|100$|200$|300$|400$|500$|600$|700$|800$|900$)", x)
 }

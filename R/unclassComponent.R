@@ -149,7 +149,7 @@ unclassComponent <- function(component, inputId, call){
       component <- list("__html" = URLencode(as.character(component)))
     }
   }else if(!isChakraIcon(component) && grepl("Icon$", component[["name"]])){
-    if(!is.element(component[["name"]], paste0(chakraIcons(), "Icon"))){
+    if(component[["name"]] %notin% paste0(chakraIcons(), "Icon")){
       stop(
         sprintf("Invalid icon '%s'.", component[["name"]]),
         call. = FALSE
@@ -172,7 +172,7 @@ unclassComponent <- function(component, inputId, call){
         call. = FALSE
       )
     }
-    if(!is.element(icon[["name"]], paste0(chakraIcons(), "Icon"))){
+    if(icon[["name"]] %notin% paste0(chakraIcons(), "Icon")){
       stop(
         sprintf("Invalid `icon` attribute in component '%s'.", component[["name"]]),
         sprintf("'%s' is not the name of a chakra icon.", icon[["name"]]),
@@ -210,7 +210,7 @@ unclassComponent <- function(component, inputId, call){
       component[["attribs"]][[attribname]] <- URLencode(attrib)
     }
     if(isReactComponent(attrib) && grepl("Icon$", attrib[["name"]])){
-      if(!is.element(attrib[["name"]], paste0(chakraIcons(), "Icon"))){
+      if(attrib[["name"]] %notin% paste0(chakraIcons(), "Icon")){
         stop(
           sprintf("Invalid icon '%s'.", attrib[["name"]]),
           call. = FALSE
@@ -244,7 +244,7 @@ unclassComponent <- function(component, inputId, call){
     "className" %in% attribsNames &&
     grepl("action-button", attribs[["className"]])
   ){
-    if(!is.element("id", attribsNames)){
+    if("id" %notin% attribsNames){
       stop(
         "Buttons with 'action-button' class must have an `id` attribute.",
         call. = FALSE
@@ -283,7 +283,7 @@ unclassComponent <- function(component, inputId, call){
   }else if(
     component[["name"]] %in% c("Button", "IconButton") &&
     "id" %in% attribsNames &&
-    !is.element("className", attribsNames)
+    "className" %notin% attribsNames
   ){
     component[["attribs"]][["className"]] <- "action-button"
     attribs <- component[["attribs"]]
@@ -302,7 +302,7 @@ unclassComponent <- function(component, inputId, call){
   #   component[["attribs"]][["title"]] <- URLencode(attribs[["title"]])
   # }
   if(component[["name"]] == "MenuItem"){
-    if(!is.element("value", attribsNames)){
+    if("value" %notin% attribsNames){
       stop(
         "`MenuItem` requires a `value` attribute.", call. = FALSE
       )
@@ -448,7 +448,7 @@ unclassComponent <- function(component, inputId, call){
         call. = TRUE
       )
     }
-    if(!is.element("id", attribsNames)){
+    if("id" %notin% attribsNames){
       stop(
         "A `Menu` component must have an `id` attribute.",
         call. = FALSE

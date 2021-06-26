@@ -272,24 +272,69 @@ useDisclosure <- function(defaultIsOpen = FALSE){
   )
 }
 
-#' Title
+#' @title The `useToast` hook
+#' @description The `useToast` hook.
 #'
-#' @return
 #' @export
 #' @importFrom utils URLencode
+#' @note It does not work well. Use \code{\link{createStandaloneToast}} instead.
 #'
-#' @examples
 useToast <- function(){
   list("__hook" = URLencode("useToast()"))
 }
 
-#' Title
+#' @title The `createStandaloneToast` hook
+#' @description The `createStandaloneToast` hook.
 #'
-#' @return
 #' @export
 #' @importFrom utils URLencode
 #'
 #' @examples
+#' library(shiny)
+#' library(shinyChakraUI)
+#'
+#' ui <- chakraPage(
+#'
+#'   br(),
+#'
+#'   chakraComponent(
+#'     "mycomponent",
+#'
+#'     withStates(
+#'
+#'       Tag$Button(
+#'         colorScheme = "orange",
+#'         size = "lg",
+#'         onClick = jseval(paste(
+#'           '() => {',
+#'           '  const toast = getState("toast");',
+#'           '  toast({',
+#'           '    position: "bottom",',
+#'           '    title: "Account created.",',
+#'           '    description: "We have created your account for you.",',
+#'           '    status: "success",',
+#'           '    duration: 3000,',
+#'           '    isClosable: true',
+#'           '  });',
+#'           '}',
+#'           sep = "\n")),
+#'
+#'         "Show toast"
+#'       ),
+#'
+#'       states = list(toast = createStandaloneToast())
+#'
+#'     )
+#'
+#'   )
+#'
+#' )
+#'
+#' server <- function(input, output, session){}
+#'
+#' if(interactive()){
+#'   shinyApp(ui, server)
+#' }
 createStandaloneToast <- function(){
   list("__hook" = URLencode("createStandaloneToast()"))
 }

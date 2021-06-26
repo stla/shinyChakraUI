@@ -36,16 +36,59 @@ jseval <- function(code){
   list("__eval" = URLencode(code))
 }
 
-#' Title
+#' @title Get React state
+#' @description Get the value of a React state.
 #'
-#' @param state
+#' @param state name of the state
 #'
-#' @return
 #' @export
 #'
 #' @examples
+#' library(shiny)
+#' library(shinyChakraUI)
+#'
+#' ui <- chakraPage(
+#'
+#'   chakraComponent(
+#'     "mycomponent",
+#'
+#'     withStates(
+#'       Tag$Fragment(
+#'
+#'         Tag$Box(
+#'           bg = "yellow.100",
+#'           fontSize = "30px",
+#'           width = "50%",
+#'           getState("boxtext")
+#'         ),
+#'
+#'         br(),
+#'         Tag$Divider(),
+#'         br(),
+#'
+#'         Tag$Button(
+#'           colorScheme = "telegram",
+#'           size = "lg",
+#'           onClick = jseval('() => setState("boxtext", "Hello Chakra")'),
+#'           "Change box text"
+#'         )
+#'       ),
+#'
+#'       states = list(boxtext = "I am the box text")
+#'     )
+#'
+#'   )
+#'
+#' )
+#'
+#' server <- function(input, output, session){}
+#'
+#' if(interactive()){
+#'   shinyApp(ui, server)
+#' }
 getState <- function(state){
-  assign(state, NULL, envir = usedStatesEnvir)
+  #assign(state, NULL, envir = usedStatesEnvir)
+  stopifnot(isString(state))
   jseval(sprintf("getState('%s')", state))
 }
 

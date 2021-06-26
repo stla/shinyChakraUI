@@ -13,7 +13,7 @@
 #'   \code{"5xl"}, or \code{"6xl"}
 #' @param ... other attributes
 #'
-#' @return A named list.
+#' @return A named list, for usage in \code{\link{chakraAlertDialog}}.
 #' @export
 chakraAlertDialogOptions <- function(
   closeOnEsc = TRUE,
@@ -50,14 +50,83 @@ chakraAlertDialogOptions <- function(
 }
 
 
-#' Title
+#' @title Alert dialog widget
+#' @description An alert dialog widget.
 #'
-#' @param inputId
+#' @param inputId widget id
+#' @param options named list of options created with
+#'   \code{\link{chakraAlertDialogOptions}}
+#' @param openButton a chakra button to open the alert dialog
+#' @param header an \code{AlertDialogHeader} element
+#' @param body an \code{AlertDialogBody} element
+#' @param footerButtons a chakra button or a list of chakra buttons
 #'
-#' @return
+#' @return A widget that can be used in \code{\link{chakraComponent}}.
 #' @export
 #'
 #' @examples
+#' library(shiny)
+#' library(shinyChakraUI)
+#'
+#' ui <- chakraPage(
+#'
+#'   br(),
+#'
+#'   chakraComponent(
+#'     "mycomponent",
+#'
+#'     chakraAlertDialog(
+#'       inputId = "alertDialog",
+#'       openButton = Tag$Button(
+#'         leftIcon = Tag$DeleteIcon(),
+#'         colorScheme = "red",
+#'         "Delete customer"
+#'       ),
+#'       header = Tag$AlertDialogHeader(
+#'         fontSize = "lg",
+#'         fontWeight = "bold",
+#'         "Delete customer?"
+#'       ),
+#'       body = Tag$AlertDialogBody(
+#'         "Are you sure? You can't undo this action afterwards."
+#'       ),
+#'       footerButtons = list(
+#'         Tag$Button(
+#'           action = "cancel",
+#'           value = "CANCEL",
+#'           "Cancel"
+#'         ),
+#'         Tag$Button(
+#'           action = "disable",
+#'           value = "DISABLE",
+#'           colorScheme = "red",
+#'           ml = 3,
+#'           "Disable"
+#'         ),
+#'         Tag$Button(
+#'           action = "remove",
+#'           value = "REMOVE",
+#'           ml = 3,
+#'           "Remove"
+#'         )
+#'       )
+#'     )
+#'
+#'   )
+#'
+#' )
+#'
+#' server <- function(input, output, session){
+#'
+#'   observe({
+#'     print(input[["alertDialog"]])
+#'   })
+#'
+#' }
+#'
+#' if(interactive()){
+#'   shinyApp(ui, server)
+#' }
 chakraAlertDialog <- function(
   inputId,
   options = chakraAlertDialogOptions(),
@@ -79,31 +148,40 @@ chakraAlertDialog <- function(
     isListOfButtons <-
       all(vapply(footerButtons, isChakraButton, FUN.VALUE = logical(1L)))
     if(!isListOfButtons){
-      stop("")
+      stop(
+        "`footerButtons` must be a chakra button or a list of chakra buttons.",
+        call. = TRUE
+      )
     }
   }
   stopifnot(isReactComponent(header))
   stopifnot(isReactComponent(body))
   if(header[["name"]] != "AlertDialogHeader"){
-    stop("")
+    stop("`header` must be an `AlertDialogHeader` element.", call. = TRUE)
   }
   if(body[["name"]] != "AlertDialogBody"){
-    stop("")
+    stop("`body` must be an `AlertDialogBody` element.", call. = TRUE)
   }
   component <- tags$div(
     id = inputId,
     Tag$Fragment(
       openButton,
-      Tag$AlertDialog(
-        Tag$AlertDialogOverlay(
-          Tag$AlertDialogContent(
-            header,
-            body,
-            asShinyTag(
-              list(
-                name = "AlertDialogFooter",
-                attribs = emptyNamedList,
-                children = footerButtons
+      asShinyTag(
+        list(
+          name = "AlertDialog",
+          attribs = options,
+          children = list(
+            Tag$AlertDialogOverlay(
+              Tag$AlertDialogContent(
+                header,
+                body,
+                asShinyTag(
+                  list(
+                    name = "AlertDialogFooter",
+                    attribs = emptyNamedList,
+                    children = footerButtons
+                  )
+                )
               )
             )
           )

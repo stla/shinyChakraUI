@@ -1,32 +1,60 @@
 library(shiny)
 library(shinyChakraUI)
 
-ui <- fluidPage(
-  chakraAlertDialogInput(
-    inputId = "alert",
-    openButton = chakraButton(
-      "Delete customer",
-      #rightIcon = chakraIcon("Delete"),
-      colorScheme = "red"
-    ),
-    header = chakraBox("Delete customer", fontSize = "lg", fontWeight = "bold"),
-    body = chakraBox("Are you sure? You can't undo this action afterwards"),
-    footerButtons = list(
-      chakraButton(
-        "Cancel", action = "cancel", id = "cancel"
+ui <- chakraPage(
+
+  br(),
+
+  chakraComponent(
+    "mycomponent",
+
+    chakraAlertDialog(
+      inputId = "alertDialog",
+      openButton = Tag$Button(
+        leftIcon = Tag$DeleteIcon(),
+        colorScheme = "red",
+        "Delete customer"
       ),
-      chakraButton(
-        "Delete", action = "disable", id = "delete", colorScheme = "red", ml = 3
+      header = Tag$AlertDialogHeader(
+        fontSize = "lg",
+        fontWeight = "bold",
+        "Delete customer?"
+      ),
+      body = Tag$AlertDialogBody(
+        "Are you sure? You can't undo this action afterwards."
+      ),
+      footerButtons = list(
+        Tag$Button(
+          action = "cancel",
+          value = "CANCEL",
+          "Cancel"
+        ),
+        Tag$Button(
+          action = "disable",
+          value = "DISABLE",
+          colorScheme = "red",
+          ml = 3,
+          "Disable"
+        ),
+        Tag$Button(
+          action = "remove",
+          value = "REMOVE",
+          ml = 3,
+          "Remove"
+        )
       )
     )
+
   )
+
 )
 
 server <- function(input, output, session){
 
   observe({
-    print(input[["alert"]])
+    print(input[["alertDialog"]])
   })
+
 }
 
 shinyApp(ui, server)

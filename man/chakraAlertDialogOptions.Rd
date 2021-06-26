@@ -31,7 +31,7 @@ chakraAlertDialogOptions(
 \item{...}{other attributes}
 }
 \value{
-A named list.
+A named list, for usage in \code{\link{chakraAlertDialog}}.
 }
 \description{
 Options for the alert dialog widget

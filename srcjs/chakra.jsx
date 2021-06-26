@@ -522,7 +522,7 @@ const makeCheckboxWithChildren = (div, shinyValue) => {
     if(isEmptyArray(attribs)){
       childCheckboxes[i].attribs = {};
     }
-    state.push(attribs.isChecked === true);
+    state.push(attribs.isChecked === true || attribs.defaultChecked === true);
   }
   const [xcheckedItems, xsetCheckedItems] = React.useState(state);
   const allChecked = xcheckedItems.every(Boolean);

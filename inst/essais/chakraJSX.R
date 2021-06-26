@@ -4,8 +4,7 @@ library(shinyChakraUI)
 ui <- chakraPage(
 
   chakraComponent(
-
-    inputId = "id",
+    "mycomponent",
 
     jsx(paste(
       '<>',

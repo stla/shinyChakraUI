@@ -117,24 +117,74 @@ sliderTooltipOptions <- function(
 
 #' Title
 #'
-#' @param id
-#' @param label
-#' @param value
-#' @param min
-#' @param max
-#' @param step
-#' @param width
-#' @param size
-#' @param trackColor
-#' @param filledTrackColor
-#' @param thumbOptions
-#' @param shinyValueOn
+#' @param id widget id
+#' @param label label (optional)
+#' @param value initial value
+#' @param min minimal value
+#' @param max maximal value
+#' @param step increment step
+#' @param width slider width
+#' @param size size, \code{"sm"}, \code{"md"}, or \code{"lg"}
+#' @param colorScheme a chakra color scheme
+#' @param orientation slider orientation, \code{"horizontal"} or \code{"vertical"}
+#' @param focusThumbOnChange whether to focus the thumb on change
+#' @param isDisabled whether to disable the slider
+#' @param isReadOnly read only mode
+#' @param isReversed whether to reverse the slider
+#' @param trackColor color of the track
+#' @param filledTrackColor color of the filled track
+#' @param mark whether to set a mark to the thumb
+#' @param markOptions options of the mark, a list created with
+#'   \code{\link{sliderMarkOptions}}
+#' @param tooltip whether to set a tooltip to the thumb
+#' @param tooltipOptions options of the mark, a list created with
+#'   \code{\link{sliderTooltipOptions}}
+#' @param thumbOptions list of options for the thumb created with
+#'   \code{\link{sliderThumbOptions}}
+#' @param shinyValueOn either \code{"drag"} or \code{"end"}, the moment to get
+#'   the Shiny value
 #'
 #' @return
 #' @export
 #' @importFrom htmltools validateCssUnit tags
 #'
 #' @examples
+#' library(shiny)
+#' library(shinyChakraUI)
+#'
+#' ui <- chakraPage(
+#'
+#'   br(),
+#'
+#'   chakraComponent(
+#'     "mycomponent",
+#'
+#'     chakraSlider(
+#'       "slider",
+#'       label = HTML("<span style='color:red'>Hello slider!</span>"),
+#'       value = 5,
+#'       min = 0,
+#'       max = 10,
+#'       width = "50%",
+#'       tooltip = TRUE,
+#'       shinyValueOn = "end"
+#'     )
+#'
+#'   )
+#'
+#' )
+#'
+#' server <- function(input, output, session){
+#'
+#'   observe({
+#'     print(input[["slider"]])
+#'   })
+#'
+#' }
+#'
+#' if(interactive()){
+#'   shinyApp(ui, server)
+#' }
 chakraSlider <- function(
   id,
   label = NULL,
@@ -169,7 +219,7 @@ chakraSlider <- function(
     }
   }
   attribs <- dropNulls(list(
-    id = id,
+#    id = id,
     defaultValue = value,
     min = min,
     max = max,
@@ -238,17 +288,24 @@ chakraSlider <- function(
         track,
         mark,
         thumb
-      )),
-      shinyValueOn = match.arg(shinyValueOn, c("end", "drag")),
-      widget = "slider"
+      ))
     )
   )
   if(!is.null(label)){
     component <- tags$div(
-      class = "form-group",
+      id = id,
+      class = "form-group chakraTag",
       tags$label(label),
       component
     )
+  }else{
+    component <- tags$div(
+      id = id,
+      class = "form-group chakraTag",
+      component
+    )
   }
+  component[["shinyValueOn"]] = match.arg(shinyValueOn, c("end", "drag"))
+  component[["widget"]] = "slider"
   component
 }

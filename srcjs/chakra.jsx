@@ -1811,38 +1811,39 @@ const chakraComponent = (
       }  
     }
   }else if(component.widget === "slider"){
-    let defaultValue = props.defaultValue;
-    props.className = "chakraTag";
+    let slider = component.children[component.children.length - 1];
+    let defaultValue = slider.attribs.defaultValue;
+    //props.class = "chakraTag";
     props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
     shinyValue.add(props.id, defaultValue);
-    const sliderMark = component.children.length === 3;
-    const tooltip = component.children[1].name === "Tooltip";
+    const sliderMark = slider.children.length === 3;
+    const tooltip = slider.children[1].name === "Tooltip";
     let sliderValue = null;
     let setSliderValue = () => {};
     if(sliderMark || tooltip){
       [sliderValue, setSliderValue] = React.useState(defaultValue);
-      let child1 = component.children[1]; 
+      let child1 = slider.children[1]; 
       if(sliderMark){
         child1.attribs.value = sliderValue;
         child1.children = [sliderValue];
       }else{ // tooltip
         const tooltipAttribs = $.extend(child1.attribs, {label: sliderValue});
         const thumbAttribs = child1.children[0].attribs;
-        component.children[1] = <Tooltip {...tooltipAttribs}><SliderThumb {...thumbAttribs}/></Tooltip>;
+        slider.children[1] = <Tooltip {...tooltipAttribs}><SliderThumb {...thumbAttribs}/></Tooltip>;
       }
     }
     if(component.shinyValueOn === "end"){
-      props.onChangeEnd = (val) => {
+      slider.attribs.onChangeEnd = (val) => {
         Shiny.setInputValue(props.id, val);
         shinyValue.set(props.id, val);
       };
       if(sliderMark || tooltip){
-        props.onChange = (val) => {
+        slider.attribs.onChange = (val) => {
           setSliderValue(val);
         };  
       }
     }else{
-      props.onChange = (val) => {
+      slider.attribs.onChange = (val) => {
         Shiny.setInputValue(props.id, val);
         shinyValue.set(props.id, val);
         setSliderValue(val);

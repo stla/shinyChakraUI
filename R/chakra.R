@@ -147,9 +147,11 @@ withStates <- function(component, states){
   component
 }
 
-#' <Add Title>
+#' @title Chakra page
+#' @description Function to be used as the \code{ui} element of a Shiny app;
+#'   it is intended to contain some \code{\link{chakraComponent}} elements.
 #'
-#' <Add Description>
+#' @param ... ui elements
 #'
 #' @importFrom htmltools htmlDependency tags attachDependencies
 #' @export
@@ -175,14 +177,16 @@ chakraPage <- function(...){
   )
 }
 
-#' <Add Title>
+#' @title Chakra component
+#' @description Create a chakra component.
 #'
-#' <Add Description>
+#' @param componentId component id
+#' @param ... ui elements
 #'
 #' @importFrom reactR createReactShinyInput
 #' @importFrom htmltools htmlDependency tags attachDependencies
 #' @export
-chakraComponent <- function(inputId, ...){
+chakraComponent <- function(componentId, ...){
   component <- list(...)
   if(length(names(component))){
     stop(
@@ -205,7 +209,7 @@ chakraComponent <- function(inputId, ...){
   # rm(list = usedStates, envir = usedStatesEnvir)
   configuration <- unclassComponent(
     Tag$ChakraProvider(do.call(Tag$Fragment, component)),
-    inputId,
+    componentId,
     "chakraComponent"
   )
   if(configuration[["shinyOutput"]]){
@@ -226,11 +230,11 @@ chakraComponent <- function(inputId, ...){
   #   ))
   # )
   configuration[["dependencies"]] <- NULL
-  configuration[["inputId"]] <- inputId
+  configuration[["inputId"]] <- componentId
   # configuration[["states"]] <-
   #   URLencode(as.character(toJSON(configuration[["states"]], auto_unbox = TRUE)))
   attachDependencies(createReactShinyInput(
-    inputId = inputId,
+    inputId = componentId,
     class = "chakracomponent",
     dependencies = htmlDependency(
       name = "chakra-input",

@@ -2,10 +2,15 @@
 % Please edit documentation in R/chakra.R
 \name{chakraComponent}
 \alias{chakraComponent}
-\title{<Add Title>}
+\title{Chakra component}
 \usage{
-chakraComponent(inputId, ...)
+chakraComponent(componentId, ...)
+}
+\arguments{
+\item{componentId}{component id}
+
+\item{...}{ui elements}
 }
 \description{
-<Add Description>
+Create a chakra component.
 }

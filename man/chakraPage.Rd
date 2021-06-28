@@ -2,10 +2,14 @@
 % Please edit documentation in R/chakra.R
 \name{chakraPage}
 \alias{chakraPage}
-\title{<Add Title>}
+\title{Chakra page}
 \usage{
 chakraPage(...)
 }
+\arguments{
+\item{...}{ui elements}
+}
 \description{
-<Add Description>
+Function to be used as the \code{ui} element of a Shiny app;
+  it is intended to contain some \code{\link{chakraComponent}} elements.
 }

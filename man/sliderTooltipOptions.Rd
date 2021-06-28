@@ -2,7 +2,7 @@
 % Please edit documentation in R/chakraSlider.R
 \name{sliderTooltipOptions}
 \alias{sliderTooltipOptions}
-\title{Title}
+\title{Slider tooltip options}
 \usage{
 sliderTooltipOptions(
   hasArrow = TRUE,
@@ -31,5 +31,5 @@ sliderTooltipOptions(
 A list of attributes for usage in \code{\link{chakraSlider}}.
 }
 \description{
-Title
+Defined the slider tooltip options.
 }

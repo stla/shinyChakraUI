@@ -74,7 +74,8 @@ sliderMarkOptions <- function(
   )
 }
 
-#' Title
+#' @title Slider tooltip options
+#' @description Defined the slider tooltip options.
 #'
 #' @param hasArrow whether to include an arrow
 #' @param backgroundColor background color
@@ -115,7 +116,8 @@ sliderTooltipOptions <- function(
   )
 }
 
-#' Title
+#' @title Chakra slider
+#' @description Create a chakra slider.
 #'
 #' @param id widget id
 #' @param label label (optional)

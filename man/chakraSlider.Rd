@@ -2,7 +2,7 @@
 % Please edit documentation in R/chakraSlider.R
 \name{chakraSlider}
 \alias{chakraSlider}
-\title{Title}
+\title{Chakra slider}
 \usage{
 chakraSlider(
   id,
@@ -83,7 +83,7 @@ the Shiny value}
 A widget to use in \code{\link{chakraComponent}}.
 }
 \description{
-Title
+Create a chakra slider.
 }
 \examples{
 library(shiny)

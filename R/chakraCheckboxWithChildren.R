@@ -11,6 +11,45 @@
 #' @importFrom htmltools tags
 #'
 #' @examples
+#' library(shiny)
+#' library(shinyChakraUI)
+#'
+#' ui <- chakraPage(
+#'
+#'   br(),
+#'
+#'   chakraComponent(
+#'     "mycomponent",
+#'
+#'     chakraCheckboxWithChildren(
+#'       "cwc",
+#'       Tag$Checkbox(
+#'         "Parentxxx checkbox"
+#'       ),
+#'       Tag$Checkbox(
+#'         "Child checkbox 1"
+#'       ),
+#'       Tag$Checkbox(
+#'         defaultChecked = TRUE,
+#'         "Child checkbox 2"
+#'       )
+#'     )
+#'
+#'   )
+#'
+#' )
+#'
+#' server <- function(input, output, session){
+#'
+#'   observe({
+#'     print(input[["cwc"]])
+#'   })
+#'
+#' }
+#'
+#' if(interactive()){
+#'   shinyApp(ui, server)
+#' }
 chakraCheckboxWithChildren <- function(
   inputId, parentCheckbox, ...,
   stackAttributes = list(pl = 6, mt = 1, spacing = 1)

@@ -433,7 +433,7 @@ const getMenuOptionGroupSelections = menuoptiongroup => {
   let menuitemoptions = menuoptiongroup.children;
   for(let i = 0; i < menuitemoptions.length; i++){
     let attribs = menuitemoptions[i].attribs;
-    if(attribs.isChecked){
+    if(attribs.isChecked === true || attribs.defaultChecked === true){
       if(type === "radio"){
         return attribs.value;
       }

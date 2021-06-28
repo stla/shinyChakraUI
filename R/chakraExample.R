@@ -1,5 +1,19 @@
 #' @title Chakra examples
-#' @description A function to run examples of Shiny apps.
+#' @description List of chakra examples.
+#'
+#' @export
+#'
+#' @examples
+#' chakraExamples()
+chakraExamples <- function(){
+  Folder <- system.file("examples", package = "shinyChakraUI")
+  Examples <- list.dirs(Folder, full.names = FALSE, recursive = FALSE)
+  message("Chakra examples: ", toString(Examples), ".")
+  message('Type `chakraExample("ExampleName")` to run an example.')
+}
+
+#' @title Run a chakra example
+#' @description A function to run examples of Shiny apps with Chakra components.
 #'
 #' @param example example name
 #' @param display.mode the display mode to use when running the example; see

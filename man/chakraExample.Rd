@@ -2,7 +2,7 @@
 % Please edit documentation in R/chakraExample.R
 \name{chakraExample}
 \alias{chakraExample}
-\title{Chakra examples}
+\title{Run a chakra example}
 \usage{
 chakraExample(example, display.mode = "showcase", ...)
 }
@@ -15,7 +15,7 @@ chakraExample(example, display.mode = "showcase", ...)
 \item{...}{arguments passed to \code{\link[shiny:runApp]{runApp}}}
 }
 \description{
-A function to run examples of Shiny apps.
+A function to run examples of Shiny apps with Chakra components.
 }
 \examples{
 chakraExample("Menu")

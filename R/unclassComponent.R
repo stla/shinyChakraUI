@@ -180,30 +180,30 @@ unclassComponent <- function(component, inputId, call){
       )
     }
   }
-  if(isTRUE(attr(component, "withDisclosure"))){
-    for(i in seq_along(component[["children"]])){
-      child <- component[["children"]][[i]]
-      if(isReactComponent(child)){
-        attr(component[["children"]][[i]], "withDisclosure") <- TRUE
-        attribs <- child[["attribs"]]
-        for(attrib in attribs){
-          if(is.list(attrib) && identical(names(attrib), "disclosure")){
-            check <- attrib[["disclosure"]] %in%
-              c("isOpen", "onToggle", "onOpen", "onClose")
-            if(!check){
-              stop(
-                sprintf(
-                  "Invalid `disclosure` value in component '%s'.",
-                  child[["name"]]
-                ),
-                call. = FALSE
-              )
-            }
-          }
-        }
-      }
-    }
-  }
+  # if(isTRUE(attr(component, "withDisclosure"))){
+  #   for(i in seq_along(component[["children"]])){
+  #     child <- component[["children"]][[i]]
+  #     if(isReactComponent(child)){
+  #       attr(component[["children"]][[i]], "withDisclosure") <- TRUE
+  #       attribs <- child[["attribs"]]
+  #       for(attrib in attribs){
+  #         if(is.list(attrib) && identical(names(attrib), "disclosure")){
+  #           check <- attrib[["disclosure"]] %in%
+  #             c("isOpen", "onToggle", "onOpen", "onClose")
+  #           if(!check){
+  #             stop(
+  #               sprintf(
+  #                 "Invalid `disclosure` value in component '%s'.",
+  #                 child[["name"]]
+  #               ),
+  #               call. = FALSE
+  #             )
+  #           }
+  #         }
+  #       }
+  #     }
+  #   }
+  # }
   for(attribname in names(component[["attribs"]])){
     attrib <- component[["attribs"]][[attribname]]
     if(isString(attrib)){ #&& attribname != "defaultValue"){

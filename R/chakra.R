@@ -147,20 +147,6 @@ withStates <- function(component, states){
   component
 }
 
-#' Title
-#'
-#' @param component
-#'
-#' @return
-#' @export
-#'
-#' @examples
-withDisclosure <- function(component){
-  component[["withDisclosure"]] <- TRUE
-  attr(component, "withDisclosure") <- TRUE
-  component
-}
-
 #' <Add Title>
 #'
 #' <Add Description>

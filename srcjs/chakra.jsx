@@ -772,14 +772,14 @@ console.log("ARGUMENTS", getArguments(unescapeHtml));
 //console.log("ARGUMENTS", getArguments(() => 0));
 //window.Acorn = acorn;
 
-const appendDisclosure = (component, disclosure) => {
-  for(let i = 0; i < component.children.length; i++){
-    if(isTag(component.children[i])){
-      component.children[i].disclosure = disclosure;
-      appendDisclosure(component.children[i], disclosure);
-    }
-  }
-};
+// const appendDisclosure = (component, disclosure) => {
+//   for(let i = 0; i < component.children.length; i++){
+//     if(isTag(component.children[i])){
+//       component.children[i].disclosure = disclosure;
+//       appendDisclosure(component.children[i], disclosure);
+//     }
+//   }
+// };
 
 const getHookProperty = (states, inputId) => ((hook, key) => {
   if(states[hook] === undefined){
@@ -1241,16 +1241,16 @@ const chakraComponent = (
 //    States[component.statesGroup] = states;
     component.hasStates = true;
   }
-  if(component.withDisclosure){
-    delete component.withDisclosure;
-    const disclosure = useDisclosure();
-    appendDisclosure(component, disclosure);
-    // for(let i = 0; i < component.children.length; i++){
-    //   if(isTag(component.children[i])){
-    //     component.children[i].disclosure = disclosure;
-    //   }
-    // }
-  }
+  // if(component.withDisclosure){
+  //   delete component.withDisclosure;
+  //   const disclosure = useDisclosure();
+  //   appendDisclosure(component, disclosure);
+  //   // for(let i = 0; i < component.children.length; i++){
+  //   //   if(isTag(component.children[i])){
+  //   //     component.children[i].disclosure = disclosure;
+  //   //   }
+  //   // }
+  // }
   let props = component.attribs;
   if(isEmptyArray(props)){
     props = {};
@@ -1262,19 +1262,18 @@ const chakraComponent = (
       // ReactDOM.render(<InvalidState/>, document.getElementById("invalidstate"));
       // throw "" ;
       //let disclosure = component.disclosure; 
-      props[key] = 
-        Eval(decodeURI(props[key].__eval), states, inputId);
+      props[key] = Eval(decodeURI(props[key].__eval), states, inputId);
     }else if(isJSX(props[key])){
       props[key] = jsxParser(props[key].__jsx, props[key].__preamble, inputId, states);
     }
   }
-  if(component.disclosure){
-    for(const key in props){
-      if(typeof props[key] === "object" && props[key].disclosure){
-        props[key] = component.disclosure[props[key].disclosure];
-      }
-    }  
-  }
+  // if(component.disclosure){
+  //   for(const key in props){
+  //     if(typeof props[key] === "object" && props[key].disclosure){
+  //       props[key] = component.disclosure[props[key].disclosure];
+  //     }
+  //   }  
+  // }
   // if(props.title){
   //   props.title = decodeURI(props.title);
   // }

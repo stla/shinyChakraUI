@@ -17,10 +17,25 @@ isCapitalized <- function(word){
 }
 
 #' @export
+#' @noRd
 `[[.ReactTagBuilder` <- `$.ReactTagBuilder`
 
-#' Title
-#' @description xx
+#' @title React component builder
+#' @description Create a React component. This is similar to
+#'   \code{\link[reactR:React]{React}}.
 #' @export
+#' @examples
+#' Tag$Box(
+#'   bg = "tomato",
+#'   Tag$ButtonGroup(
+#'     spacing = "4",
+#'     Tag$Button(
+#'       "I'm a button"
+#'     ),
+#'     Tag$Button(
+#'       "I'm another button"
+#'     )
+#'   )
+#' )
 Tag <- structure(list(), class = "ReactTagBuilder")
 

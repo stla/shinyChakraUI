@@ -3,7 +3,7 @@
 \docType{data}
 \name{Tag}
 \alias{Tag}
-\title{Title}
+\title{React component builder}
 \format{
 An object of class \code{ReactTagBuilder} of length 0.
 }
@@ -11,6 +11,21 @@ An object of class \code{ReactTagBuilder} of length 0.
 Tag
 }
 \description{
-xx
+Create a React component. This is similar to
+  \code{\link[reactR:React]{React}}.
+}
+\examples{
+Tag$Box(
+  bg = "tomato",
+  Tag$ButtonGroup(
+    spacing = "4",
+    Tag$Button(
+      "I'm a button"
+    ),
+    Tag$Button(
+      "I'm another button"
+    )
+  )
+)
 }
 \keyword{datasets}

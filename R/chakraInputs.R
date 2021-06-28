@@ -21,7 +21,7 @@
 #     container = tags$div
 #   )
 # }
-# 
+#
 # #' Title
 # #'
 # #' @param inputId
@@ -77,8 +77,8 @@
 #     configuration = list(widget = "alert", component = component)
 #   )
 # }
-# 
-# 
+#
+#
 # #' Title
 # #'
 # #' @param inputId
@@ -136,92 +136,185 @@
 #     default = if(length(menuoptiongroups)) values
 #   )
 # }
-# 
-# 
-# 
-# # chakraAlertDialogInput <- function(inputId){
-# #   component <- list(
-# #     element = "Fragment",
-# #     props = list(),
-# #     children = list(
-# #       list(
-# #         element = "OpenButton",
-# #         props = list(
-# #           colorScheme = "red"
-# #         ),
-# #         children = list(
-# #           "Delete customer"
-# #         )
-# #       ),
-# #       list(
-# #         element = "AlertDialog",
-# #         props = list(),
-# #         children = list(
-# #           list(
-# #             element = "AlertDialogOverlay",
-# #             props = list(),
-# #             children = list(
-# #               list(
-# #                 element = "AlertDialogContent",
-# #                 props = list(),
-# #                 children = list(
-# #                   list(
-# #                     element = "AlertDialogHeader",
-# #                     props = list(
-# #                       fontSize = "lg",
-# #                       fontWeight = "bold"
-# #                     ),
-# #                     children = list(
-# #                       "Delete customer"
-# #                     )
-# #                   ),
-# #                   list(
-# #                     element = "AlertDialogBody",
-# #                     props = list(),
-# #                     children = list(
-# #                       "Are you sure? You can't undo this action afterwards"
-# #                     )
-# #                   ),
-# #                   list(
-# #                     element = "AlertDialogFooter",
-# #                     props = list(),
-# #                     children = list(
-# #                       list(
-# #                         element = "CancelButton",
-# #                         props = list(
-# #                           id = "cancel"
-# #                         ),
-# #                         children = list(
-# #                           "Cancel"
-# #                         )
-# #                       ),
-# #                       list(
-# #                         element = "Button",
-# #                         props = list(
-# #                           id = "delete",
-# #                           colorScheme = "red",
-# #                           ml = 3
-# #                         ),
-# #                         children = list(
-# #                           "Delete"
-# #                         )
-# #                       )
-# #                     )
-# #                   )
-# #                 )
-# #               )
-# #             )
-# #           )
-# #         )
-# #       )
-# #     )
-# #   )
-# #   chakraInput(
-# #     inputId = inputId,
-# #     configuration = list(widget = "alertdialog", component = component)
-# #   )
-# # }
-# 
+#
+# chakraDrawerInput <- function(
+#   inputId, openButton, options = chakraDrawerOptions(),
+#   closeButton = TRUE, header, body, footer
+# ){
+#   openButton[["name"]] <- "OpenButton"
+#   drawer <- list(
+#     name = "Drawer",
+#     attribs = options,
+#     children = list(
+#       Tag$DrawerOverlay(),
+#       Tag$DrawerContent(
+#         if(closeButton) Tag$DrawerCloseButton(),
+#         header,
+#         body,
+#         footer
+#       )
+#     )
+#   )
+#   class(drawer) <- "shiny.tag"
+#   component <- Tag$Fragment(
+#     openButton,
+#     drawer
+#   )
+#   chakraInput(
+#     inputId = inputId,
+#     configuration =
+#       list(
+#         widget = "drawer",
+#         component = unclassComponent(component)
+#       )
+#   )
+# }
+#
+# chakraAlertDialogInput <- function(inputId){
+#   component <- list(
+#     element = "Fragment",
+#     props = list(),
+#     children = list(
+#       list(
+#         element = "OpenButton",
+#         props = list(
+#           colorScheme = "red"
+#         ),
+#         children = list(
+#           "Delete customer"
+#         )
+#       ),
+#       list(
+#         element = "AlertDialog",
+#         props = list(),
+#         children = list(
+#           list(
+#             element = "AlertDialogOverlay",
+#             props = list(),
+#             children = list(
+#               list(
+#                 element = "AlertDialogContent",
+#                 props = list(),
+#                 children = list(
+#                   list(
+#                     element = "AlertDialogHeader",
+#                     props = list(
+#                       fontSize = "lg",
+#                       fontWeight = "bold"
+#                     ),
+#                     children = list(
+#                       "Delete customer"
+#                     )
+#                   ),
+#                   list(
+#                     element = "AlertDialogBody",
+#                     props = list(),
+#                     children = list(
+#                       "Are you sure? You can't undo this action afterwards"
+#                     )
+#                   ),
+#                   list(
+#                     element = "AlertDialogFooter",
+#                     props = list(),
+#                     children = list(
+#                       list(
+#                         element = "CancelButton",
+#                         props = list(
+#                           id = "cancel"
+#                         ),
+#                         children = list(
+#                           "Cancel"
+#                         )
+#                       ),
+#                       list(
+#                         element = "Button",
+#                         props = list(
+#                           id = "delete",
+#                           colorScheme = "red",
+#                           ml = 3
+#                         ),
+#                         children = list(
+#                           "Delete"
+#                         )
+#                       )
+#                     )
+#                   )
+#                 )
+#               )
+#             )
+#           )
+#         )
+#       )
+#     )
+#   )
+#   chakraInput(
+#     inputId = inputId,
+#     configuration = list(widget = "alertdialog", component = component)
+#   )
+# }
+#
+# chakraAlertDialogInput <- function(
+#   inputId,
+#   options = chakraAlertDialogOptions(),
+#   openButton,
+#   header,
+#   body,
+#   footerButtons = chakraButton("Cancel", action = "cancel", value = "cancel")
+# ){
+#   stopifnot(isChakraButton(openButton))
+#   openButton[["name"]] <- "OpenButton"
+#   # if(!is.null(cancelButton)){
+#   #   if(!isChakraButton(cancelButton)){
+#   #     stop("")
+#   #   }
+#   #   cancelButton[["element"]] <- "CancelButton"
+#   # }
+#   if(isChakraButton(footerButtons)){
+#     footerButtons <- list(footerButtons)
+#   }else{
+#     isListOfButtons <-
+#       all(vapply(footerButtons, isChakraButton, FUN.VALUE = logical(1L)))
+#     if(!isListOfButtons){
+#       stop("")
+#     }
+#   }
+#   #footerButtons <- lapply(footerButtons, unclass)
+#   if(!isChakraBox(header)){
+#     stop("")
+#   }
+#   if(!isChakraBox(body)){
+#     stop("")
+#   }
+#   header[["name"]] <- "AlertDialogHeader"
+#   body[["name"]] <- "AlertDialogBody"
+#   component <- Tag$Fragment(
+#     openButton,
+#     Tag$AlertDialog(
+#       Tag$AlertDialogOverlay(
+#         Tag$AlertDialogContent(
+#           header,
+#           body,
+#           asShinyTag(
+#             list(
+#               name = "AlertDialogFooter",
+#               attribs = list(),
+#               children = footerButtons
+#             )
+#           )
+#         )
+#       )
+#     )
+#   )
+#   chakraInput(
+#     inputId = inputId,
+#     configuration = list(
+#       widget = "alertdialog",
+#       component = unclassComponent(component),
+#       inputId = inputId
+#     )
+#   )
+# }
+#
 # #' <Add Title>
 # #'
 # #' <Add Description>

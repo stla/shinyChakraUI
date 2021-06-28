@@ -29,7 +29,7 @@ shinyUI(
                   type = "radio",
                   Tag$MenuItemOption(
                     value = "asc",
-                    isChecked = TRUE,
+                    defaultChecked = TRUE,
                     "Ascending"
                   ),
                   Tag$MenuItemOption(
@@ -43,7 +43,7 @@ shinyUI(
                   type = "checkbox",
                   Tag$MenuItemOption(
                     value = "email",
-                    isChecked = TRUE,
+                    defaultChecked = TRUE,
                     "Email"
                   ),
                   Tag$MenuItemOption(

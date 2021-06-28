@@ -17,6 +17,7 @@ import {
   //toast,
   createStandaloneToast,
   useEditableControls,
+  useBoolean,
   ChakraProvider,
   Button,
   IconButton,
@@ -2173,7 +2174,8 @@ const Hooks = {
   useClipboard,
   useToast, 
   createStandaloneToast,
-  useEditableControls
+  useEditableControls,
+  useBoolean
 };
 
 const ChakraComponent = ({ configuration, value, setValue }) => {

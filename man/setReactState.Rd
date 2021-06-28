@@ -2,16 +2,87 @@
 % Please edit documentation in R/chakra.R
 \name{setReactState}
 \alias{setReactState}
-\title{Title}
+\title{Set a React state}
 \usage{
-setReactState(session, inputId, stateName, value)
+setReactState(session, componentId, stateName, value)
 }
 \arguments{
-\item{value}{}
-}
-\value{
+\item{session}{Shiny session object}
 
+\item{componentId}{the id of the \code{\link{chakraComponent}} which
+contains the state to be changed}
+
+\item{stateName}{the name of the state to be set}
+
+\item{value}{the new value of the state}
 }
 \description{
-Title
+Set a React state from the Shiny server.
+}
+\examples{
+library(shiny)
+library(shinyChakraUI)
+
+ui <- chakraPage(
+
+  br(),
+
+  chakraComponent(
+    "mycomponent",
+
+    Tag$Button(
+      id = "button",
+      className = "action-button",
+      colorScheme = "facebook",
+      display = "block",
+      onClick = jseval("(event) => {event.target.disabled = true}"),
+      "Click me to change the content of the container"
+    ),
+
+    br(),
+    Tag$Divider(),
+    br(),
+
+    withStates(
+
+      Tag$Container(
+        maxW = "xl",
+        centerContent = TRUE,
+        bg = "yellow.100",
+        getState("containerContent")
+      ),
+
+      states = list(containerContent = "I am the container content.")
+
+    )
+
+  )
+
+)
+
+server <- function(input, output, session){
+
+  observeEvent(input[["button"]], {
+
+    setReactState(
+      session = session,
+      componentId = "mycomponent",
+      stateName = "containerContent",
+      value = Tag$Box(
+        padding = "4",
+        maxW = "3xl",
+        fontStyle = "italic",
+        fontWeight = "bold",
+        borderWidth = "2px",
+        "I am the new container content, included in a Box."
+      )
+    )
+
+  })
+
+}
+
+if(interactive()){
+  shinyApp(ui, server)
+}
 }

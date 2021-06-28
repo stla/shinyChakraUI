@@ -671,26 +671,27 @@ const fixTagAttribs = attribs => {
 };
 
 const isTag = value => {
-  return (typeof value === 'object')
+  return value !== null 
+      && (typeof value === 'object')
       && value.hasOwnProperty('name')
       && value.hasOwnProperty('attribs')
       && value.hasOwnProperty('children');
 };
 
 const isJseval = x => {
-  return (typeof x === "object") && x.hasOwnProperty("__eval");
+  return x !== null && (typeof x === "object") && x.hasOwnProperty("__eval");
 };
 
 const isHook = x => {
-  return (typeof x === "object") && x.hasOwnProperty("__hook");
+  return x !== null && (typeof x === "object") && x.hasOwnProperty("__hook");
 };
 
 const isHTML = x => {
-  return (typeof x === "object") && x.hasOwnProperty("__html");
+  return x !== null && (typeof x === "object") && x.hasOwnProperty("__html");
 };
 
 const isJSX = x => {
-  return (typeof x === "object") && x.hasOwnProperty("__jsx");
+  return x !== null && (typeof x === "object") && x.hasOwnProperty("__jsx");
 };
 
 /* const chakraComponent = (component, patch) => {
@@ -1156,6 +1157,9 @@ const chakraComponent = (
   }
   if(typeof component !== "object"){
     return component;
+  }
+  if(component === null){
+    return ;
   }
   let tagName = component.name;
   if(isCapitalized(tagName) && !ChakraTags.includes(tagName)){

@@ -11,22 +11,22 @@
 #' @importFrom utils URLencode
 #'
 #' @examples
-setReactState <- function(session, inputId, stateName, value){
-  if(is.null(statesEnvir[[inputId]])){
+setReactState <- function(session, componentId, stateName, value){
+  if(is.null(statesEnvir[[componentId]])){
     rm(list = ls(statesEnvir), envir = statesEnvir)
     stop(
-      sprintf("Unknown component '%s'.", inputId),
+      sprintf("Unknown component '%s'.", componentId),
       call. = TRUE
     )
   }
-  if(is.na(statesEnvir[[inputId]][stateName])){
+  if(is.na(statesEnvir[[componentId]][stateName])){
     rm(list = ls(statesEnvir), envir = statesEnvir)
     stop(
       sprintf("Unknown state '%s'.", stateName),
       call. = TRUE
     )
   }
-  if(statesEnvir[[inputId]][stateName] == ""){
+  if(statesEnvir[[componentId]][stateName] == ""){
     rm(list = ls(statesEnvir), envir = statesEnvir)
     stop(
       sprintf("You cannot set a value to state '%s'.", stateName),
@@ -47,7 +47,7 @@ setReactState <- function(session, inputId, stateName, value){
     type <- "jsx"
   }
   session$sendCustomMessage(
-    statesEnvir[[inputId]][[stateName]],
+    statesEnvir[[componentId]][[stateName]],
     list(state = stateName, value = value, type = type)
   )
 }

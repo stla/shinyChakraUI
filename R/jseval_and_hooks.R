@@ -93,26 +93,26 @@ getState <- function(state){
 }
 
 
-Function <- function(arguments = list(), body){
-  jseval(sprintf("(%s) => {%s}", toString(arguments), body))
-}
-
-#' Title
-#'
-#' @param state
-#' @param value
-#'
-#' @return
-#' @export
-#'
-#' @examples
-setState <- function(state, value){
-  if(is.list(value) && identical(names(value), "eval")){
-    list(eval = sprintf("states.%s.set(%s)", state, value[["eval"]]))
-  }else{
-    sprintf("states.%s.set(%s)", state)
-  }
-}
+# Function <- function(arguments = list(), body){
+#   jseval(sprintf("(%s) => {%s}", toString(arguments), body))
+# }
+#
+# #' Title
+# #'
+# #' @param state
+# #' @param value
+# #'
+# #' @return
+# #' @export
+# #'
+# #' @examples
+# setState <- function(state, value){
+#   if(is.list(value) && identical(names(value), "eval")){
+#     list(eval = sprintf("states.%s.set(%s)", state, value[["eval"]]))
+#   }else{
+#     sprintf("states.%s.set(%s)", state)
+#   }
+# }
 
 #' @title The `useClipboard` hook
 #' @description  The `useClipboard` hook.
@@ -278,7 +278,6 @@ useDisclosure <- function(defaultIsOpen = FALSE){
 #' @export
 #' @importFrom utils URLencode
 #' @note It does not work well. Use \code{\link{createStandaloneToast}} instead.
-#'
 useToast <- function(){
   list("__hook" = URLencode("useToast()"))
 }

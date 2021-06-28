@@ -1,16 +1,15 @@
-#' Title
+#' @title Slider thumb options
+#' @description Define the slider thumb options.
 #'
-#' @param width
-#' @param height
-#' @param color
-#' @param borderColor
-#' @param borderWidth
+#' @param width thumb width
+#' @param height thumb height
+#' @param color thumb color
+#' @param borderColor thumb border color
+#' @param borderWidth thumb border width
 #'
-#' @return
+#' @return A list of attributes for usage in \code{\link{chakraSlider}}.
 #' @export
 #' @importFrom htmltools validateCssUnit
-#'
-#' @examples
 sliderThumbOptions <- function(
   width = NULL,
   height = NULL,
@@ -33,17 +32,18 @@ sliderThumbOptions <- function(
   )
 }
 
-#' Title
+#' @title Slider mark options.
+#' @description Define the options for the slider mark.
 #'
-#' @param textAlign
-#' @param backgroundColor
-#' @param textColor
-#' @param margin
-#' @param padding
-#' @param width
-#' @param ...
+#' @param textAlign text alignment
+#' @param backgroundColor background color
+#' @param textColor text color
+#' @param margin margin (CSS property)
+#' @param padding padding (CSS property)
+#' @param width width
+#' @param ... other attributes
 #'
-#' @return
+#' @return A list of attributes for usage in \code{\link{chakraSlider}}.
 #' @export
 #' @importFrom htmltools validateCssUnit
 #'
@@ -78,17 +78,16 @@ sliderMarkOptions <- function(
 
 #' Title
 #'
-#' @param hasArrow
-#' @param backgroundColor
-#' @param placement
-#' @param closeOnClick
-#' @param isOpen
-#' @param ...
+#' @param hasArrow whether to include an arrow
+#' @param backgroundColor background color
+#' @param placement tooltip placement; see
+#'   \href{https://chakra-ui.com/docs/overlay/tooltip#placement}{tooltip placement}
+#' @param closeOnClick whether to close the tooltip on click
+#' @param isOpen whether the tooltip is open
+#' @param ... other attributes
 #'
-#' @return
+#' @return A list of attributes for usage in \code{\link{chakraSlider}}.
 #' @export
-#'
-#' @examples
 sliderTooltipOptions <- function(
   hasArrow = TRUE,
   backgroundColor = "red.600",
@@ -105,6 +104,9 @@ sliderTooltipOptions <- function(
       )
     }
   }
+  stopifnot(isBoolean(hasArrow))
+  stopifnot(isBoolean(closeOnClick))
+  stopifnot(isBoolean(isOpen))
   list(
     hasArrow = hasArrow,
     bg = validateColor(backgroundColor),

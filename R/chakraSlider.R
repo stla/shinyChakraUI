@@ -46,8 +46,6 @@ sliderThumbOptions <- function(
 #' @return A list of attributes for usage in \code{\link{chakraSlider}}.
 #' @export
 #' @importFrom htmltools validateCssUnit
-#'
-#' @examples
 sliderMarkOptions <- function(
   textAlign = "center",
   backgroundColor = "blue.500",
@@ -146,7 +144,7 @@ sliderTooltipOptions <- function(
 #' @param shinyValueOn either \code{"drag"} or \code{"end"}, the moment to get
 #'   the Shiny value
 #'
-#' @return
+#' @return A widget to use in \code{\link{chakraComponent}}.
 #' @export
 #' @importFrom htmltools validateCssUnit tags
 #'

@@ -749,7 +749,7 @@ ui2 <- chakraPage(
     br(),
 
     chakraSlider(
-      "slider",
+      "sslider",
       label = HTML("<span style='color:red'>Hello slider!</span>"),
       value = 5,
       min = 0,
@@ -997,23 +997,23 @@ server <- function(input, output, session){
 
   inputs <- reactiveVal()
 
-  observers <- NULL
-  observeEvent(names(input), {
-    lapply(observers, function(o) o$destroy())
-    observers <<- lapply(names(input), function(inputName){
-      #inputIds[[inputName]] <- input[[inputName]]
-      observeEvent(input[[inputName]], {
-        cat(inputName, "\n")
-        print(input[[inputName]])
-      })
-    })
-    # xx <<- reactiveValuesToList(inputIds)
-  })
-
-  output[["inputs"]] <- renderPrint({
-    inputs <- reactiveValuesToList(input)
-    toJSON(inputs, auto_unbox = TRUE, pretty = TRUE)
-  })
+  # observers <- NULL
+  # observeEvent(names(input), {
+  #   lapply(observers, function(o) o$destroy())
+  #   observers <<- lapply(names(input), function(inputName){
+  #     #inputIds[[inputName]] <- input[[inputName]]
+  #     observeEvent(input[[inputName]], {
+  #       cat(inputName, "\n")
+  #       print(input[[inputName]])
+  #     })
+  #   })
+  #   # xx <<- reactiveValuesToList(inputIds)
+  # })
+  #
+  # output[["inputs"]] <- renderPrint({
+  #   inputs <- reactiveValuesToList(input)
+  #   toJSON(inputs, auto_unbox = TRUE, pretty = TRUE)
+  # })
   # lapply(xx, function(id){
   #   observe({
   #     cat(id, "\n")
@@ -1056,7 +1056,8 @@ server <- function(input, output, session){
   #   print(input[["uuuuu"]])
   #   print(input[["id"]])
   # })
+  observe({print(input[["sslider"]])})
 }
 
-shinyApp(ui1, server)
+shinyApp(ui2, server)
 

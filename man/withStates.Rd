@@ -2,16 +2,18 @@
 % Please edit documentation in R/chakra.R
 \name{withStates}
 \alias{withStates}
-\title{Title}
+\title{Component with states or hooks}
 \usage{
 withStates(component, states)
 }
 \arguments{
-\item{component}{}
+\item{component}{a React component}
+
+\item{states}{list of states}
 }
 \value{
-
+A component to use in \code{\link{chakraComponent}}.
 }
 \description{
-Title
+Create a component with React states and/or hooks.
 }

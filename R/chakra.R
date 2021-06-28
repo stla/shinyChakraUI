@@ -117,13 +117,14 @@ setReactState <- function(session, componentId, stateName, value){
   )
 }
 
-#' Title
+#' @title Component with states or hooks
+#' @description Create a component with React states and/or hooks.
 #'
-#' @param component
+#' @param component a React component
+#' @param states list of states
 #'
-#' @return
+#' @return A component to use in \code{\link{chakraComponent}}.
 #' @export
-#' @importFrom jsonlite toJSON
 #'
 #' @examples
 withStates <- function(component, states){

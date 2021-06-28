@@ -80,7 +80,7 @@ chakraSlider(
 the Shiny value}
 }
 \value{
-
+A widget to use in \code{\link{chakraComponent}}.
 }
 \description{
 Title

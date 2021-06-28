@@ -128,7 +128,9 @@ import {
   PinInput, 
   PinInputField,
   Select,
-  Textarea
+  Textarea,
+  Heading,
+  Text
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -391,7 +393,9 @@ const ChakraComponents = {
   PinInput, 
   PinInputField,
   Select,
-  Textarea
+  Textarea,
+  Heading,
+  Text
 };
 
 const ChakraTags = Object.keys(ChakraComponents);

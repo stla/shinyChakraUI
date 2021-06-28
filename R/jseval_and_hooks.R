@@ -33,6 +33,7 @@
 #' }
 jseval <- function(code){
   stopifnot(isString(code))
+  code <- gsub('\"', "'", code)
   list("__eval" = URLencode(code))
 }
 

@@ -1,16 +1,18 @@
 Package: shinyChakraUI
-Title: What the Package Does (One Line, Title Case)
+Title: A Wrapper of the 'React' library 'Chakra UI' for 'Shiny'
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
+Authors@R: c(
+    person(given = "Stéphane",
+           family = "Laurent",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           email = "laurent_step@outlook.fr"),
+    person(given = "Segun",
+           family = "Adebayo",
+           role = "cph",
+           comment = "'Chakra UI' library (https://chakra-ui.com/)"))
+Description: Makes the 'React' library 'Chakra UI' usable in 'Shiny' apps. 'Chakra UI' components include alert dialogs, drawers (sliding panels), menus, modals, popovers, sliders, and more. 
 License: GPL (>= 3)
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.1.1
 Imports: 
     htmltools,

@@ -1,5 +1,6 @@
 library(shiny)
 library(shinyChakraUI)
+library(DT)
 
 ui <- chakraPage(
 
@@ -17,11 +18,19 @@ ui <- chakraPage(
             direction = "column",
             Tag$Radio(
               value = "1",
-              "First"
+              "Table"
             ),
             Tag$Radio(
               value = "2",
-              "Second"
+              "Stat"
+            ),
+            Tag$Radio(
+              value = "3",
+              "Plot"
+            ),
+            Tag$Radio(
+              value = "4",
+              "Datatable"
             )
           )
         )
@@ -155,11 +164,23 @@ server <- function(input, output, session){
     )
   )
 
+  output[["plot"]] <- renderPlot({
+    plot(rnorm(10), rnorm(10))
+  })
+
+  output[["dtable"]] <- renderDT({
+    datatable(iris[1:6,], style = "default")
+  })
+
   output[["Component"]] <- renderUI({
     if(input[["radiogroup"]] == 1){
       ChakraTable
-    }else{
+    }else if(input[["radiogroup"]] == 2){
       ChakraStat
+    }else if(input[["radiogroup"]] == 3){
+      plotOutput("plot")
+    }else{
+      DTOutput("dtable")
     }
   })
 

@@ -1215,3 +1215,11 @@ pre {
   padding: 9px;
   .border-radius(3px);
 }
+
+/*
+ * datatables
+ */
+.dataTables_length > label > select,
+.dataTables_filter > label > input[type="search"] {
+  border: 1px solid orange;
+}

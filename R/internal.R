@@ -120,4 +120,13 @@ isJSX <- function(x){
   is.list(x) && identical(names(x), c("__jsx", "__preamble"))
 }
 
-
+invalidNamedDotsList <- function(dotslist){
+  if(length(dotslist)){
+    namesDots <- names(dotslist)
+    if(is.null(namesDots) || ("" %in% namesDots)){
+      TRUE
+    }
+  }else{
+    FALSE
+  }
+}

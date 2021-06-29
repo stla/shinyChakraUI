@@ -6,6 +6,7 @@
 #' @param color thumb color
 #' @param borderColor thumb border color
 #' @param borderWidth thumb border width
+#' @param ... other attributes passed to \code{SliderThumb}
 #'
 #' @return A list of attributes for usage in \code{\link{chakraSlider}}.
 #' @export
@@ -15,8 +16,14 @@ sliderThumbOptions <- function(
   height = NULL,
   color = NULL,
   borderColor = NULL,
-  borderWidth = NULL
+  borderWidth = NULL,
+  ...
 ){
+  if(invalidNamedDotsList(list(...))){
+    stop(
+      "The arguments given in `...` must be named.", call. = TRUE
+    )
+  }
   list(
     width = validateCssUnit(width),
     height = validateCssUnit(height),
@@ -28,7 +35,8 @@ sliderThumbOptions <- function(
       }else{
         validateCssUnit(borderWidth)
       }
-    }
+    },
+    ...
   )
 }
 
@@ -41,7 +49,7 @@ sliderThumbOptions <- function(
 #' @param margin margin (CSS property)
 #' @param padding padding (CSS property)
 #' @param width width
-#' @param ... other attributes
+#' @param ... other attributes passed to \code{SliderMark}
 #'
 #' @return A list of attributes for usage in \code{\link{chakraSlider}}.
 #' @export
@@ -55,13 +63,10 @@ sliderMarkOptions <- function(
   width = "50px",
   ...
 ){
-  if(length(dots <- list(...))){
-    namesDots <- names(dots)
-    if(is.null(namesDots) || ("" %in% namesDots)){
-      stop(
-        "The arguments given in `...` must be named.", call. = TRUE
-      )
-    }
+  if(invalidNamedDotsList(list(...))){
+    stop(
+      "The arguments given in `...` must be named.", call. = TRUE
+    )
   }
   list(
     textAlign = textAlign,
@@ -83,7 +88,7 @@ sliderMarkOptions <- function(
 #'   \href{https://chakra-ui.com/docs/overlay/tooltip#placement}{tooltip placement}
 #' @param closeOnClick whether to close the tooltip on click
 #' @param isOpen whether the tooltip is open
-#' @param ... other attributes
+#' @param ... other attributes passed to \code{Tooltip}
 #'
 #' @return A list of attributes for usage in \code{\link{chakraSlider}}.
 #' @export
@@ -95,13 +100,10 @@ sliderTooltipOptions <- function(
   isOpen = TRUE,
   ...
 ){
-  if(length(dots <- list(...))){
-    namesDots <- names(dots)
-    if(is.null(namesDots) || ("" %in% namesDots)){
-      stop(
-        "The arguments given in `...` must be named.", call. = TRUE
-      )
-    }
+  if(invalidNamedDotsList(list(...))){
+    stop(
+      "The arguments given in `...` must be named.", call. = TRUE
+    )
   }
   stopifnot(isBoolean(hasArrow))
   stopifnot(isBoolean(closeOnClick))
@@ -145,6 +147,7 @@ sliderTooltipOptions <- function(
 #'   \code{\link{sliderThumbOptions}}
 #' @param shinyValueOn either \code{"drag"} or \code{"end"}, the moment to get
 #'   the Shiny value
+#' @param ... other attributes passed to \code{Slider}
 #'
 #' @return A widget to use in \code{\link{chakraComponent}}.
 #' @export
@@ -212,13 +215,10 @@ chakraSlider <- function(
   shinyValueOn = "end",
   ...)
 {
-  if(length(dots <- list(...))){
-    namesDots <- names(dots)
-    if(is.null(namesDots) || ("" %in% namesDots)){
-      stop(
-        "The arguments given in `...` must be named.", call. = TRUE
-      )
-    }
+  if(invalidNamedDotsList(list(...))){
+    stop(
+      "The arguments given in `...` must be named.", call. = TRUE
+    )
   }
   attribs <- dropNulls(list(
 #    id = id,

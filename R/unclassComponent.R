@@ -149,7 +149,7 @@ unclassComponent <- function(component, inputId, call){
       component <- list("__html" = URLencode(as.character(component)))
     }
   }else if(!isChakraIcon(component) && grepl("Icon$", component[["name"]])){
-    if(component[["name"]] %notin% paste0(chakraIcons(), "Icon")){
+    if(component[["name"]] %notin% chakraIcons()){
       stop(
         sprintf("Invalid icon '%s'.", component[["name"]]),
         call. = FALSE
@@ -172,7 +172,7 @@ unclassComponent <- function(component, inputId, call){
         call. = FALSE
       )
     }
-    if(icon[["name"]] %notin% paste0(chakraIcons(), "Icon")){
+    if(icon[["name"]] %notin% chakraIcons()){
       stop(
         sprintf("Invalid `icon` attribute in component '%s'.", component[["name"]]),
         sprintf("'%s' is not the name of a chakra icon.", icon[["name"]]),
@@ -210,7 +210,7 @@ unclassComponent <- function(component, inputId, call){
       component[["attribs"]][[attribname]] <- URLencode(attrib)
     }
     if(isReactComponent(attrib) && grepl("Icon$", attrib[["name"]])){
-      if(attrib[["name"]] %notin% paste0(chakraIcons(), "Icon")){
+      if(attrib[["name"]] %notin% chakraIcons()){
         stop(
           sprintf("Invalid icon '%s'.", attrib[["name"]]),
           call. = FALSE

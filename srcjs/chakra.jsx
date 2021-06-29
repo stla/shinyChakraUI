@@ -131,7 +131,15 @@ import {
   Select,
   Textarea,
   Heading,
-  Text
+  Text,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -396,7 +404,15 @@ const ChakraComponents = {
   Select,
   Textarea,
   Heading,
-  Text
+  Text,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption
 };
 
 const ChakraTags = Object.keys(ChakraComponents);

@@ -24,7 +24,7 @@
 #'     chakraCheckboxWithChildren(
 #'       "cwc",
 #'       Tag$Checkbox(
-#'         "Parentxxx checkbox"
+#'         "Parent checkbox"
 #'       ),
 #'       Tag$Checkbox(
 #'         "Child checkbox 1"

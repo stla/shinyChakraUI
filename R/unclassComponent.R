@@ -8,6 +8,7 @@ initializeShinyInput <- function(shinyInput, elementId){
 isSlider <- function(x){
   inherits(x, "shiny.tag") &&
     length(x[["children"]]) == 2L &&
+    inherits(x[["children"]][[2L]], "shiny.tag") &&
     identical(x[["children"]][[2L]][["attribs"]][["class"]], "js-range-slider")
 }
 
@@ -102,7 +103,7 @@ unclassComponent <- function(component, inputId, call){
     dependencies <- evalHtmlDependencies(htmlDependencies(component))
     # sliders <- list(list(id = component[["children"]][[2]][["attribs"]][["id"]]))
     # component[["children"]][[2]][["attribs"]][["class"]] <- NULL
-    id <- component[["children"]][[2]][["attribs"]][["id"]]
+    id <- component[["children"]][[2L]][["attribs"]][["id"]]
     script <- initializeShinyInput("sliderInput", id)
     component <- Tag$Fragment(
       list("__html" = URLencode(as.character(component))),

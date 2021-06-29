@@ -1857,7 +1857,30 @@ const chakraComponent = (
         setSliderValue(val);
       };
     }
+  }else if(component.widget === "combinedslider"){
+    let numberinput = component.children[0].children[0];
+    let slider = component.children[0].children[1];
+    let defaultValue = component.value;
+    //props.class = "chakraTag";
+    props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
+    shinyValue.add(props.id, defaultValue);
+    const [sliderValue, setSliderValue] = React.useState(defaultValue);
+    const tooltip = slider.children[1].name === "Tooltip";
+    if(tooltip){
+      const child1 = slider.children[1]; 
+      const tooltipAttribs = $.extend(child1.attribs, {label: sliderValue});
+      const thumbAttribs = child1.children[0].attribs;
+      slider.children[1] = <Tooltip {...tooltipAttribs}><SliderThumb {...thumbAttribs}/></Tooltip>;
+    }
+    slider.attribs.value = sliderValue;
+    numberinput.attribs.value = sliderValue;
+    slider.attribs.onChange = numberinput.attribs.onChange = (val) => {
+      Shiny.setInputValue(props.id, val);
+      shinyValue.set(props.id, val);
+      setSliderValue(val);
+    };
   }
+  /* --- */
   for(const key in props){
     if(isTag(props[key])){
       const name = props[key].name; 

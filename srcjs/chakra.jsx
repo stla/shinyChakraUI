@@ -1966,7 +1966,7 @@ const chakraComponent = (
   if(tag === "input"){
     console.log("IIIIIINPuT", component);
   }
-  if(tag[0] === tag[0].toUpperCase()){
+  if(isCapitalized(tag)){
     if(tag === "ScriptTag"){
       console.log(component);
       console.log(newprops);
@@ -1993,234 +1993,234 @@ const chakraComponent = (
   }
 };
 
-const ChakraAlert = ({component}) => {
-   return (
-    <ChakraProvider>
-      {chakraComponent(component, {})}
-    </ChakraProvider>
-  );
- };
+// const ChakraAlert = ({component}) => {
+//    return (
+//     <ChakraProvider>
+//       {chakraComponent(component, {})}
+//     </ChakraProvider>
+//   );
+//  };
 
-const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [disabled, setDisabled] = React.useState(false);
-  const onClose = () => {
-    setIsOpen(false);
-  };
-  const onCloseButton = (e) => {
-    setShinyValue(decodeURI(e.currentTarget.dataset.val));
-    setIsOpen(false);
-  };
-  const cancelRef = React.useRef();
-  const patch = {
-    Button: {
-      onClick: onCloseButton
-    },
-    OpenButton: {
-      onClick: () => {setIsOpen(true);},
-      isDisabled: disabled
-    },
-    DisableButton: {
-      onClick: (e) => {
-        setShinyValue(decodeURI(e.currentTarget.dataset.val));
-        setDisabled(true);
-        setIsOpen(false);
-      }
-    },
-    CancelButton: {
-      ref: cancelRef,
-      onClick: onCloseButton
-    },
-    UnmountingButton: {
-      onClick: (e) => {
-        setShinyValue(decodeURI(e.currentTarget.dataset.val));
-        unmountComponentAtNode(document.getElementById(inputId));
-      }
-    },
-    IconButton: {
-      onClick: onCloseButton
-    },
-    OpenIconButton: {
-      onClick: () => {setIsOpen(true);},
-      isDisabled: disabled
-    },
-    DisableIconButton: {
-      onClick: (e) => {
-        setShinyValue(decodeURI(e.currentTarget.dataset.val));
-        setDisabled(true);
-        setIsOpen(false);
-      }
-    },
-    CancelIconButton: {
-      ref: cancelRef,
-      onClick: onCloseButton
-    },
-    UnmountingIconButton: {
-      onClick: (e) => {
-        setShinyValue(decodeURI(e.currentTarget.dataset.val));
-        unmountComponentAtNode(document.getElementById(inputId));
-      }
-    },
-    AlertDialog: {
-      isOpen: isOpen,
-      leastDestructiveRef: cancelRef,
-      onClose: onClose,
-      onEsc: () => {setShinyValue("esc");}
-    }
-  };
-  return (
-    <ChakraProvider>
-      {chakraComponent(component, patch)}
-    </ChakraProvider>
-  );
-};
+// const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
+//   const [isOpen, setIsOpen] = React.useState(false);
+//   const [disabled, setDisabled] = React.useState(false);
+//   const onClose = () => {
+//     setIsOpen(false);
+//   };
+//   const onCloseButton = (e) => {
+//     setShinyValue(decodeURI(e.currentTarget.dataset.val));
+//     setIsOpen(false);
+//   };
+//   const cancelRef = React.useRef();
+//   const patch = {
+//     Button: {
+//       onClick: onCloseButton
+//     },
+//     OpenButton: {
+//       onClick: () => {setIsOpen(true);},
+//       isDisabled: disabled
+//     },
+//     DisableButton: {
+//       onClick: (e) => {
+//         setShinyValue(decodeURI(e.currentTarget.dataset.val));
+//         setDisabled(true);
+//         setIsOpen(false);
+//       }
+//     },
+//     CancelButton: {
+//       ref: cancelRef,
+//       onClick: onCloseButton
+//     },
+//     UnmountingButton: {
+//       onClick: (e) => {
+//         setShinyValue(decodeURI(e.currentTarget.dataset.val));
+//         unmountComponentAtNode(document.getElementById(inputId));
+//       }
+//     },
+//     IconButton: {
+//       onClick: onCloseButton
+//     },
+//     OpenIconButton: {
+//       onClick: () => {setIsOpen(true);},
+//       isDisabled: disabled
+//     },
+//     DisableIconButton: {
+//       onClick: (e) => {
+//         setShinyValue(decodeURI(e.currentTarget.dataset.val));
+//         setDisabled(true);
+//         setIsOpen(false);
+//       }
+//     },
+//     CancelIconButton: {
+//       ref: cancelRef,
+//       onClick: onCloseButton
+//     },
+//     UnmountingIconButton: {
+//       onClick: (e) => {
+//         setShinyValue(decodeURI(e.currentTarget.dataset.val));
+//         unmountComponentAtNode(document.getElementById(inputId));
+//       }
+//     },
+//     AlertDialog: {
+//       isOpen: isOpen,
+//       leastDestructiveRef: cancelRef,
+//       onClose: onClose,
+//       onEsc: () => {setShinyValue("esc");}
+//     }
+//   };
+//   return (
+//     <ChakraProvider>
+//       {chakraComponent(component, patch)}
+//     </ChakraProvider>
+//   );
+// };
 
-const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, setShinyValue}) => {
-  if(optiongroups){
-    const [value, setValue] = React.useState(selected);
-    let menulist = component.children[1].children;
-    for(let i = 0; i < optiongroups.length; i++){
-      let groupprops = menulist[optiongroups[i]].attribs;
-      let grouptitle = groupprops.title;
-      groupprops.onChange = (selection) => {
-        value[grouptitle] = Array.isArray(selection) ? selection.map(decodeURI) : decodeURI(selection);
-        setValue(value);
-        setShinyValue(value);
-      };
-    }
-  }
-  if(text){
-    let buttonprops = component.children[0].attribs;
-    component = component.children[1];
-    let textWhenOpen = decodeURI(text.textWhenOpen);
-    let textWhenClose = decodeURI(text.textWhenClose);
-    const patch = {
-      // MenuButton: {
-      //   as: Button,
-      //   isActive: isOpen,
-      //   children: [isOpen ? textWhenOpen : textWhenClose]
-      // },
-      MenuItem: {
-        onClick: (e) => {
-          setShinyValue(decodeURI(e.currentTarget.dataset.val));
-        }
-      }
-    };
-    return (
-      <ChakraProvider>
-        <Menu closeOnSelect={closeOnSelect}>
-          {({ isOpen }) => (
-            <React.Fragment>
-              <MenuButton isActive={isOpen} as={Button} {...buttonprops}>
-                {isOpen ? textWhenOpen : textWhenClose}
-              </MenuButton>
-              {chakraComponent(component, patch)}
-            </React.Fragment>
-          )}
-        </Menu>
-      </ChakraProvider>
-    );  
-  }else{
-    const patch = {
-      MenuButton: {
-        as: Button
-      },
-      MenuItem: {
-        onClick: (e) => {
-          setShinyValue(decodeURI(e.currentTarget.dataset.val));
-        }
-      }
-    };
-    return (
-      <ChakraProvider>
-        <Menu closeOnSelect={closeOnSelect}>
-          {chakraComponent(component, patch)}
-        </Menu>
-      </ChakraProvider>
-    );  
-  }
-};
+// const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, setShinyValue}) => {
+//   if(optiongroups){
+//     const [value, setValue] = React.useState(selected);
+//     let menulist = component.children[1].children;
+//     for(let i = 0; i < optiongroups.length; i++){
+//       let groupprops = menulist[optiongroups[i]].attribs;
+//       let grouptitle = groupprops.title;
+//       groupprops.onChange = (selection) => {
+//         value[grouptitle] = Array.isArray(selection) ? selection.map(decodeURI) : decodeURI(selection);
+//         setValue(value);
+//         setShinyValue(value);
+//       };
+//     }
+//   }
+//   if(text){
+//     let buttonprops = component.children[0].attribs;
+//     component = component.children[1];
+//     let textWhenOpen = decodeURI(text.textWhenOpen);
+//     let textWhenClose = decodeURI(text.textWhenClose);
+//     const patch = {
+//       // MenuButton: {
+//       //   as: Button,
+//       //   isActive: isOpen,
+//       //   children: [isOpen ? textWhenOpen : textWhenClose]
+//       // },
+//       MenuItem: {
+//         onClick: (e) => {
+//           setShinyValue(decodeURI(e.currentTarget.dataset.val));
+//         }
+//       }
+//     };
+//     return (
+//       <ChakraProvider>
+//         <Menu closeOnSelect={closeOnSelect}>
+//           {({ isOpen }) => (
+//             <React.Fragment>
+//               <MenuButton isActive={isOpen} as={Button} {...buttonprops}>
+//                 {isOpen ? textWhenOpen : textWhenClose}
+//               </MenuButton>
+//               {chakraComponent(component, patch)}
+//             </React.Fragment>
+//           )}
+//         </Menu>
+//       </ChakraProvider>
+//     );  
+//   }else{
+//     const patch = {
+//       MenuButton: {
+//         as: Button
+//       },
+//       MenuItem: {
+//         onClick: (e) => {
+//           setShinyValue(decodeURI(e.currentTarget.dataset.val));
+//         }
+//       }
+//     };
+//     return (
+//       <ChakraProvider>
+//         <Menu closeOnSelect={closeOnSelect}>
+//           {chakraComponent(component, patch)}
+//         </Menu>
+//       </ChakraProvider>
+//     );  
+//   }
+// };
 
-const ChakraDrawer = ({component, setShinyValue}) => {
-//  const [isOpen, setOpen] = React.useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef();
-  const patch = {
-    OpenButton: {
-      ref: btnRef,
-      onClick: onOpen
-    },
-    Drawer: {
-      isOpen: isOpen,
-      onClose: onClose,
-      finalFocusRef: btnRef
-    },
-    CloseButton: {
-      onClick: onClose
-    },
-    Button: {
-      onClick: (e) => {
-        setShinyValue(decodeURI(e.currentTarget.dataset.val));
-      }
-    }
-  };
-  return (
-    <ChakraProvider>
-      {chakraComponent(component, patch)}
-    </ChakraProvider>
-  );
-};
+// const ChakraDrawer = ({component, setShinyValue}) => {
+// //  const [isOpen, setOpen] = React.useState(false);
+//   const { isOpen, onOpen, onClose } = useDisclosure();
+//   const btnRef = React.useRef();
+//   const patch = {
+//     OpenButton: {
+//       ref: btnRef,
+//       onClick: onOpen
+//     },
+//     Drawer: {
+//       isOpen: isOpen,
+//       onClose: onClose,
+//       finalFocusRef: btnRef
+//     },
+//     CloseButton: {
+//       onClick: onClose
+//     },
+//     Button: {
+//       onClick: (e) => {
+//         setShinyValue(decodeURI(e.currentTarget.dataset.val));
+//       }
+//     }
+//   };
+//   return (
+//     <ChakraProvider>
+//       {chakraComponent(component, patch)}
+//     </ChakraProvider>
+//   );
+// };
 
-const ChakraInput = ({ configuration, value, setValue }) => {
-  let widget = configuration.widget;
-  const setShinyValue = (value) => { setValue({value: value, widget: widget}); };
-  value = value.value;
-  switch(widget) {
-    case "alert":
-      return <ChakraAlert component={configuration.component}/>;
-    break;
-    case "alertdialog":
-      return (
-        <ChakraAlertDialog 
-          component={configuration.component} 
-          setShinyValue={setShinyValue} 
-          inputId={configuration.inputId}
-        />
-      );
-    break;
-    case "menu":
-      return (
-        <ChakraMenu 
-          component={configuration.component} 
-          text={configuration.text}
-          closeOnSelect={configuration.closeOnSelect} 
-          setShinyValue={setShinyValue} 
-        />
-      );
-    break;
-    case "menuWithGroups":
-      return (
-        <ChakraMenu 
-          component={configuration.component} 
-          text={configuration.text}
-          closeOnSelect={configuration.closeOnSelect} 
-          selected={value}
-          optiongroups={configuration.optiongroups}
-          setShinyValue={setShinyValue} 
-        />
-      );
-    break;
-    case "drawer":
-      console.log(JSON.stringify(configuration.component));
-      return (
-        <ChakraDrawer
-          component={configuration.component}
-          setShinyValue={setShinyValue}
-        />
-      );
-    break;
-  }
-};
+// const ChakraInput = ({ configuration, value, setValue }) => {
+//   let widget = configuration.widget;
+//   const setShinyValue = (value) => { setValue({value: value, widget: widget}); };
+//   value = value.value;
+//   switch(widget) {
+//     case "alert":
+//       return <ChakraAlert component={configuration.component}/>;
+//     break;
+//     case "alertdialog":
+//       return (
+//         <ChakraAlertDialog 
+//           component={configuration.component} 
+//           setShinyValue={setShinyValue} 
+//           inputId={configuration.inputId}
+//         />
+//       );
+//     break;
+//     case "menu":
+//       return (
+//         <ChakraMenu 
+//           component={configuration.component} 
+//           text={configuration.text}
+//           closeOnSelect={configuration.closeOnSelect} 
+//           setShinyValue={setShinyValue} 
+//         />
+//       );
+//     break;
+//     case "menuWithGroups":
+//       return (
+//         <ChakraMenu 
+//           component={configuration.component} 
+//           text={configuration.text}
+//           closeOnSelect={configuration.closeOnSelect} 
+//           selected={value}
+//           optiongroups={configuration.optiongroups}
+//           setShinyValue={setShinyValue} 
+//         />
+//       );
+//     break;
+//     case "drawer":
+//       console.log(JSON.stringify(configuration.component));
+//       return (
+//         <ChakraDrawer
+//           component={configuration.component}
+//           setShinyValue={setShinyValue}
+//         />
+//       );
+//     break;
+//   }
+// };
 
 const Hooks = {
   useDisclosure,
@@ -2388,7 +2388,7 @@ Shiny.inputBindings.register(chakraBinding);
 
 
 //reactShinyInput('.chakracomponent', 'shinyChakraUI.chakracomponent', ChakraComponent);
-reactShinyInput('.chakra', 'shinyChakraUI.chakra', ChakraInput, {type: "shinyChakraUI.widget"});
+// reactShinyInput('.chakra', 'shinyChakraUI.chakra', ChakraInput, {type: "shinyChakraUI.widget"});
 
 
 Shiny.inputBindings.register(new class extends Shiny.InputBinding {

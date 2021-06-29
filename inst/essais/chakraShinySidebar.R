@@ -31,6 +31,10 @@ ui <- chakraPage(
             Tag$Radio(
               value = "4",
               "Datatable"
+            ),
+            Tag$Radio(
+              value = "5",
+              "Image"
             )
           )
         )
@@ -164,6 +168,16 @@ server <- function(input, output, session){
     )
   )
 
+  ChakraImage <- chakraComponent(
+    "image",
+    Tag$Image(
+      borderRadius = "full",
+      boxSize = "150px",
+      src = "RLadies.png",
+      alt = "RLadies"
+    )
+  )
+
   output[["plot"]] <- renderPlot({
     plot(rnorm(10), rnorm(10))
   })
@@ -179,8 +193,10 @@ server <- function(input, output, session){
       ChakraStat
     }else if(input[["radiogroup"]] == 3){
       plotOutput("plot")
-    }else{
+    }else if(input[["radiogroup"]] == 4){
       DTOutput("dtable")
+    }else{
+      ChakraImage
     }
   })
 

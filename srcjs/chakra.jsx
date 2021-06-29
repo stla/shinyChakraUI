@@ -139,7 +139,11 @@ import {
   Tr,
   Th,
   Td,
-  TableCaption
+  TableCaption,
+  Avatar, 
+  AvatarBadge, 
+  AvatarGroup,
+  Image
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -412,7 +416,11 @@ const ChakraComponents = {
   Tr,
   Th,
   Td,
-  TableCaption
+  TableCaption,
+  Avatar, 
+  AvatarBadge, 
+  AvatarGroup,
+  Image
 };
 
 const ChakraTags = Object.keys(ChakraComponents);

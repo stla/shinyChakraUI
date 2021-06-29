@@ -303,3 +303,33 @@ chakraComponent <- function(componentId, ...){
   ), dependencies)
 }
 
+
+#' @title Chakra color schemes
+#' @description List of chakra color schemes.
+#'
+#' @export
+#'
+#' @examples
+#' chakraColorSchemes()
+chakraColorSchemes <- function(){
+  c(
+    "whiteAlpha",
+    "blackAlpha",
+    "gray",
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "teal",
+    "blue",
+    "cyan",
+    "purple",
+    "pink",
+    "linkedin",
+    "facebook",
+    "messenger",
+    "whatsapp",
+    "twitter",
+    "telegram"
+  )
+}

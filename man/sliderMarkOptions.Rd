@@ -27,7 +27,7 @@ sliderMarkOptions(
 
 \item{width}{width}
 
-\item{...}{other attributes}
+\item{...}{other attributes passed to \code{SliderMark}}
 }
 \value{
 A list of attributes for usage in \code{\link{chakraSlider}}.

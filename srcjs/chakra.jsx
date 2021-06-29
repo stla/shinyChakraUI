@@ -1874,10 +1874,15 @@ const chakraComponent = (
     }
     slider.attribs.value = sliderValue;
     numberinput.attribs.value = sliderValue;
-    slider.attribs.onChange = numberinput.attribs.onChange = (val) => {
+    slider.attribs.onChange = (val) => {
       Shiny.setInputValue(props.id, val);
       shinyValue.set(props.id, val);
       setSliderValue(val);
+    };
+    numberinput.attribs.onChange = (valString, valNumber) => {
+      Shiny.setInputValue(props.id, valNumber);
+      shinyValue.set(props.id, valNumber);
+      setSliderValue(valNumber);
     };
   }
   /* --- */

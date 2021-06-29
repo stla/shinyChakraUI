@@ -141,7 +141,7 @@ sliderTooltipOptions <- function(
 #' @param markOptions options of the mark, a list created with
 #'   \code{\link{sliderMarkOptions}}
 #' @param tooltip whether to set a tooltip to the thumb
-#' @param tooltipOptions options of the mark, a list created with
+#' @param tooltipOptions options of the tooltip, a list created with
 #'   \code{\link{sliderTooltipOptions}}
 #' @param thumbOptions list of options for the thumb created with
 #'   \code{\link{sliderThumbOptions}}
@@ -307,7 +307,7 @@ chakraSlider <- function(
       component
     )
   }
-  component[["shinyValueOn"]] = match.arg(shinyValueOn, c("end", "drag"))
-  component[["widget"]] = "slider"
+  component[["shinyValueOn"]] <- match.arg(shinyValueOn, c("end", "drag"))
+  component[["widget"]] <- "slider"
   component
 }

@@ -70,7 +70,7 @@ chakraSlider(
 
 \item{tooltip}{whether to set a tooltip to the thumb}
 
-\item{tooltipOptions}{options of the mark, a list created with
+\item{tooltipOptions}{options of the tooltip, a list created with
 \code{\link{sliderTooltipOptions}}}
 
 \item{thumbOptions}{list of options for the thumb created with
@@ -78,6 +78,8 @@ chakraSlider(
 
 \item{shinyValueOn}{either \code{"drag"} or \code{"end"}, the moment to get
 the Shiny value}
+
+\item{...}{other attributes passed to \code{Slider}}
 }
 \value{
 A widget to use in \code{\link{chakraComponent}}.

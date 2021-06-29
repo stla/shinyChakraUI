@@ -9,7 +9,8 @@ sliderThumbOptions(
   height = NULL,
   color = NULL,
   borderColor = NULL,
-  borderWidth = NULL
+  borderWidth = NULL,
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ sliderThumbOptions(
 \item{borderColor}{thumb border color}
 
 \item{borderWidth}{thumb border width}
+
+\item{...}{other attributes passed to \code{SliderThumb}}
 }
 \value{
 A list of attributes for usage in \code{\link{chakraSlider}}.

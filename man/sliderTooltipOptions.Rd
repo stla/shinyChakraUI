@@ -25,7 +25,7 @@ sliderTooltipOptions(
 
 \item{isOpen}{whether the tooltip is open}
 
-\item{...}{other attributes}
+\item{...}{other attributes passed to \code{Tooltip}}
 }
 \value{
 A list of attributes for usage in \code{\link{chakraSlider}}.

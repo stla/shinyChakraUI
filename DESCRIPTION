@@ -13,6 +13,8 @@ Authors@R: c(
 Description: Makes the 'React' library 'Chakra UI' usable in 'Shiny' apps. 'Chakra UI' components include alert dialogs, drawers (sliding panels), menus, modals, popovers, sliders, and more. 
 License: GPL (>= 3)
 Encoding: UTF-8
+URL: https://github.com/stla/shinyChakraUI
+BugReports: https://github.com/stla/shinyChakraUI/issues
 RoxygenNote: 7.1.1
 Imports: 
     htmltools,

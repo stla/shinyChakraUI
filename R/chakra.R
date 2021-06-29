@@ -338,6 +338,7 @@ chakraColorSchemes <- function(){
 #' @description List of chakra icons.
 #'
 #' @export
+#' @details See \href{https://chakra-ui.com/docs/media-and-icons/icon#all-icons}{all chakra icons}.
 #'
 #' @examples
 #' chakraIcons()

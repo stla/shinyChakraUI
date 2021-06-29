@@ -9,6 +9,9 @@ chakraIcons()
 \description{
 List of chakra icons.
 }
+\details{
+See \href{https://chakra-ui.com/docs/media-and-icons/icon#all-icons}{all chakra icons}.
+}
 \examples{
 chakraIcons()
 }

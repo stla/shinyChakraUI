@@ -125,6 +125,8 @@ invalidNamedDotsList <- function(dotslist){
     namesDots <- names(dotslist)
     if(is.null(namesDots) || ("" %in% namesDots)){
       TRUE
+    }else{
+      FALSE
     }
   }else{
     FALSE

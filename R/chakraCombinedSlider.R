@@ -17,7 +17,7 @@
 #' @export
 numberInputOptions <- function(
   precision = NULL,
-  width = NULL,
+  maxWidth = NULL,
   fontSize = NULL,
   fontColor = NULL,
   borderColor = NULL,
@@ -32,11 +32,15 @@ numberInputOptions <- function(
       "The arguments given in `...` must be named.", call. = TRUE
     )
   }
-  list(
+  numberInputProps <- list(
     precision = precision,
-    width = validateCssUnit(width),
+    maxWidth = validateCssUnit(maxWidth),
+    ...
+  )
+  numberInputFieldProps <- list(
+    type = "number",
     fontSize = validateCssUnit(fontSize),
-    fontColor = validateColor(fontColor),
+    color = validateColor(fontColor),
     borderColor = validateColor(borderColor),
     focusBorderColor = validateColor(focusBorderColor),
     borderWidth = if(!is.null(borderWidth)){
@@ -45,10 +49,19 @@ numberInputOptions <- function(
       }else{
         validateCssUnit(borderWidth)
       }
-    },
-    incrementStepperColor = validateColor(incrementStepperColor),
-    decrementStepperColor = validateColor(decrementStepperColor),
-    ...
+    }
+  )
+  numberIncrementStepperProps <- list(
+    bg = validateColor(incrementStepperColor)
+  )
+  numberDecrementStepperProps <- list(
+    bg = validateColor(decrementStepperColor)
+  )
+  list(
+    numberInputProps = dropNulls(numberInputProps),
+    numberInputFieldProps = dropNulls(numberInputFieldProps),
+    numberIncrementStepperProps = dropNulls(numberIncrementStepperProps),
+    numberDecrementStepperProps = dropNulls(numberDecrementStepperProps)
   )
 }
 
@@ -59,7 +72,9 @@ numberInputOptions <- function(
 #' @param min
 #' @param max
 #' @param step
-#' @param width
+#' @param maxWidth
+#' @param numericInputOptions
+#' @param spacing
 #' @param focusThumbOnChange
 #' @param trackColor
 #' @param filledTrackColor
@@ -79,8 +94,10 @@ chakraCombinedSlider <- function(
   min,
   max,
   step = NULL,
-  width = NULL,
+  maxWidth = NULL,
   # size = "md",
+  numericInputOptions = numberInputOptions(),
+  spacing = "2rem",
   focusThumbOnChange = FALSE,
   trackColor = NULL,
   filledTrackColor = NULL,
@@ -100,7 +117,7 @@ chakraCombinedSlider <- function(
     min = min,
     max = max,
     step = step,
-    width = validateCssUnit(width),
+    maxWidth = validateCssUnit(maxWidth),
     # size = match.arg(size, c("sm", "md", "lg")),
     focusThumbOnChange = focusThumbOnChange,
     display = "block",
@@ -147,13 +164,57 @@ chakraCombinedSlider <- function(
       )
     )
   )
-  numberInput <- Tag$NumberInput(
-    maxW = "100px",
-    mr = "2rem",
-    Tag$NumberInputField(),
-    Tag$NumberInputStepper(
-      Tag$NumberIncrementStepper(),
-      Tag$NumberDecrementStepper()
+  if(
+    !identical(
+      names(numericInputOptions),
+      c(
+        "numberInputProps",
+        "numberInputFieldProps",
+        "numberIncrementStepperProps",
+        "numberDecrementStepperProps"
+      )
+    )
+  ){
+    stop(
+      "`numericInputOptions` must be created by the `numberInputOptions` function",
+      call. = TRUE
+    )
+  }
+  numberInput <- asShinyTag(
+    list(
+      name = "NumberInput",
+      attribs = c(numericInputOptions[["numberInputProps"]], list(mr = spacing)),
+      children = list(
+        asShinyTag(
+          list(
+            name = "NumberInputField",
+            attribs = numericInputOptions[["numberInputFieldProps"]],
+            children = list()
+          )
+        ),
+        asShinyTag(
+          list(
+            name = "NumberInputStepper",
+            attribs = emptyNamedList,
+            children = list(
+              asShinyTag(
+                list(
+                  name = "NumberIncrementStepper",
+                  attribs = numericInputOptions[["numberIncrementStepperProps"]],
+                  children = list()
+                )
+              ),
+              asShinyTag(
+                list(
+                  name = "NumberDecrementStepper",
+                  attribs = numericInputOptions[["numberDecrementStepperProps"]],
+                  children = list()
+                )
+              )
+            )
+          )
+        )
+      )
     )
   )
   flex <- Tag$Flex(

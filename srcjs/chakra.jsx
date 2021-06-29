@@ -892,7 +892,7 @@ const appendStates = (component, states, inputId) => {
       if(defaultValue !== null){
         attribs.defaultValue = defaultValue;
       }
-    }else if(component.name === "NumberInput"){
+    }else if(component.name === "NumberInput" && component.parent !== "combinedslider"){
       let defaultValue = attribs.hasOwnProperty("defaultValue") ? attribs.defaultValue : null;
       if(defaultValue === null){
         const hasValue = attribs.hasOwnProperty("value");
@@ -1637,6 +1637,7 @@ const chakraComponent = (
     // };
   }else if(
     component.name === "NumberInput" && 
+    component.parent !== "combinedslider" &&
     //props.shinyValue !== false && 
     props.hasOwnProperty("id")
   ){

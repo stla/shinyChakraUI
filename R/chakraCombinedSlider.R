@@ -273,6 +273,7 @@ chakraCombinedSlider <- function(
       )
     )
   )
+  numberInput[["parent"]] <- "combinedslider"
   flex <- Tag$Flex(
     numberInput,
     slider

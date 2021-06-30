@@ -33,6 +33,18 @@ is given in the `onClick` attribute of the Chakra button:
 `jseval("() => setState('heading', 'New heading!')")`. When the button
 is clicked, the `'heading'` state takes the new value `'New heading!'`.
 
+# Writing JSX code
+
+So far, we built React components with the help of the `Tag`
+constructor. It is also possible to build a React component by writing
+its JSX code, with the help of the `jsx` function. Here is an example:
+
+![](https://raw.githubusercontent.com/stla/shinyChakraUI/main/inst/screenshots/jsx.gif)
+
+The `jsx` function takes two arguments. The first one is the JSX element
+and the second one, named `preamble`, is some JavaScript code to be
+executed at first.
+
 # More examples
 
 Run `chakraExamples()` to get the list of available examples provided in

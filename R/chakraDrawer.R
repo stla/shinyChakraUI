@@ -64,10 +64,11 @@ chakraDrawerOptions <- function(
 }
 
 #' @title Drawer widget
-#' @description A drawer widget.
+#' @description Create a drawer widget, a panel that slides out from the edge
+#'   of the screen.
 #'
 #' @param inputId widget id
-#' @param openButton a chakra button to open the drawer
+#' @param openButton a Chakra button to open the drawer
 #' @param options list of options created with \code{\link{chakraDrawerOptions}}
 #' @param closeButton Boolean, whether to include a closing button
 #' @param header a \code{DrawerHeader} element
@@ -76,6 +77,10 @@ chakraDrawerOptions <- function(
 #'
 #' @return A widget to use in \code{\link{chakraComponent}}.
 #' @export
+#'
+#' @details Similarly to \code{\link{chakraAlertDialog}}, you can set an
+#'   action attribute and a value attribute to the Chakra buttons you include
+#'   in the Chakra drawer.
 #'
 #' @examples
 #' library(shiny)

@@ -56,13 +56,22 @@ chakraAlertDialogOptions <- function(
 #' @param inputId widget id
 #' @param options named list of options created with
 #'   \code{\link{chakraAlertDialogOptions}}
-#' @param openButton a chakra button to open the alert dialog
+#' @param openButton a Chakra button to open the alert dialog
 #' @param header an \code{AlertDialogHeader} element
 #' @param body an \code{AlertDialogBody} element
-#' @param footerButtons a chakra button or a list of chakra buttons
+#' @param footerButtons a Chakra button or a list of chakra buttons
 #'
 #' @return A widget that can be used in \code{\link{chakraComponent}}.
 #' @export
+#'
+#' @details You can use an \code{action} attribute and a \code{value}
+#'   attribute to the Chakra buttons you put in the widget. For example, if
+#'   you include the Chakra button
+#'   \code{Tag$Button("Cancel", action = "cancel", value = "CANCEL")}, clicking
+#'   this button will cancel the alert dialog and will set the Shiny value
+#'   \code{"CANCEL"}. Other possible action attributes are \code{"close"} to
+#'   close the alert dialog, \code{"disable"} to disable the alert dialog, and
+#'   \code{"remove"} to entirely remove the widget.
 #'
 #' @examples
 #' library(shiny)

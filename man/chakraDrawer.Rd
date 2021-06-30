@@ -17,7 +17,7 @@ chakraDrawer(
 \arguments{
 \item{inputId}{widget id}
 
-\item{openButton}{a chakra button to open the drawer}
+\item{openButton}{a Chakra button to open the drawer}
 
 \item{options}{list of options created with \code{\link{chakraDrawerOptions}}}
 
@@ -33,7 +33,13 @@ chakraDrawer(
 A widget to use in \code{\link{chakraComponent}}.
 }
 \description{
-A drawer widget.
+Create a drawer widget, a panel that slides out from the edge
+  of the screen.
+}
+\details{
+Similarly to \code{\link{chakraAlertDialog}}, you can set an
+  action attribute and a value attribute to the Chakra buttons you include
+  in the Chakra drawer.
 }
 \examples{
 library(shiny)

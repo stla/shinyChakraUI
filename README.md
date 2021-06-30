@@ -59,4 +59,6 @@ JSX element, a Shiny widget, or some HTML code. Here is an example:
 # More examples
 
 Run `chakraExamples()` to get the list of available examples provided in
-the package.
+the package. See also the examples of the built-in widgets
+`chakraAlertDialog`, `chakraCheckboxWithChildren`, `chakraDrawer`,
+`chakraSlider`, and `chakraCombinedSlider`.

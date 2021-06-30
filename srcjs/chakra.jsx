@@ -520,7 +520,7 @@ const makeMenuComponent = (menu, shinyValue) => {
   for(let i = 0; i < menuoptiongroups.length; i++){
     let groupprops = menuoptiongroups[i].attribs;
     let grouptitle = groupprops.title;
-    if(selected[grouptitle]){
+    if(selected.hasOwnProperty(grouptitle)){
       groupprops.defaultValue = selected[grouptitle];
     }
     groupprops.onChange = (selection) => {
@@ -813,7 +813,7 @@ console.log("ARGUMENTS", getArguments(unescapeHtml));
 // };
 
 const getHookProperty = (states, inputId) => ((hook, key) => {
-  if(states[hook] === undefined){
+  if(!states.hasOwnProperty(hook)){
     throwApp(inputId, <InvalidState message={`Hook '${hook}' not found.`}/>);
   }
   if(!states[hook].hasOwnProperty(key)){
@@ -823,14 +823,14 @@ const getHookProperty = (states, inputId) => ((hook, key) => {
 });
 
 const getState = (states, inputId) => ((state) => {
-  if(states[state] === undefined){
+  if(!states.hasOwnProperty(state)){
     throwApp(inputId, <InvalidState message={`State '${state}' not found.`}/>);
   }
   return states[state].get();
 });
 
 const setState = (states, inputId) => ((state, value) => {
-  if(states[state] === undefined){
+  if(!states.hasOwnProperty(state)){
     throwApp(inputId, <InvalidState message={`State '${state}' not found.`}/>);
   }
   if(!states[state].hasOwnProperty("set")){
@@ -880,7 +880,8 @@ const appendStates = (component, states, inputId) => {
   if(attribs.hasOwnProperty("id") && attribs.shinyValue !== false){
     const stateName = "chakra" + attribs.id;
     if(component.name === "Input"){
-      let defaultValue = attribs.hasOwnProperty("defaultValue") ? decodeURI(attribs.defaultValue) : null;
+      let defaultValue = attribs.hasOwnProperty("defaultValue") ? 
+        decodeURI(attribs.defaultValue) : null;
       if(defaultValue === null){
         const hasValue = attribs.hasOwnProperty("value");
         const value = hasValue ? attribs.value : null;
@@ -1099,7 +1100,7 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
       code = jsxString;
     }else{
       try {
-        let p = prettier.format(jsxString, { parser: "babel", plugins: [parserBabel]});
+        let p = prettier.format(jsxString, { parser: "babel", plugins: [parserBabel] });
       } catch (err) {
         message = "Error in `jsx()`.";
         code = err.message;
@@ -1112,7 +1113,7 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
   if(preamble){
     preamble = decodeURI(preamble);
     try {
-      let p = prettier.format(preamble, { parser: "babel", plugins: [parserBabel]});
+      let p = prettier.format(preamble, { parser: "babel", plugins: [parserBabel] });
     } catch (error) {
       let message = "Error in `jsx()` preamble.";
       let code = error.name + ": " + error.message;

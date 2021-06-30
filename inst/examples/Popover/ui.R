@@ -6,6 +6,13 @@ shinyUI(
 
     br(),
 
+    helpText(paste0(
+      "Set a 'value' attribute to the Chakra buttons of the Popover widget, ",
+      "this will define the Shiny value."
+    )),
+
+    br(), br(), br(),
+
     fluidRow(
 
       column(

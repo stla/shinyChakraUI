@@ -489,17 +489,18 @@ unclassComponent <- function(component, inputId, call){
   #   # }
   #   component[["attribs"]][["value"]] <- ""
   # }
-  if(length(component[["children"]])){
-    component[["children"]] <- lapply(component[["children"]], function(child){
+  componentChildren <- dropNulls(component[["children"]])
+  if(length(componentChildren)){
+    component[["children"]] <- lapply(componentChildren, function(child){
       if(isJseval(child)){
         child
-      }else if(
-        is.list(child) &&
-        !isShinyTag(child) &&
-        is.null(child[["__html"]]) &&
-        is.null(child[["__jsx"]])
-      ){
-        unlist(child) # this handles actionButton
+      # }else if(
+      #   is.list(child) &&
+      #   !isShinyTag(child) &&
+      #   is.null(child[["__html"]]) &&
+      #   is.null(child[["__jsx"]])
+      # ){
+      #   unlist(child) # this handles actionButton
       }else if(isShinyTag(child)){
         x <- unclassComponent(child, inputId, call)
         #states <<- c(x[["states"]], states)

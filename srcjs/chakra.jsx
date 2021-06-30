@@ -697,28 +697,31 @@ const fixTagAttribs = attribs => {
   }
 };
 
+const isnonnullobject = x => {
+  return x !== null && (typeof x === "object");
+};
+
 const isTag = value => {
-  return value !== null 
-      && (typeof value === 'object')
+  return isnonnullobject(value) 
       && value.hasOwnProperty('name')
       && value.hasOwnProperty('attribs')
       && value.hasOwnProperty('children');
 };
 
 const isJseval = x => {
-  return x !== null && (typeof x === "object") && x.hasOwnProperty("__eval");
+  return isnonnullobject(x) && x.hasOwnProperty("__eval");
 };
 
 const isHook = x => {
-  return x !== null && (typeof x === "object") && x.hasOwnProperty("__hook");
+  return isnonnullobject(x) && x.hasOwnProperty("__hook");
 };
 
 const isHTML = x => {
-  return x !== null && (typeof x === "object") && x.hasOwnProperty("__html");
+  return isnonnullobject(x) && x.hasOwnProperty("__html");
 };
 
 const isJSX = x => {
-  return x !== null && (typeof x === "object") && x.hasOwnProperty("__jsx");
+  return isnonnullobject(x) && x.hasOwnProperty("__jsx");
 };
 
 /* const chakraComponent = (component, patch) => {

@@ -97,7 +97,8 @@ unclassComponent <- function(component, inputId, call){
     component <- do.call(Tag$Fragment, component)
   }
   #states <- attr(component, "states")
-  Checkboxes <- RadioGroups <- dependencies <- NULL
+  # Checkboxes <-
+  RadioGroups <- dependencies <- NULL
   shinyOutput <- FALSE
   if(isSlider(component)){
     dependencies <- evalHtmlDependencies(htmlDependencies(component))
@@ -163,19 +164,25 @@ unclassComponent <- function(component, inputId, call){
   ){
     if(!isReactComponent(icon)){
       stop(
-        sprintf("Invalid `icon` attribute in component '%s'.", component[["name"]]),
+        sprintf(
+          "Invalid `icon` attribute in component '%s'.", component[["name"]]
+        ),
         call. = FALSE
       )
     }
     if(!grepl("Icon$", icon[["name"]])){
       stop(
-        sprintf("Invalid `icon` attribute in component '%s'.", component[["name"]]),
+        sprintf(
+          "Invalid `icon` attribute in component '%s'.", component[["name"]]
+        ),
         call. = FALSE
       )
     }
     if(icon[["name"]] %notin% chakraIcons()){
       stop(
-        sprintf("Invalid `icon` attribute in component '%s'.", component[["name"]]),
+        sprintf(
+          "Invalid `icon` attribute in component '%s'.", component[["name"]]
+        ),
         sprintf("'%s' is not the name of a chakra icon.", icon[["name"]]),
         call. = FALSE
       )
@@ -341,12 +348,12 @@ unclassComponent <- function(component, inputId, call){
       component, makeScriptTag(script)
     )
   }else if(
-    component[["name"]] == "Checkbox" && !is.null(attribs[["id"]])
-  ){
-    Checkboxes <- list(isTRUE(attribs[["isChecked"]]))
-    names(Checkboxes) <- attribs[["id"]]
-    #component[["attribs"]][["isChecked"]] <- NULL
-  }else if(
+  #   component[["name"]] == "Checkbox" && !is.null(attribs[["id"]])
+  # ){
+  #   Checkboxes <- list(isTRUE(attribs[["isChecked"]]))
+  #   names(Checkboxes) <- attribs[["id"]]
+  #   #component[["attribs"]][["isChecked"]] <- NULL
+  # }else if(
     component[["name"]] == "CheckboxGroup"
     # is.null(attr(component, "processed"))
   ){
@@ -505,7 +512,7 @@ unclassComponent <- function(component, inputId, call){
         x <- unclassComponent(child, inputId, call)
         #states <<- c(x[["states"]], states)
         shinyOutput <<- x[["shinyOutput"]] || shinyOutput
-        Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)
+        # Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)
         RadioGroups <<- c(x[["RadioGroups"]], RadioGroups)
         dependencies <<- c(x[["dependencies"]], dependencies)
         x[["component"]]
@@ -525,7 +532,7 @@ unclassComponent <- function(component, inputId, call){
     component = unclass(component),
     #states = states,
     shinyOutput = shinyOutput,
-    Checkboxes = Checkboxes,
+    # Checkboxes = Checkboxes,
     RadioGroups = RadioGroups,
     dependencies = dependencies
   )

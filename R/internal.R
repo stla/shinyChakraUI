@@ -75,7 +75,8 @@ isChakraButton <- function(x){
 }
 
 isChakraIcon <- function(x){
-  inherits(x, "icon") || x[["name"]] == "Icon"
+  isShinyTag(x) && grepl("Icon$", x[["name"]])
+  #inherits(x, "icon") || x[["name"]] == "Icon"
 }
 
 isChakraCheckbox <- function(x){

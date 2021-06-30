@@ -143,7 +143,8 @@ import {
   Avatar, 
   AvatarBadge, 
   AvatarGroup,
-  Image
+  Image,
+  CloseButton
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -420,7 +421,8 @@ const ChakraComponents = {
   Avatar, 
   AvatarBadge, 
   AvatarGroup,
-  Image
+  Image,
+  CloseButton
 };
 
 const ChakraTags = Object.keys(ChakraComponents);

@@ -7,3 +7,4 @@
 ^webpack\.config\.js$
 ^yarn\.lock$
 ^LICENSE\.md$
+^README\.Rmd$

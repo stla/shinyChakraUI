@@ -9,7 +9,13 @@ withStates(component, states)
 \arguments{
 \item{component}{a React component}
 
-\item{states}{list of states}
+\item{states}{named list of states; a state value can be an R object
+serializable to JSON, a React component (\code{Tag$Component(...)}),
+a Shiny widget, some HTML code defined by the
+\code{\link[htmltools:HTML]{HTML}} function, a JSX element defined by
+the \code{\link{jsx}} function, a JavaScript value defined by the
+\code{\link{jseval}} function, or a hook such as \code{useDisclosure()}
+(see \code{\link{useDisclosure}}).}
 }
 \value{
 A component to use in \code{\link{chakraComponent}}.

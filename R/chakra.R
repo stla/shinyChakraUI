@@ -191,6 +191,20 @@ withStates <- function(component, states){
   #print(ls(sys.frame(-1)))
   #print(lapply(sys.frames(),ls))
   stopifnot(isNamedList(states))
+  forbiddenTypes <- ForbiddenTypes()
+  Rstates <- Filter(
+    function(s){!isJseval(s) && !isHook(s) && !isJSX(s)}, states
+  )
+  for(state in names(Rstates)){
+    stateType <- typeof(Rstates[[state]])
+    invalid <- !is.na(match(stateType, forbiddenTypes))
+    if(invalid){
+      stop(
+        sprintf("State '%s' is invalid (type '%s').", state, stateType),
+        call. = TRUE
+      )
+    }
+  }
   if(component[["name"]] == "Menu"){
     component <- Tag$Fragment(component)
   }

@@ -174,45 +174,36 @@ chakraCombinedSlider <- function(
     display = "block",
     ...
   ))
-  track <- asShinyTag(
-    list(
-      name = "SliderTrack",
-      attribs = dropNulls(list(bg = validateColor(trackColor))),
-      children = list(
-        asShinyTag(
-          list(
-            name = "SliderFilledTrack",
-            attribs = dropNulls(list(bg = validateColor(filledTrackColor))),
-            children = list()
-          )
+  track <- shinyTag(
+    name = "SliderTrack",
+    attribs = dropNulls(list(bg = validateColor(trackColor))),
+    children = list(
+      asShinyTag(
+        list(
+          name = "SliderFilledTrack",
+          attribs = dropNulls(list(bg = validateColor(filledTrackColor))),
+          children = list()
         )
       )
     )
   )
-  thumb <- asShinyTag(
-    list(
-      name = "SliderThumb",
-      attribs = dropNulls(thumbOptions),
-      children = list()
-    )
+  thumb <- shinyTag(
+    name = "SliderThumb",
+    attribs = dropNulls(thumbOptions),
   )
   if(tooltip){
-    thumb <- asShinyTag(
-      list(
-        name = "Tooltip",
-        attribs = dropNulls(tooltipOptions),
-        children = list(thumb)
-      )
+    thumb <- shinyTag(
+      name = "Tooltip",
+      attribs = dropNulls(tooltipOptions),
+      children = list(thumb)
     )
   }
-  slider <- asShinyTag(
-    list(
-      name = "Slider",
-      attribs = attribs,
-      children = list(
-        track,
-        thumb
-      )
+  slider <- shinyTag(
+    name = "Slider",
+    attribs = attribs,
+    children = list(
+      track,
+      thumb
     )
   )
   if(
@@ -232,48 +223,35 @@ chakraCombinedSlider <- function(
       call. = TRUE
     )
   }
-  numberInput <- asShinyTag(
-    list(
-      name = "NumberInput",
-      attribs = dropNulls(c(
-        numericInputOptions[["numberInputProps"]],
-        list(
-          mr = spacing,
-          min = min,
-          max = max,
-          step = step,
-          keepWithinRange = keepWithinRange,
-          clampValueOnBlur = clampValueOnBlur
-        )
-      )),
-      children = list(
-        asShinyTag(
-          list(
-            name = "NumberInputField",
-            attribs = numericInputOptions[["numberInputFieldProps"]],
-            children = list()
-          )
-        ),
-        asShinyTag(
-          list(
-            name = "NumberInputStepper",
-            attribs = emptyNamedList,
-            children = list(
-              asShinyTag(
-                list(
-                  name = "NumberIncrementStepper",
-                  attribs = numericInputOptions[["numberIncrementStepperProps"]],
-                  children = list()
-                )
-              ),
-              asShinyTag(
-                list(
-                  name = "NumberDecrementStepper",
-                  attribs = numericInputOptions[["numberDecrementStepperProps"]],
-                  children = list()
-                )
-              )
-            )
+  numberInput <- shinyTag(
+    name = "NumberInput",
+    attribs = dropNulls(c(
+      numericInputOptions[["numberInputProps"]],
+      list(
+        mr = spacing,
+        min = min,
+        max = max,
+        step = step,
+        keepWithinRange = keepWithinRange,
+        clampValueOnBlur = clampValueOnBlur
+      )
+    )),
+    children = list(
+      shinyTag(
+        name = "NumberInputField",
+        attribs = numericInputOptions[["numberInputFieldProps"]],
+      ),
+      shinyTag(
+        name = "NumberInputStepper",
+        attribs = emptyNamedList,
+        children = list(
+          shinyTag(
+            name = "NumberIncrementStepper",
+            attribs = numericInputOptions[["numberIncrementStepperProps"]],
+          ),
+          shinyTag(
+            name = "NumberDecrementStepper",
+            attribs = numericInputOptions[["numberDecrementStepperProps"]],
           )
         )
       )

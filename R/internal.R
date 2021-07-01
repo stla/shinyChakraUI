@@ -1,3 +1,26 @@
+ForbiddenTypes <- function(){
+  c(
+    "complex",
+    "raw",
+    "closure",
+    "special",
+    "builtin",
+    "environment",
+    "S4",
+    "symbol",
+    "pairlist",
+    "promise",
+    "language",
+    "char",
+    "...",
+    "any",
+    "expression",
+    "externalptr",
+    "bytecode",
+    "weakref"
+  )
+}
+
 `%notin%` <- function(x, set){
   !is.element(x, set)
 }

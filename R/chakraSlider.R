@@ -231,7 +231,7 @@ chakraSlider <- function(
   stopifnot(isBoolean(mark))
   stopifnot(isBoolean(tooltip))
   attribs <- dropNulls(list(
-#    id = id,
+    #    id = id,
     defaultValue = value,
     min = min,
     max = max,
@@ -247,18 +247,13 @@ chakraSlider <- function(
     display = "block",
     ...
   ))
-  track <- asShinyTag(
-    list(
-      name = "SliderTrack",
-      attribs = dropNulls(list(bg = validateColor(trackColor))),
-      children = list(
-        asShinyTag(
-          list(
-            name = "SliderFilledTrack",
-            attribs = dropNulls(list(bg = validateColor(filledTrackColor))),
-            children = list()
-          )
-        )
+  track <- shinyTag(
+    name = "SliderTrack",
+    attribs = dropNulls(list(bg = validateColor(trackColor))),
+    children = list(
+      shinyTag(
+        name = "SliderFilledTrack",
+        attribs = dropNulls(list(bg = validateColor(filledTrackColor)))
       )
     )
   )
@@ -266,42 +261,32 @@ chakraSlider <- function(
     stop("You cannot use both `mark` and `tooltip`.", call. = TRUE)
   }
   if(mark){
-    mark <- asShinyTag(
-      list(
-        name = "SliderMark",
-        attribs = dropNulls(markOptions),
-        children = list()
-      )
+    mark <- shinyTag(
+      name = "SliderMark",
+      attribs = dropNulls(markOptions),
     )
   }else{
     mark <- NULL
   }
-  thumb <- asShinyTag(
-    list(
-      name = "SliderThumb",
-      attribs = dropNulls(thumbOptions),
-      children = list()
-    )
+  thumb <- shinyTag(
+    name = "SliderThumb",
+    attribs = dropNulls(thumbOptions),
   )
   if(tooltip){
-    thumb <- asShinyTag(
-      list(
-        name = "Tooltip",
-        attribs = dropNulls(tooltipOptions),
-        children = list(thumb)
-      )
+    thumb <- shinyTag(
+      name = "Tooltip",
+      attribs = dropNulls(tooltipOptions),
+      children = list(thumb)
     )
   }
-  component <- asShinyTag(
-    list(
-      name = "Slider",
-      attribs = attribs,
-      children = dropNulls(list(
-        track,
-        mark,
-        thumb
-      ))
-    )
+  component <- shinyTag(
+    name = "Slider",
+    attribs = attribs,
+    children = dropNulls(list(
+      track,
+      mark,
+      thumb
+    ))
   )
   if(!is.null(label)){
     component <- tags$div(

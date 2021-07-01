@@ -64,6 +64,10 @@ isNamedList <- function(x){
     (is.list(x) && !is.null(names(x)) && all(names(x) != ""))
 }
 
+isUnnamedList <- function(x){
+  is.list(x) && is.null(names(x))
+}
+
 isChakraBox <- function(x){
   inherits(x, "box") || x[["name"]] == "Box"
 }
@@ -102,6 +106,26 @@ encode <- function(x){
 asShinyTag <- function(x){
   class(x) <- "shiny.tag"
   x
+}
+
+shinyTag <- function(name, attribs = emptyNamedList, children = list(), ...){
+  if(invalidNamedDotsList(list(...))){
+    stop(
+      "The arguments given in `...` must be named.", call. = TRUE
+    )
+  }
+  stopifnot(isString(name))
+  stopifnot(isNamedList(attribs))
+  stopifnot(isUnnamedList(children))
+  structure(
+    list(
+      name = name,
+      attribs = attribs,
+      children = children,
+      ...
+    ),
+    class = "shiny.tag"
+  )
 }
 
 isShinyTag <- function(x){

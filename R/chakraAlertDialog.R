@@ -23,13 +23,10 @@ chakraAlertDialogOptions <- function(
   size = "md",
   ...
 ){
-  if(length(dots <- list(...))){
-    namesDots <- names(dots)
-    if(is.null(namesDots) || ("" %in% namesDots)){
-      stop(
-        "The arguments given in `...` must be named.", call. = TRUE
-      )
-    }
+  if(invalidNamedDotsList(list(...))){
+    stop(
+      "The arguments given in `...` must be named.", call. = TRUE
+    )
   }
   stopifnot(isBoolean(closeOnEsc))
   stopifnot(isBoolean(isCentered))
@@ -175,22 +172,18 @@ chakraAlertDialog <- function(
     id = inputId,
     Tag$Fragment(
       openButton,
-      asShinyTag(
-        list(
-          name = "AlertDialog",
-          attribs = options,
-          children = list(
-            Tag$AlertDialogOverlay(
-              Tag$AlertDialogContent(
-                header,
-                body,
-                asShinyTag(
-                  list(
-                    name = "AlertDialogFooter",
-                    attribs = emptyNamedList,
-                    children = footerButtons
-                  )
-                )
+      shinyTag(
+        name = "AlertDialog",
+        attribs = options,
+        children = list(
+          Tag$AlertDialogOverlay(
+            Tag$AlertDialogContent(
+              header,
+              body,
+              shinyTag(
+                name = "AlertDialogFooter",
+                attribs = emptyNamedList,
+                children = footerButtons
               )
             )
           )

@@ -31,13 +31,10 @@ chakraDrawerOptions <- function(
   size = "xs",
   ...
 ){
-  if(length(dots <- list(...))){
-    namesDots <- names(dots)
-    if(is.null(namesDots) || ("" %in% namesDots)){
-      stop(
-        "The arguments given in `...` must be named.", call. = TRUE
-      )
-    }
+  if(invalidNamedDotsList(list(...))){
+    stop(
+      "The arguments given in `...` must be named.", call. = TRUE
+    )
   }
   stopifnot(isBoolean(closeOnEsc))
   stopifnot(isBoolean(closeOnOverlayClick))
@@ -151,7 +148,7 @@ chakraDrawer <- function(
   if(footer[["name"]] != "DrawerFooter"){
     stop("`footer` must be a `DrawerFooter` element.", call. = TRUE)
   }
-  drawer <- asShinyTag(list(
+  drawer <- shinyTag(
     name = "Drawer",
     attribs = options,
     children = list(
@@ -163,7 +160,7 @@ chakraDrawer <- function(
         footer
       )
     )
-  ))
+  )
   component <- tags$div(
     id = inputId,
     Tag$Fragment(

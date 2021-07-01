@@ -178,12 +178,9 @@ chakraCombinedSlider <- function(
     name = "SliderTrack",
     attribs = dropNulls(list(bg = validateColor(trackColor))),
     children = list(
-      asShinyTag(
-        list(
-          name = "SliderFilledTrack",
-          attribs = dropNulls(list(bg = validateColor(filledTrackColor))),
-          children = list()
-        )
+      shinyTag(
+        name = "SliderFilledTrack",
+        attribs = dropNulls(list(bg = validateColor(filledTrackColor))),
       )
     )
   )

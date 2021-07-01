@@ -75,12 +75,10 @@ chakraCheckboxWithChildren <- function(
     id = inputId,
     class = "checkboxWithChildren",
     parentCheckbox,
-    asShinyTag(
-      list(
-        name = "Stack",
-        attribs = stackAttributes,
-        children = checkboxes
-      )
+    shinyTag(
+      name = "Stack",
+      attribs = stackAttributes,
+      children = checkboxes
     )
   )
 }

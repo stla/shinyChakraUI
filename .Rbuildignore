@@ -9,3 +9,8 @@
 ^LICENSE\.md$
 ^README\.Rmd$
 ^\.Rhistory$
+^inst/essais$
+^inst/ChakraUImodifs$
+^inst/screenshots$
+^inst/trash$
+^inst/ztemp$

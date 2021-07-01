@@ -53,6 +53,8 @@ module.exports = {
     new webpack.ProvidePlugin({
       acorn: "acorn",
       acornjsx: "acorn-jsx",
+      walk: "acorn-walk",
+      escodegen: "escodegen",
       prettier: "prettier"
     })
   ],

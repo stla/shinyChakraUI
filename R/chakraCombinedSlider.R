@@ -261,7 +261,7 @@ chakraCombinedSlider <- function(
   )
   component <- tags$div(
     id = id,
-    class = "form-group chakraTag",
+    class = "form-group chakraShiny",
     flex
   )
   component[["value"]] <- value

@@ -276,7 +276,7 @@ ui1 <- chakraPage(
           )
         ),
 
-        #    HTML(as.character(tags$p(id="ii", class="chakraTag", "data-shinyvalue"="a"))),
+        #    HTML(as.character(tags$p(id="ii", class="chakraShiny", "data-shinyvalue"="a"))),
         Tag$Button(
           id = "button",
           className = "action-button",

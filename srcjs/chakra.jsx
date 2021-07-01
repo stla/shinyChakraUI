@@ -1,4 +1,4 @@
-import { reactShinyInput, hydrate } from 'reactR';
+import { reactShinyInput } from 'reactR';
 //import * as React from 'react';
 import { unmountComponentAtNode } from "react-dom";
 import ReactDOM from 'react-dom';
@@ -1514,7 +1514,7 @@ const chakraComponent = (
           name: "div",
           attribs: {
             id: props.id,
-            className: "chakraTag",
+            className: "chakraShiny",
             "data-shinyinitvalue": selected,
             "data-widget": "menuWithGroups"          
           },
@@ -1536,7 +1536,7 @@ const chakraComponent = (
           name: "div",
           attribs: {
             id: props.id,
-            className: "chakraTag",
+            className: "chakraShiny",
             "data-shinyinitvalue": selected,
             "data-widget": "menuWithGroups"          
           },
@@ -1593,7 +1593,7 @@ const chakraComponent = (
       }
     }
   }else if(component.name === "Popover" && props.hasOwnProperty("id")){
-    props.className = "chakraTag";
+    props.className = "chakraShiny";
     props["data-shinyinitvalue"] = JSON.stringify(null);
     shinyValue.add(props.id, null);
     const setShinyValue = (value) => {
@@ -1624,12 +1624,12 @@ const chakraComponent = (
       Shiny.setInputValue(props.id, index);
       shinyValue.set(props.id, index);
     };
-    props.className = "chakraTag";
+    props.className = "chakraShiny";
     props["data-shinyinitvalue"] = defaultIndex;
   }else if(props.class === "checkboxWithChildren"){
     const state = makeCheckboxWithChildren(component, shinyValue);
     shinyValue.add(props.id, state);
-    props.className = "chakraTag";
+    props.className = "chakraShiny";
     delete props.class;
     props["data-shinyinitvalue"] = JSON.stringify(state);
     props["data-widget"] = "checkboxWithChildren";
@@ -1753,7 +1753,7 @@ const chakraComponent = (
     let divattrs = {id: props.id};
     if(props.hasOwnProperty("defaultValue")){
       props.defaultValue = props.defaultValue.map(decodeURI);
-      divattrs.className = "chakraTag";
+      divattrs.className = "chakraShiny";
       divattrs["data-shinyinitvalue"] = JSON.stringify(props.defaultValue);
       shinyValue.add(props.id, props.defaultValue);
     }
@@ -1787,7 +1787,7 @@ const chakraComponent = (
           shinyValue.set(props.id, value);
         },
         value: radiogroupValues[props.id],
-        className: "chakraTag",
+        className: "chakraShiny",
         "data-shinyinitvalue": radiogroupValues[props.id]
       }
     );
@@ -1798,7 +1798,7 @@ const chakraComponent = (
     component.name === "Editable" && props.hasOwnProperty("id") && props.shinyValue !== false
   ){
     const defaultValue = props.hasOwnProperty("defaultValue") ? props.defaultValue : "";
-    props.className = "chakraTag";
+    props.className = "chakraShiny";
     props["data-shinyinitvalue"] = defaultValue;
     shinyValue.add(props.id, defaultValue);
     const f = props.onChange || (() => {});
@@ -1817,7 +1817,7 @@ const chakraComponent = (
   }else if(
     component.name === "Input" && props.hasOwnProperty("id") && props.shinyValue !== false
   ){
-    props.className = "chakraTag";
+    props.className = "chakraShiny";
     if(isNotEmpty(states) && states.hasOwnProperty("chakra" + props.id)){
       const chakraState = states["chakra" + props.id];
       props["data-shinyinitvalue"] = chakraState.get();  
@@ -1856,7 +1856,7 @@ const chakraComponent = (
   }else if(component.widget === "slider"){
     let slider = component.children[component.children.length - 1];
     const defaultValue = slider.attribs.defaultValue;
-    //props.class = "chakraTag";
+    //props.class = "chakraShiny";
     props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
     shinyValue.add(props.id, defaultValue);
     const sliderMark = slider.children.length === 3;
@@ -1896,7 +1896,7 @@ const chakraComponent = (
     let numberinput = component.children[0].children[0];
     let slider = component.children[0].children[1];
     const defaultValue = component.value;
-    //props.class = "chakraTag";
+    //props.class = "chakraShiny";
     props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
     shinyValue.add(props.id, defaultValue);
     const [sliderValue, setSliderValue] = React.useState(defaultValue);
@@ -2301,7 +2301,7 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
   const [radiogroupValues, setRadiogroupValues] = React.useState(RadioGroups);
   let shinyValue = new ShinyValue(configuration.inputId);
   //setValue("xxx");
-  //$("#id").addClass("chakraTag");
+  //$("#id").addClass("chakraShiny");
   return (
     // <ChakraProvider>
     // {
@@ -2352,7 +2352,7 @@ var chakraBinding = new Shiny.InputBinding();
 
 $.extend(chakraBinding, {
   find: function (scope) {
-    return $(scope).find(".chakraTag");
+    return $(scope).find(".chakraShiny");
   },
   getType: function (el) {
     return $(el).data("widget") ? "shinyChakraUI.widget" : false;

@@ -291,14 +291,14 @@ chakraSlider <- function(
   if(!is.null(label)){
     component <- tags$div(
       id = id,
-      class = "form-group chakraTag",
+      class = "form-group chakraShiny",
       tags$label(label),
       component
     )
   }else{
     component <- tags$div(
       id = id,
-      class = "form-group chakraTag",
+      class = "form-group chakraShiny",
       component
     )
   }

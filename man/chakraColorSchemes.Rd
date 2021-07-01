@@ -7,7 +7,8 @@
 chakraColorSchemes()
 }
 \description{
-List of Chakra color schemes.
+List of Chakra color schemes (to use as a \code{colorScheme}
+  attribute in e.g. Chakra buttons).
 }
 \examples{
 chakraColorSchemes()

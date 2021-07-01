@@ -14,7 +14,10 @@ contains the state to be changed}
 
 \item{stateName}{the name of the state to be set}
 
-\item{value}{the new value of the state}
+\item{value}{the new value of the state; it can be an R object serializable
+to JSON, a React component, a JSX element created with the
+\code{\link{jsx}} function, a Shiny widget, or some HTML code created with
+the \code{\link[htmltools:HTML]{HTML}} function}
 }
 \description{
 Set a React state from the Shiny server.

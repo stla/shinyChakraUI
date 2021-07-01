@@ -2,7 +2,7 @@
 % Please edit documentation in R/chakra.R
 \name{withStates}
 \alias{withStates}
-\title{Component with states or hooks}
+\title{Chakra component with states or hooks}
 \usage{
 withStates(component, states)
 }
@@ -21,7 +21,7 @@ the \code{\link{jsx}} function, a JavaScript value defined by the
 A component to use in \code{\link{chakraComponent}}.
 }
 \description{
-Create a component with React states and/or hooks.
+Create a Chakra component with React states and/or hooks.
 }
 \examples{
 library(shiny)

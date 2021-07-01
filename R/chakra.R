@@ -5,7 +5,10 @@
 #' @param componentId the id of the \code{\link{chakraComponent}} which
 #'   contains the state to be changed
 #' @param stateName the name of the state to be set
-#' @param value the new value of the state
+#' @param value the new value of the state; it can be an R object serializable
+#'   to JSON, a React component, a JSX element created with the
+#'   \code{\link{jsx}} function, a Shiny widget, or some HTML code created with
+#'   the \code{\link[htmltools:HTML]{HTML}} function
 #'
 #' @export
 #' @importFrom utils URLencode
@@ -117,8 +120,8 @@ setReactState <- function(session, componentId, stateName, value){
   )
 }
 
-#' @title Component with states or hooks
-#' @description Create a component with React states and/or hooks.
+#' @title Chakra component with states or hooks
+#' @description Create a Chakra component with React states and/or hooks.
 #'
 #' @param component a React component
 #' @param states named list of states; a state value can be an R object
@@ -192,9 +195,9 @@ withStates <- function(component, states){
   #print(lapply(sys.frames(),ls))
   stopifnot(isNamedList(states))
   forbiddenTypes <- ForbiddenTypes()
-  Rstates <- Filter(
-    function(s){!isJseval(s) && !isHook(s) && !isJSX(s)}, states
-  )
+  Rstates <- Filter(function(s){
+    !isJseval(s) && !isHook(s) && !isJSX(s)
+  }, states)
   for(state in names(Rstates)){
     stateType <- typeof(Rstates[[state]])
     invalid <- !is.na(match(stateType, forbiddenTypes))
@@ -210,7 +213,7 @@ withStates <- function(component, states){
   }
   # component[["states"]] <-
   #   URLencode(as.character(toJSON(states, auto_unbox = TRUE)))
-  statesGroup <- paste0("setState_", randomString(15))
+  statesGroup <- paste0("setState_", randomString(15L))
   component[["statesGroup"]] <- statesGroup
   component[["states"]] <- states
   # for(state in names(states)){
@@ -270,8 +273,8 @@ chakraComponent <- function(componentId, ...){
       call. = TRUE
     )
   }
-  states <- ls(statesEnvir)
-  usedStates <- ls(usedStatesEnvir)
+  # states <- ls(statesEnvir)
+  # usedStates <- ls(usedStatesEnvir)
   # for(usedState in usedStates){
   #   if(!is.element(usedState, states)){
   #     rm(list = states, envir = statesEnvir)
@@ -327,7 +330,8 @@ chakraComponent <- function(componentId, ...){
 
 
 #' @title Chakra color schemes
-#' @description List of Chakra color schemes.
+#' @description List of Chakra color schemes (to use as a \code{colorScheme}
+#'   attribute in e.g. Chakra buttons).
 #'
 #' @export
 #'

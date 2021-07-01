@@ -3,7 +3,7 @@
 #'   (\code{\link{chakraAlertDialog}}).
 #'
 #' @param closeOnEsc whether to close the modal on pressing the 'esc' key
-#' @param colorScheme a chakra color scheme
+#' @param colorScheme a Chakra color scheme
 #' @param isCentered whether to center the modal on screen
 #' @param motionPreset transition that should be used for the modal; one of
 #'   \code{"scale"}, \code{"none"}, \code{"slideInBottom"}, or
@@ -11,7 +11,7 @@
 #' @param size modal size, \code{"sm"}, \code{"md"}, \code{"lg"}, \code{"xl"},
 #'   \code{"2xl"}, \code{"full"}, \code{"xs"}, \code{"3xl"}, \code{"4xl"},
 #'   \code{"5xl"}, or \code{"6xl"}
-#' @param ... other attributes
+#' @param ... other attributes of \code{AlertDialog}
 #'
 #' @return A named list, for usage in \code{\link{chakraAlertDialog}}.
 #' @export

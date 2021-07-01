@@ -5,6 +5,13 @@ shinyUI(
   chakraPage(
 
     br(),
+    chakraComponent(
+      "title",
+      Tag$Heading(
+        "Menu with options groups."
+      )
+    ),
+    br(), tags$hr(), br(),
 
     fluidRow(
 

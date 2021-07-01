@@ -262,6 +262,7 @@ chakraPage <- function(...){
 #' @importFrom htmltools htmlDependency tags attachDependencies
 #' @export
 chakraComponent <- function(componentId, ...){
+  stopifnot(isString(componentId))
   component <- list(...)
   if(length(names(component))){
     stop(

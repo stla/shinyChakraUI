@@ -1446,7 +1446,6 @@ const chakraComponent = (
         onEsc: () => {setShinyValue("esc");}
       }
     };
-    //component = chakraComponent(component, thispatch);
   }else if(component.widget === "drawer"){
     delete component.widget;
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -1487,6 +1486,70 @@ const chakraComponent = (
       //     }
       //   }
       // }
+    };  
+  }else if(component.widget === "modal"){
+    delete component.widget;
+    const { isOpen, onOpen, onClose } = useDisclosure({defaultIsOpen: component.isOpen});
+    shinyValue.add(props.id, null);
+    const setShinyValue = (e) => {
+      let value = e.currentTarget.dataset.val;
+      if(value !== undefined){
+        Shiny.setInputValue(props.id, value);
+        shinyValue.set(props.id, value);
+      }
+    };
+    const [disabled, setDisabled] = React.useState(false);
+    const funcs = {
+      OpenButton: onOpen,
+      OpenIconButton: onOpen,
+      ClosingButton: (e) => {
+        setShinyValue(e);
+        onClose();
+      },
+      ClosingIconButton: (e) => {
+        setShinyValue(e);
+        onClose();
+      },
+      CancelButton: (e) => {
+        setShinyValue(e);
+        onClose();
+      },
+      CancelIconButton: (e) => {
+        setShinyValue(e);
+        onClose();
+      },
+      DisableButton: (e) => {
+        setShinyValue(e);
+        onClose();
+        setDisabled(true);
+      },
+      DisableIconButton: (e) => {
+        setShinyValue(e);
+        onClose();
+        setDisabled(true);
+      },
+      RemoveButton: (e) => {
+        setShinyValue(e);
+        onClose();
+        $("#" + props.id).remove();
+      },
+      RemoveIconButton: (e) => {
+        setShinyValue(e);
+        onClose();
+        $("#" + props.id).remove();
+      },
+      Button: setShinyValue,
+      IconButton: setShinyValue
+    };
+    mergeOnClick(component, funcs, states, inputId);
+    patch = {
+      OpenButton: {
+        isDisabled: disabled
+      },
+      Modal: {
+        isOpen: isOpen,
+        onClose: onClose
+      }
     };  
   }else if(component.name === "Menu" && component.process !== false){
     component.process = false;

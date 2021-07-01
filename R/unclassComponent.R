@@ -12,43 +12,32 @@ isSlider <- function(x){
     identical(x[["children"]][[2L]][["attribs"]][["class"]], "js-range-slider")
 }
 
-sliderDependencies <- function(){
-  htmlDependencies(shiny::sliderInput("id", "label", 0, 2, 1))
-  # list(structure(list(name = "ionrangeslider-javascript", version = "2.3.1",
-  #                     src = list(href = "shared/ionrangeslider"), meta = NULL,
-  #                     script = "js/ion.rangeSlider.min.js", stylesheet = NULL,
-  #                     head = NULL, attachment = NULL, package = NULL, all_files = TRUE), class = "html_dependency"),
-  #      structure(list(name = "strftime", version = "0.9.2", src = list(
-  #        href = "shared/strftime"), meta = NULL, script = "strftime-min.js",
-  #        stylesheet = NULL, head = NULL, attachment = NULL, package = NULL,
-  #        all_files = TRUE), class = "html_dependency"), structure(function ()
-  #        {
-  #          if (is_shiny_app()) {
-  #            register_theme_dependency(func)
-  #            return(func(get_current_theme()))
-  #          }
-  #          func(bs_global_get())
-  #        }, class = "shiny.tag.function"))
-}
+# sliderDependencies <- function(){
+#   htmlDependencies(shiny::sliderInput("id", "label", 0, 2, 1))
+# }
 
 evalHtmlDependencies <- function(x){
   lapply(x, function(dep){
-    if(inherits(dep, "shiny.tag.function")){
-      dep()
-    }else{
-      dep
-    }
+    if(inherits(dep, "shiny.tag.function")) dep() else dep
   })
 }
 
 makeScriptTag <- function(script){
   if(inherits(script, "shiny.tag")){
-    script[["name"]] <- "ScriptTag"
-    script[["attribs"]][["dangerouslySetInnerHTML"]] <-
-      list("__html" = URLencode(script[["children"]][[1L]]))
-    script[["children"]] <- list()
-    script
-  }else{
+    shinyTag(
+      name = "ScriptTag",
+      attribs = c(
+        script[["attribs"]],
+        list(dangerouslySetInnerHTML =
+               list("__html" = URLencode(script[["children"]][[1L]])))
+      )
+    )
+    # script[["name"]] <- "ScriptTag"
+    # script[["attribs"]][["dangerouslySetInnerHTML"]] <-
+    #   list("__html" = URLencode(script[["children"]][[1L]]))
+    # script[["children"]] <- list()
+    # script
+  }else{ # script is a string
     Tag$ScriptTag(
       dangerouslySetInnerHTML = list("__html" = URLencode(script))
     )
@@ -96,14 +85,10 @@ unclassComponent <- function(component, inputId, call){
   if(inherits(component, "shiny.tag.list")){
     component <- do.call(Tag$Fragment, component)
   }
-  #states <- attr(component, "states")
-  # Checkboxes <-
   RadioGroups <- dependencies <- NULL
   shinyOutput <- FALSE
   if(isSlider(component)){
     dependencies <- evalHtmlDependencies(htmlDependencies(component))
-    # sliders <- list(list(id = component[["children"]][[2]][["attribs"]][["id"]]))
-    # component[["children"]][[2]][["attribs"]][["class"]] <- NULL
     id <- component[["children"]][[2L]][["attribs"]][["id"]]
     script <- initializeShinyInput("sliderInput", id)
     component <- Tag$Fragment(
@@ -188,30 +173,6 @@ unclassComponent <- function(component, inputId, call){
       )
     }
   }
-  # if(isTRUE(attr(component, "withDisclosure"))){
-  #   for(i in seq_along(component[["children"]])){
-  #     child <- component[["children"]][[i]]
-  #     if(isReactComponent(child)){
-  #       attr(component[["children"]][[i]], "withDisclosure") <- TRUE
-  #       attribs <- child[["attribs"]]
-  #       for(attrib in attribs){
-  #         if(is.list(attrib) && identical(names(attrib), "disclosure")){
-  #           check <- attrib[["disclosure"]] %in%
-  #             c("isOpen", "onToggle", "onOpen", "onClose")
-  #           if(!check){
-  #             stop(
-  #               sprintf(
-  #                 "Invalid `disclosure` value in component '%s'.",
-  #                 child[["name"]]
-  #               ),
-  #               call. = FALSE
-  #             )
-  #           }
-  #         }
-  #       }
-  #     }
-  #   }
-  # }
   for(attribname in names(component[["attribs"]])){
     attrib <- component[["attribs"]][[attribname]]
     if(isString(attrib)){ #&& attribname != "defaultValue"){
@@ -240,13 +201,6 @@ unclassComponent <- function(component, inputId, call){
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
   }
-  # for(attribname in attribsNames){
-  #   attrib <- attribs[[attribname]]
-  #   if(is.list(attrib) && identical(names(attrib), "eval")){
-  #     component[["attribs"]][[attribname]] <-
-  #       list(eval = URLencode(attrib[["eval"]]))
-  #   }
-  # }
   if(
     component[["name"]] %in% c("Button", "IconButton") &&
     "className" %in% attribsNames &&
@@ -254,7 +208,7 @@ unclassComponent <- function(component, inputId, call){
   ){
     if("id" %notin% attribsNames){
       stop(
-        "Buttons with 'action-button' class must have an `id` attribute.",
+        "Buttons with the 'action-button' class must have an `id` attribute.",
         call. = FALSE
       )
     }
@@ -297,18 +251,6 @@ unclassComponent <- function(component, inputId, call){
     attribs <- component[["attribs"]]
     attribsNames <- names(attribs)
   }
-  # if(
-  #   "value" %in% attribsNames &&
-  #   is.character(value <- attribs[["value"]])
-  # ){
-  #   component[["attribs"]][["value"]] <- attribs[["value"]] <- URLencode(value)
-  # }
-  # if("onClick" %in% attribsNames){
-  #   component[["attribs"]][["onClick"]] <- URLencode(attribs[["onClick"]])
-  # }
-  # if("title" %in% attribsNames){
-  #   component[["attribs"]][["title"]] <- URLencode(attribs[["title"]])
-  # }
   if(component[["name"]] == "MenuItem"){
     if("value" %notin% attribsNames){
       stop(
@@ -348,14 +290,7 @@ unclassComponent <- function(component, inputId, call){
       component, makeScriptTag(script)
     )
   }else if(
-  #   component[["name"]] == "Checkbox" && !is.null(attribs[["id"]])
-  # ){
-  #   Checkboxes <- list(isTRUE(attribs[["isChecked"]]))
-  #   names(Checkboxes) <- attribs[["id"]]
-  #   #component[["attribs"]][["isChecked"]] <- NULL
-  # }else if(
     component[["name"]] == "CheckboxGroup"
-    # is.null(attr(component, "processed"))
   ){
     if(is.null(attribs[["id"]])){
       stop(
@@ -452,8 +387,9 @@ unclassComponent <- function(component, inputId, call){
     children <- vapply(component[["children"]], `[[`, character(1L), "name")
     if(!identical(children, c("MenuButton", "MenuList"))){
       stop(
-        "Invalid `Menu` component.",
-        call. = TRUE
+        "Invalid `Menu` component: ",
+        "it must have two children, `MenuButton` and `MenuList`.",
+        call. = FALSE
       )
     }
     if("id" %notin% attribsNames){
@@ -461,14 +397,6 @@ unclassComponent <- function(component, inputId, call){
         "A `Menu` component must have an `id` attribute.",
         call. = FALSE
       )
-      # menulist <- component[["children"]][[2L]]
-      # children <- vapply(menulist[["children"]], `[[`, character(1L), "name")
-      # if("MenuOptionGroup" %in% children){
-      #   stop(
-      #     "A `Menu` component containing `MenuOptionGroup` components must have an `id` attribute.",
-      #     call. = FALSE
-      #   )
-      # }
     }
   }else if(component[["name"]] == "MenuButton" && "text" %in% attribsNames){
     text <- attribs[["text"]]
@@ -512,7 +440,6 @@ unclassComponent <- function(component, inputId, call){
         x <- unclassComponent(child, inputId, call)
         #states <<- c(x[["states"]], states)
         shinyOutput <<- x[["shinyOutput"]] || shinyOutput
-        # Checkboxes <<- c(x[["Checkboxes"]], Checkboxes)
         RadioGroups <<- c(x[["RadioGroups"]], RadioGroups)
         dependencies <<- c(x[["dependencies"]], dependencies)
         x[["component"]]
@@ -525,14 +452,10 @@ unclassComponent <- function(component, inputId, call){
       }
     })
   }
-  # if(length(component[["attribs"]])){
-  #   component[["attribs"]] <- lapply(component[["attribs"]], unclass)
-  # }
   list(
     component = unclass(component),
     #states = states,
     shinyOutput = shinyOutput,
-    # Checkboxes = Checkboxes,
     RadioGroups = RadioGroups,
     dependencies = dependencies
   )

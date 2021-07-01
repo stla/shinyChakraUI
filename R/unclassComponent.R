@@ -485,7 +485,7 @@ unclassComponent <- function(component, inputId, call){
   # else if(
   #   component[["name"]] == "Input" &&
   #   "id" %in% attribsNames &&
-  #   !isFALSE(attribs[["shinyValue"]]) &&
+  #   !isFALSE(attribs[["shinyAuto"]]) &&
   #   is.null(attribs[["value"]])
   # ){
   #   # if(is.null(attribs[["id"]])){

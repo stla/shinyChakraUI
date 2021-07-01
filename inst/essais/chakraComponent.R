@@ -636,7 +636,7 @@ ui1 <- chakraPage(
               id = "input3",
               value = getState("inputvalue"),#list(eval = "'$' + states.inputvalue.get()"),#getState("inputvalue")
               onChange = jseval("(event) => {setState('inputvalue', event.target.value)}"),
-              shinyValue = TRUE
+              shinyAuto = TRUE
             ),
             Tag$Button(
               colorScheme = "orange",

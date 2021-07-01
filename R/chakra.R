@@ -104,7 +104,7 @@ setReactState <- function(session, componentId, stateName, value){
     value <- URLencode(as.character(value))
   }else if(isShinyTag(value)){
     type <- "component"
-    value[["attribs"]][["shinyValue"]] <- FALSE
+    value[["attribs"]][["shinyAuto"]] <- FALSE
     value <- unclassComponent(value, NULL, "setReactState")[["component"]]
     value[["hasStates"]] <- TRUE
     value[["force"]] <- TRUE

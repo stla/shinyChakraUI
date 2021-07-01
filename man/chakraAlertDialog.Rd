@@ -10,7 +10,7 @@ chakraAlertDialog(
   openButton,
   header,
   body,
-  footerButtons = Tag$Button("Cancel", action = "cancel", value = "cancel")
+  footer
 )
 }
 \arguments{
@@ -25,7 +25,8 @@ chakraAlertDialog(
 
 \item{body}{an \code{AlertDialogBody} element}
 
-\item{footerButtons}{a Chakra button or a list of chakra buttons}
+\item{footer}{an \code{AlertDialogFooter} element; usually it contains
+some Chakra buttons (that you can group with \code{Tag$ButtonGroup(...)})}
 }
 \value{
 A widget that can be used in \code{\link{chakraComponent}}.
@@ -69,24 +70,25 @@ ui <- chakraPage(
       body = Tag$AlertDialogBody(
         "Are you sure? You can't undo this action afterwards."
       ),
-      footerButtons = list(
-        Tag$Button(
-          action = "cancel",
-          value = "CANCEL",
-          "Cancel"
-        ),
-        Tag$Button(
-          action = "disable",
-          value = "DISABLE",
-          colorScheme = "red",
-          ml = 3,
-          "Disable"
-        ),
-        Tag$Button(
-          action = "remove",
-          value = "REMOVE",
-          ml = 3,
-          "Remove"
+      footer = Tag$AlertDialogFooter(
+        Tag$ButtonGroup(
+          spacing = "3",
+          Tag$Button(
+            action = "cancel",
+            value = "CANCEL",
+            "Cancel"
+          ),
+          Tag$Button(
+            action = "disable",
+            value = "DISABLE",
+            colorScheme = "red",
+            "Disable"
+          ),
+          Tag$Button(
+            action = "remove",
+            value = "REMOVE",
+            "Remove"
+          )
         )
       )
     )

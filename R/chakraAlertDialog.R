@@ -46,7 +46,6 @@ chakraAlertDialogOptions <- function(
   )
 }
 
-
 #' @title Alert dialog widget
 #' @description An alert dialog widget.
 #'
@@ -56,7 +55,8 @@ chakraAlertDialogOptions <- function(
 #' @param openButton a Chakra button to open the alert dialog
 #' @param header an \code{AlertDialogHeader} element
 #' @param body an \code{AlertDialogBody} element
-#' @param footerButtons a Chakra button or a list of chakra buttons
+#' @param footer an \code{AlertDialogFooter} element; usually it contains
+#'   some Chakra buttons (that you can group with \code{Tag$ButtonGroup(...)})
 #'
 #' @return A widget that can be used in \code{\link{chakraComponent}}.
 #' @export
@@ -96,24 +96,25 @@ chakraAlertDialogOptions <- function(
 #'       body = Tag$AlertDialogBody(
 #'         "Are you sure? You can't undo this action afterwards."
 #'       ),
-#'       footerButtons = list(
-#'         Tag$Button(
-#'           action = "cancel",
-#'           value = "CANCEL",
-#'           "Cancel"
-#'         ),
-#'         Tag$Button(
-#'           action = "disable",
-#'           value = "DISABLE",
-#'           colorScheme = "red",
-#'           ml = 3,
-#'           "Disable"
-#'         ),
-#'         Tag$Button(
-#'           action = "remove",
-#'           value = "REMOVE",
-#'           ml = 3,
-#'           "Remove"
+#'       footer = Tag$AlertDialogFooter(
+#'         Tag$ButtonGroup(
+#'           spacing = "3",
+#'           Tag$Button(
+#'             action = "cancel",
+#'             value = "CANCEL",
+#'             "Cancel"
+#'           ),
+#'           Tag$Button(
+#'             action = "disable",
+#'             value = "DISABLE",
+#'             colorScheme = "red",
+#'             "Disable"
+#'           ),
+#'           Tag$Button(
+#'             action = "remove",
+#'             value = "REMOVE",
+#'             "Remove"
+#'           )
 #'         )
 #'       )
 #'     )
@@ -139,34 +140,33 @@ chakraAlertDialog <- function(
   openButton,
   header,
   body,
-  footerButtons = Tag$Button("Cancel", action = "cancel", value = "cancel")
+  footer#Buttons = Tag$Button("Cancel", action = "cancel", value = "cancel")
 ){
   stopifnot(isChakraButton(openButton))
   openButton[["attribs"]][["action"]] <- "open"
-  # openButton[["name"]] <- switch(
-  #   openButton[["name"]],
-  #   Button = "OpenButton",
-  #   IconButton = "OpenIconButton"
-  # )
-  if(isChakraButton(footerButtons)){
-    footerButtons <- list(footerButtons)
-  }else{
-    isListOfButtons <-
-      all(vapply(footerButtons, isChakraButton, FUN.VALUE = logical(1L)))
-    if(!isListOfButtons){
-      stop(
-        "`footerButtons` must be a chakra button or a list of chakra buttons.",
-        call. = TRUE
-      )
-    }
-  }
+  # if(isChakraButton(footerButtons)){
+  #   footerButtons <- list(footerButtons)
+  # }else{
+  #   isListOfButtons <-
+  #     all(vapply(footerButtons, isChakraButton, FUN.VALUE = logical(1L)))
+  #   if(!isListOfButtons){
+  #     stop(
+  #       "`footerButtons` must be a chakra button or a list of chakra buttons.",
+  #       call. = TRUE
+  #     )
+  #   }
+  # }
   stopifnot(isReactComponent(header))
   stopifnot(isReactComponent(body))
+  stopifnot(isReactComponent(footer))
   if(header[["name"]] != "AlertDialogHeader"){
     stop("`header` must be an `AlertDialogHeader` element.", call. = TRUE)
   }
   if(body[["name"]] != "AlertDialogBody"){
     stop("`body` must be an `AlertDialogBody` element.", call. = TRUE)
+  }
+  if(footer[["name"]] != "AlertDialogFooter"){
+    stop("`footer` must be an `AlertDialogFooter` element.", call. = TRUE)
   }
   component <- tags$div(
     id = inputId,
@@ -180,11 +180,12 @@ chakraAlertDialog <- function(
             Tag$AlertDialogContent(
               header,
               body,
-              shinyTag(
-                name = "AlertDialogFooter",
-                attribs = emptyNamedList,
-                children = footerButtons
-              )
+              footer
+              # shinyTag(
+              #   name = "AlertDialogFooter",
+              #   attribs = emptyNamedList,
+              #   children = footerButtons
+              # )
             )
           )
         )

@@ -7,11 +7,18 @@ shinyUI(
     br(),
     chakraComponent(
       "title",
-      Tag$Heading(
-        "Menu with options groups."
+      Tag$Heading("Simple menu."),
+      Tag$Text(
+        "Set a ",
+        Tag$Code(colorScheme = "yellow", "value"),
+        " attribute to the ",
+        Tag$Code(colorScheme = "yellow", "MenuItem"),
+        " tags."
       )
     ),
     br(), tags$hr(), br(),
+
+    ######################
 
     fluidRow(
 
@@ -19,51 +26,24 @@ shinyUI(
         width = 6,
         chakraComponent(
           "mycomponent",
-          withStates(
-            Tag$Menu(
-              id = "mymenu",
-              onOpen = jseval("() => {setState('menuIsOpen', true)}"),
-              onClose = jseval("() => {setState('menuIsOpen', false)}"),
-              Tag$MenuButton(
-                colorScheme = "blue",
-                isActive = getState("menuIsOpen"),
-                getState("buttonText")
-              ),
-              Tag$MenuList(
-                minWidth = "240px",
-                Tag$MenuOptionGroup(
-                  title = "Order",
-                  type = "radio",
-                  Tag$MenuItemOption(
-                    value = "asc",
-                    defaultChecked = TRUE,
-                    "Ascending"
-                  ),
-                  Tag$MenuItemOption(
-                    value = "desc",
-                    "Descending"
-                  )
-                ),
-                Tag$MenuDivider(),
-                Tag$MenuOptionGroup(
-                  title = "Country",
-                  type = "checkbox",
-                  Tag$MenuItemOption(
-                    value = "email",
-                    defaultChecked = TRUE,
-                    "Email"
-                  ),
-                  Tag$MenuItemOption(
-                    value = "phone",
-                    "Phone"
-                  )
-                )
-              )
+          Tag$Menu(
+            id = "mymenu",
+            Tag$MenuButton(
+              colorScheme = "red",
+              "Menu"
             ),
-            states = list(
-              menuIsOpen = FALSE,
-              buttonText =
-                jseval("getState('menuIsOpen') ? 'CLOSE MENU' : 'OPEN MENU'")
+            Tag$MenuList(
+              minWidth = "240px",
+              Tag$MenuItem(
+                value = "item1",
+                icon = Tag$ArrowRightIcon(),
+                "Item one"
+              ),
+              Tag$MenuItem(
+                value = "item2",
+                icon = Tag$ArrowRightIcon(),
+                "Item two"
+              )
             )
           )
         )

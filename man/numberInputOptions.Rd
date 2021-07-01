@@ -2,7 +2,7 @@
 % Please edit documentation in R/chakraCombinedSlider.R
 \name{numberInputOptions}
 \alias{numberInputOptions}
-\title{Options for the number input of the combined chakra slider}
+\title{Options for the number input of the combined Chakra slider}
 \usage{
 numberInputOptions(
   precision = NULL,
@@ -20,7 +20,8 @@ numberInputOptions(
 \arguments{
 \item{precision}{number of decimal points}
 
-\item{maxWidth}{width of the number input, e.g. \code{"100px"} or \code{"20\%"}}
+\item{maxWidth}{width of the number input, e.g. \code{"100px"} or
+\code{"20\%"}}
 
 \item{fontSize}{font size of the displayed value, e.g. \code{"15px"}}
 

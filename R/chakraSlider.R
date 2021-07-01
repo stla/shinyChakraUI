@@ -8,7 +8,8 @@
 #' @param borderWidth thumb border width
 #' @param ... other attributes passed to \code{SliderThumb}
 #'
-#' @return A list of attributes for usage in \code{\link{chakraSlider}}.
+#' @return A list of attributes for usage in \code{\link{chakraSlider}} or
+#'   \code{\link{chakraCombinedSlider}}.
 #' @export
 #' @importFrom htmltools validateCssUnit
 sliderThumbOptions <- function(
@@ -90,7 +91,8 @@ sliderMarkOptions <- function(
 #' @param isOpen whether the tooltip is open
 #' @param ... other attributes passed to \code{Tooltip}
 #'
-#' @return A list of attributes for usage in \code{\link{chakraSlider}}.
+#' @return A list of attributes for usage in \code{\link{chakraSlider}} or
+#'   \code{\link{chakraCombinedSlider}}.
 #' @export
 sliderTooltipOptions <- function(
   hasArrow = TRUE,
@@ -119,7 +121,7 @@ sliderTooltipOptions <- function(
 }
 
 #' @title Chakra slider
-#' @description Create a chakra slider.
+#' @description Create a Chakra slider.
 #'
 #' @param id widget id
 #' @param label label (optional)
@@ -130,7 +132,8 @@ sliderTooltipOptions <- function(
 #' @param width slider width
 #' @param size size, \code{"sm"}, \code{"md"}, or \code{"lg"}
 #' @param colorScheme a chakra color scheme
-#' @param orientation slider orientation, \code{"horizontal"} or \code{"vertical"}
+#' @param orientation slider orientation, \code{"horizontal"} or
+#'   \code{"vertical"}
 #' @param focusThumbOnChange whether to focus the thumb on change
 #' @param isDisabled whether to disable the slider
 #' @param isReadOnly read only mode
@@ -138,6 +141,7 @@ sliderTooltipOptions <- function(
 #' @param trackColor color of the track
 #' @param filledTrackColor color of the filled track
 #' @param mark whether to set a mark to the thumb
+#'   (I personally prefer the tooltip)
 #' @param markOptions options of the mark, a list created with
 #'   \code{\link{sliderMarkOptions}}
 #' @param tooltip whether to set a tooltip to the thumb
@@ -220,6 +224,12 @@ chakraSlider <- function(
       "The arguments given in `...` must be named.", call. = TRUE
     )
   }
+  stopifnot(isBoolean(focusThumbOnChange))
+  stopifnot(isBoolean(isDisabled))
+  stopifnot(isBoolean(isReadOnly))
+  stopifnot(isBoolean(isReversed))
+  stopifnot(isBoolean(mark))
+  stopifnot(isBoolean(tooltip))
   attribs <- dropNulls(list(
 #    id = id,
     defaultValue = value,

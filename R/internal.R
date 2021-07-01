@@ -60,7 +60,7 @@ dropNulls <- function(x){
 }
 
 isNamedList <- function(x){
-  is.null(x) || identical(x, list()) ||
+  is.null(x) || identical(x, emptyNamedList) ||
     (is.list(x) && !is.null(names(x)) && all(names(x) != ""))
 }
 
@@ -124,11 +124,7 @@ isJSX <- function(x){
 invalidNamedDotsList <- function(dotslist){
   if(length(dotslist)){
     namesDots <- names(dotslist)
-    if(is.null(namesDots) || ("" %in% namesDots)){
-      TRUE
-    }else{
-      FALSE
-    }
+    is.null(namesDots) || ("" %in% namesDots)
   }else{
     FALSE
   }

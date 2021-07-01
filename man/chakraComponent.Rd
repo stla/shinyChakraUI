@@ -9,8 +9,8 @@ chakraComponent(componentId, ...)
 \arguments{
 \item{componentId}{component id}
 
-\item{...}{ui elements}
+\item{...}{elements to include within the component}
 }
 \description{
-Create a chakra component.
+Create a Chakra component.
 }

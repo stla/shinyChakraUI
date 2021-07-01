@@ -1,9 +1,10 @@
-#' @title Options for the number input of the combined chakra slider
+#' @title Options for the number input of the combined Chakra slider
 #' @description Create a list of options to be passed to the
 #'   \code{numericInputOptions} argument in \code{\link{chakraCombinedSlider}}.
 #'
 #' @param precision number of decimal points
-#' @param maxWidth width of the number input, e.g. \code{"100px"} or \code{"20\%"}
+#' @param maxWidth width of the number input, e.g. \code{"100px"} or
+#'   \code{"20\%"}
 #' @param fontSize font size of the displayed value, e.g. \code{"15px"}
 #' @param fontColor color of the displayed value
 #' @param borderColor color of the border of the number input
@@ -158,6 +159,10 @@ chakraCombinedSlider <- function(
       "The arguments given in `...` must be named.", call. = TRUE
     )
   }
+  stopifnot(isBoolean(keepWithinRange))
+  stopifnot(isBoolean(clampValueOnBlur))
+  stopifnot(isBoolean(focusThumbOnChange))
+  stopifnot(isBoolean(tooltip))
   attribs <- dropNulls(list(
     flex = "1",
     min = min,
@@ -222,7 +227,8 @@ chakraCombinedSlider <- function(
     )
   ){
     stop(
-      "`numericInputOptions` must be created by the `numberInputOptions` function",
+      "`numericInputOptions` must be created by the ",
+      "`numberInputOptions` function.",
       call. = TRUE
     )
   }

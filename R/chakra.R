@@ -190,6 +190,7 @@ setReactState <- function(session, componentId, stateName, value){
 withStates <- function(component, states){
   #print(ls(sys.frame(-1)))
   #print(lapply(sys.frames(),ls))
+  stopifnot(isNamedList(states))
   if(component[["name"]] == "Menu"){
     component <- Tag$Fragment(component)
   }
@@ -211,7 +212,7 @@ withStates <- function(component, states){
 #' @description Function to be used as the \code{ui} element of a Shiny app;
 #'   it is intended to contain some \code{\link{chakraComponent}} elements.
 #'
-#' @param ... ui elements
+#' @param ... elements to include within the page
 #'
 #' @importFrom htmltools htmlDependency tags attachDependencies
 #' @export
@@ -238,10 +239,10 @@ chakraPage <- function(...){
 }
 
 #' @title Chakra component
-#' @description Create a chakra component.
+#' @description Create a Chakra component.
 #'
 #' @param componentId component id
-#' @param ... ui elements
+#' @param ... elements to include within the component
 #'
 #' @importFrom reactR createReactShinyInput
 #' @importFrom htmltools htmlDependency tags attachDependencies
@@ -311,7 +312,7 @@ chakraComponent <- function(componentId, ...){
 
 
 #' @title Chakra color schemes
-#' @description List of chakra color schemes.
+#' @description List of Chakra color schemes.
 #'
 #' @export
 #'
@@ -341,7 +342,7 @@ chakraColorSchemes <- function(){
 }
 
 #' @title Chakra icons
-#' @description List of chakra icons.
+#' @description List of Chakra icons.
 #'
 #' @export
 #' @details See \href{https://chakra-ui.com/docs/media-and-icons/icon#all-icons}{all chakra icons}.

@@ -28,7 +28,8 @@ sliderTooltipOptions(
 \item{...}{other attributes passed to \code{Tooltip}}
 }
 \value{
-A list of attributes for usage in \code{\link{chakraSlider}}.
+A list of attributes for usage in \code{\link{chakraSlider}} or
+  \code{\link{chakraCombinedSlider}}.
 }
 \description{
 Defined the slider tooltip options.

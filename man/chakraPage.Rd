@@ -7,7 +7,7 @@
 chakraPage(...)
 }
 \arguments{
-\item{...}{ui elements}
+\item{...}{elements to include within the page}
 }
 \description{
 Function to be used as the \code{ui} element of a Shiny app;

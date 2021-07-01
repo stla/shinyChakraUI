@@ -49,7 +49,8 @@ chakraSlider(
 
 \item{colorScheme}{a chakra color scheme}
 
-\item{orientation}{slider orientation, \code{"horizontal"} or \code{"vertical"}}
+\item{orientation}{slider orientation, \code{"horizontal"} or
+\code{"vertical"}}
 
 \item{focusThumbOnChange}{whether to focus the thumb on change}
 
@@ -63,7 +64,8 @@ chakraSlider(
 
 \item{filledTrackColor}{color of the filled track}
 
-\item{mark}{whether to set a mark to the thumb}
+\item{mark}{whether to set a mark to the thumb
+(I personally prefer the tooltip)}
 
 \item{markOptions}{options of the mark, a list created with
 \code{\link{sliderMarkOptions}}}
@@ -85,7 +87,7 @@ the Shiny value}
 A widget to use in \code{\link{chakraComponent}}.
 }
 \description{
-Create a chakra slider.
+Create a Chakra slider.
 }
 \examples{
 library(shiny)

@@ -8,7 +8,7 @@ isCapitalized <- function(word){
 #' @noRd
 `$.ReactTagBuilder` <- function(x, name){
   if(!isCapitalized(name)){
-    stop("Tag name must start with an upper case character", call. = FALSE)
+    stop("Tag name must start with an upper case character.", call. = FALSE)
   }
   function(...){
     component <- tag(name, dots_list(...))

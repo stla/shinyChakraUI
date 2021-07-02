@@ -11,7 +11,7 @@ ct$source("https://raw.githubusercontent.com/RubyLouvre/jsx-parser/master/index.
 
 ct$assign(
   "x",
-  JS("JSXParser('<div><span arr={[5,7]} txt=\"hi\" obj={{a: 1}}>Hello</span></div>')")
+  JS("JSXParser('<div><span num={2.5} arr={[5,7]} txt=\"hi\" obj={{a: 1}} onClick={() => {}}>Hello</span></div>')")
 )
 ( x <- ct$get("x", simplifyDataFrame=FALSE, simplifyVector = FALSE) )
 
@@ -54,22 +54,59 @@ props2attribs(x$children[[1]]$props)
 jsx2component <- function(jsx){
   tagName <- jsx[["type"]]
   if(shinyChakraUI:::isCapitalized(tagName)){
-    f <- Tag[[tagName]]
+    f <- sprintf("Tag$%s", tagName)
   }else{
-    f <- tags[[tagName]]
+    f <- sprintf("tags$%s", tagName)
   }
-  attribs <- props2attribs(jsx[["props"]])
+  jsxProps <- jsx[["props"]]
   jsxChildren <- jsx[["children"]]
-  if(length(jsxChildren)){
-    jsxChildren <- lapply(jsxChildren, function(child){
-      if(child[["type"]] == "#text"){
-        child[["nodeValue"]]
-      }else if(child[["type"]] == "#jsx"){
-        jseval(child[["nodeValue"]])
+  hasProps <- length(jsxProps) != 0L
+  hasChildren <- length(jsxChildren) != 0L
+  hasNothing <- !hasProps && !hasChildren
+  hasBoth <- hasProps && hasChildren
+  attribs <- props2attribs(jsxProps)
+  if(hasNothing){
+    body <- "()"
+  }else if(hasBoth){
+    body <- sprintf("(%s, %%s)", attribs)
+  }else if(hasProps){
+    body <- sprintf("(%s)", attribs)
+  }else{ # children only
+    body <- "(%s)"
+  }
+  f <- paste0(f, body)
+  if(hasChildren){
+    jsxChildren <- sapply(jsxChildren, function(child){
+      childType <- child[["type"]]
+      childNodeValue <- deparse(child[["nodeValue"]])
+      if(childType == "#text"){
+        childNodeValue
+      }else if(childType == "#jsx"){
+        sprintf('jseval("%s")', childNodeValue)
       }else{
         jsx2component(child)
       }
     })
+    f <- sprintf(f, toString(jsxChildren))
   }
-  do.call(f, c(attribs, jsxChildren))
+  f
 }
+
+
+jsx2component(x)
+
+
+
+
+
+
+
+
+
+
+
+ct$assign(
+  "x",
+  JS("JSXParser('<div>a</div>')")
+)
+( x <- ct$get("x", simplifyDataFrame=FALSE, simplifyVector = FALSE) )

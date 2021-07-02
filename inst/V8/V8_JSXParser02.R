@@ -88,18 +88,43 @@ jsx2component <- function(jsx){
       }
     })
     f <- sprintf(f, toString(jsxChildren))
+    # f <- sprintf(f, paste0(jsxChildren, collapse = ",\n"))
   }
   f
 }
 
 
-jsx2component(x)
+cc <- jsx2component(x)
+formatR::tidy_source(text=cc, args.newline = TRUE, indent = 2)
 
+tags$div(tags$span(
+  num = 2.5,
+  arr = list(5L, 7L),
+  txt = "hi",
+  obj = list(a = 1L),
+  onClick = jseval("() => {}"),
+  "Hello"
+))
 
+tags$div(tags$span(
+  num = 2.5,
+  arr = list(5L, 7L),
+  txt = "hi",
+  obj = list(a = 1L),
+  onClick = jseval("() => {}"),
+  "Hello"
+))
 
-
-
-
+tags$div(
+  tags$span(
+    num = 2.5,
+    arr = list(5L, 7L),
+    txt = "hi",
+    obj = list(a = 1L),
+    onClick = jseval("() => {}"),
+    "Hello"
+  )
+)
 
 
 

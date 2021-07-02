@@ -6,12 +6,8 @@ library(formatR)
 
 setwd("C:/SL/MyPackages/shinyChakraUI/inst/V8")
 
-ct <- v8()
-ct$source("jsonNormalize.js")
-ct$source("https://raw.githubusercontent.com/RubyLouvre/jsx-parser/master/index.umd.js")
 
-
-props2attribs <- function(props){
+props2attribs <- function(props, ctx){
   nprops <- length(props)
   if(nprops == 0L){
     return("")
@@ -21,7 +17,7 @@ props2attribs <- function(props){
   for(i in seq_along(props)){
     prop <- props[[i]]
     if(length(prop) == 2L){ # type #jsx
-      nodeValue <- ct$eval(sprintf('normalize("%s")', prop[[2L]]))
+      nodeValue <- ctx$eval(sprintf('normalize("%s")', prop[[2L]]))
       attrib <- try(fromJSON(nodeValue, simplifyVector = FALSE), silent = TRUE)
       if(inherits(attrib, "try-error")){
         attrib <- sprintf('jseval("%s")', nodeValue)
@@ -43,7 +39,7 @@ props2attribs <- function(props){
 }
 
 
-parsedJSX2component <- function(jsx){
+parsedJSX2component <- function(jsx, ctx){
   tagName <- jsx[["type"]]
   if(shinyChakraUI:::isCapitalized(tagName)){
     f <- sprintf("Tag$%s", tagName)
@@ -56,7 +52,7 @@ parsedJSX2component <- function(jsx){
   hasChildren <- length(jsxChildren) != 0L
   hasNothing <- !hasProps && !hasChildren
   hasBoth <- hasProps && hasChildren
-  attribs <- props2attribs(jsxProps)
+  attribs <- props2attribs(jsxProps, ctx)
   if(hasNothing){
     body <- "()"
   }else if(hasBoth){
@@ -76,7 +72,7 @@ parsedJSX2component <- function(jsx){
       }else if(childType == "#jsx"){
         sprintf('jseval("%s")', childNodeValue)
       }else{
-        parsedJSX2component(child)
+        parsedJSX2component(child, ctx)
       }
     })
     f <- sprintf(f, toString(jsxChildren))
@@ -86,13 +82,16 @@ parsedJSX2component <- function(jsx){
 }
 
 jsxString2component <- function(jsxString){
-  ct$assign(
-    "x",
-    JS(sprintf("JSXParser('%s')", jsxString))
-  )
-  x <- ct$get("x", simplifyDataFrame=FALSE, simplifyVector = FALSE)
-  cc <- parsedJSX2component(x)
-  tidy_source(text=cc, args.newline = TRUE, indent = 2)
+  ctx <- v8()
+  ctx$source(system.file("V8", "jsonNormalize.js", package = "shinyChakraUI"))
+  ctx$source(system.file("V8", "index.umd.js", package = "shinyChakraUI"))
+  #####
+  ctx$assign("x", JS(sprintf("JSXParser('%s')", jsxString)))
+  x <- ctx$get("x", simplifyDataFrame = FALSE, simplifyVector = FALSE)
+  ######
+  code <- parsedJSX2component(x, ctx)
+  ctx$reset()
+  tidy_source(text=code, args.newline = TRUE, indent = 2)
 }
 
 jsxString <-

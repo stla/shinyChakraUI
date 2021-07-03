@@ -96,3 +96,6 @@ Tag$CheckboxGroup(
   )
 )
 ```
+
+This JSX parser is not perfect. It may fail, or you may have to manually modify 
+the output.

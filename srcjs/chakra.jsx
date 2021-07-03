@@ -145,7 +145,6 @@ import {
   AvatarGroup,
   Image,
   CloseButton,
-
   Badge,
   Kbd,
   List, 
@@ -165,8 +164,17 @@ import {
   SkeletonCircle, 
   SkeletonText,
   Spinner,
-   
-
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  VisuallyHidden,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  Portal
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -444,7 +452,37 @@ const ChakraComponents = {
   AvatarBadge, 
   AvatarGroup,
   Image,
-  CloseButton
+  CloseButton,
+  Badge,
+  Kbd,
+  List, 
+  ListItem, 
+  ListIcon, 
+  OrderedList, 
+  UnorderedList,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
+  TagRightIcon,
+  TagCloseButton,
+  CircularProgress, 
+  CircularProgressLabel,
+  Progress,
+  Skeleton, 
+  SkeletonCircle, 
+  SkeletonText,
+  Spinner,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  VisuallyHidden,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  Portal
 };
 
 const ChakraTags = Object.keys(ChakraComponents);

@@ -23,7 +23,7 @@ Instead of using this function, rather use the RStudio addin provided
 }
 \examples{
 jsxString <- '<Input type="email" id="myinput" />'
-jsxString2code(jsxString)
+\donttest{jsxString2code(jsxString)}
 jsxString <- '<Button onClick={() => alert("hello")}>Hello</Button>'
-jsxString2code(jsxString)
+\donttest{jsxString2code(jsxString)}
 }

@@ -144,7 +144,29 @@ import {
   AvatarBadge, 
   AvatarGroup,
   Image,
-  CloseButton
+  CloseButton,
+
+  Badge,
+  Kbd,
+  List, 
+  ListItem, 
+  ListIcon, 
+  OrderedList, 
+  UnorderedList,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
+  TagRightIcon,
+  TagCloseButton,
+  CircularProgress, 
+  CircularProgressLabel,
+  Progress,
+  Skeleton, 
+  SkeletonCircle, 
+  SkeletonText,
+  Spinner,
+   
+
 } from "@chakra-ui/react";
 import {
   AddIcon,

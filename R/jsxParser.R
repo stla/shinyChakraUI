@@ -12,7 +12,7 @@ props2attribs <- function(props, ctx){
     if(length(prop) == 2L){ # type #jsx
       # nodeValue <- attrib <- NULL
       nodeValue <-
-        try(ctx$eval(sprintf('normalize(\"%s\")', prop[[2L]])), silent = TRUE)
+        try(ctx$eval(sprintf("normalize('%s')", prop[[2L]])), silent = TRUE)
       if(inherits(nodeValue, "try-error")){
         attrib <- sprintf('jseval(\"%s\")', gsub("\"", "'", prop[[2L]]))
       }else{

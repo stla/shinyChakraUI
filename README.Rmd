@@ -66,3 +66,33 @@ Run `chakraExamples()` to get the list of available examples provided in the
 package. See also the examples of the built-in widgets `chakraAlertDialog`, 
 `chakraCheckboxWithChildren`, `chakraDrawer`, `chakraSlider`, 
 `chakraCombinedSlider`, and `chakraModal`.
+
+# The 'JSX parser' RStudio addin
+
+The package provides a RStudio addin which allows to convert some JSX code to 
+the corresponding R code to use in the `chakraComponent` function. For example, 
+consider this JSX code:
+
+```jsx
+<CheckboxGroup colorScheme="green" defaultValue={["naruto", "kakashi"]}>
+  <HStack>
+    <Checkbox value="naruto">Naruto</Checkbox>
+    <Checkbox value="sasuke">Sasuke</Checkbox>
+    <Checkbox value="kakashi">kakashi</Checkbox>
+  </HStack>
+</CheckboxGroup>
+```
+
+Copy it to your clipboard, and then select the 'JSX parser' addin in the 
+RStudio Addins menu. You'll get this R code:
+
+```r
+Tag$CheckboxGroup(
+  colorScheme = "green", defaultValue = list("naruto", "kakashi"),
+  Tag$HStack(
+    Tag$Checkbox(value = "naruto", "Naruto"),
+    Tag$Checkbox(value = "sasuke", "Sasuke"),
+    Tag$Checkbox(value = "kakashi", "kakashi")
+  )
+)
+```

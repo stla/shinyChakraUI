@@ -16,6 +16,11 @@ Given a JSX string, this function prints the code of the
   corresponding React component that can be used in
   \code{\link{chakraComponent}}.
 }
+\note{
+Instead of using this function, rather use the RStudio addin provided
+  by the package. Simply copy some JSX code to your clipboard, and select
+  the 'JSX parser' addin in the RStudio Addins menu.
+}
 \examples{
 jsxString <- '<Input type="email" id="myinput" />'
 jsxString2code(jsxString)

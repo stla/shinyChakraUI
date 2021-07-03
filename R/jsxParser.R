@@ -91,6 +91,10 @@ parsedJSX2component <- function(jsx, ctx){
 #' @export
 #' @importFrom formatR tidy_source
 #'
+#' @note Instead of using this function, rather use the RStudio addin provided
+#'   by the package. Simply copy some JSX code to your clipboard, and select
+#'   the 'JSX parser' addin in the RStudio Addins menu.
+#'
 #' @examples
 #' jsxString <- '<Input type="email" id="myinput" />'
 #' jsxString2code(jsxString)
@@ -167,8 +171,6 @@ jsxString2code <- function(jsxString, clipboard = TRUE){
 # jsxString2component(gsub("\n", "", jsxString))
 
 
-#' @importFrom rstudioapi getSourceEditorContext
-#' @noRd
 jsxParserAddin <- function(){
   #jsxString <- paste0(getSourceEditorContext()[["contents"]], collapse="")
   jsxString <- paste0(readLines("clipboard"), collapse="")

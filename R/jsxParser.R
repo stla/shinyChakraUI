@@ -19,7 +19,7 @@ props2attribs <- function(props, ctx){
         attrib <-
           try(fromJSON(nodeValue, simplifyVector = FALSE), silent = TRUE)
         if(inherits(attrib, "try-error")){
-          attrib <- sprintf('jseval("%s")', nodeValue)
+          attrib <- sprintf("jseval('%s')", nodeValue)
         }else{
           attrib <- deparse(attrib)
         }

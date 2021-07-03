@@ -170,7 +170,8 @@ jsxString2code <- function(jsxString, clipboard = TRUE){
 #' @importFrom rstudioapi getSourceEditorContext
 #' @noRd
 jsxParserAddin <- function(){
-  jsxString <- paste0(getSourceEditorContext()[["contents"]], collapse="")
+  #jsxString <- paste0(getSourceEditorContext()[["contents"]], collapse="")
+  jsxString <- paste0(readLines("clipboard"), collapse="")
   jsxString2code(jsxString, clipboard = TRUE)
   invisible(NULL)
 }

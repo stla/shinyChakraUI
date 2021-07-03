@@ -10,13 +10,19 @@ props2attribs <- function(props, ctx){
   for(i in seq_along(props)){
     prop <- props[[i]]
     if(length(prop) == 2L){ # type #jsx
-      nodeValue <- ctx$eval(sprintf('normalize("%s")', prop[[2L]]))
-      attrib <-
-        try(fromJSON(nodeValue, simplifyVector = FALSE), silent = TRUE)
-      if(inherits(attrib, "try-error")){
-        attrib <- sprintf('jseval("%s")', nodeValue)
+      # nodeValue <- attrib <- NULL
+      nodeValue <-
+        try(ctx$eval(sprintf('normalize(\"%s\")', prop[[2L]])), silent = TRUE)
+      if(inherits(nodeValue, "try-error")){
+        attrib <- sprintf('jseval(\"%s\")', gsub("\"", "'", prop[[2L]]))
       }else{
-        attrib <- deparse(attrib)
+        attrib <-
+          try(fromJSON(nodeValue, simplifyVector = FALSE), silent = TRUE)
+        if(inherits(attrib, "try-error")){
+          attrib <- sprintf('jseval("%s")', nodeValue)
+        }else{
+          attrib <- deparse(attrib)
+        }
       }
     }else{ # type #text
       x <- suppressWarnings(as.numeric(prop))
@@ -103,7 +109,31 @@ jsxString2code <- function(jsxString){
   ctx$source(system.file("V8", "jsonNormalize.js", package = "shinyChakraUI"))
   ctx$source(system.file("V8", "index.umd.js", package = "shinyChakraUI"))
   #####
-  ctx$assign("x", V8::JS(sprintf("JSXParser('%s')", jsxString)))
+  tryCatch({
+    ctx$assign(
+      "x", V8::JS(sprintf("JSXParser('%s')", jsxString))
+    )
+  }, error = function(e){
+    tryCatch({
+      ctx$assign(
+        "x", V8::JS(sprintf("JSXParser(\"%s\")", jsxString))
+      )
+    }, error = function(e){
+      ctx$reset()
+      stop("JSX parser has failed.", call. = TRUE)
+    })
+  })
+  # p <- try(ctx$assign(
+  #   "x", V8::JS(sprintf("JSXParser('%s')", jsxString))
+  # ))
+  # if(inherits(p, "try-error")){
+  #   p <- try(ctx$assign(
+  #     "x", V8::JS(sprintf("JSXParser(\"%s\")", jsxString))
+  #   ))
+  #   if(inherits(p, "try-error")){
+  #     stop("JSX parser has failed.", call. = TRUE)
+  #   }
+  # }
   x <- ctx$get("x", simplifyDataFrame = FALSE, simplifyVector = FALSE)
   ######
   code <- parsedJSX2component(x, ctx)

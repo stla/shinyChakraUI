@@ -55,3 +55,20 @@ jsx2component <- function(jsx){
   }
   do.call(f, c(attribs, jsxChildren))
 }
+
+
+ct$assign(
+  "x",
+  JS(sprintf(
+    "JSXParser(\"%s\")",
+    "<Button onClick={{() => alert('')}}>Hello</Button>"))
+)
+( x <- ct$get("x", simplifyDataFrame=FALSE) )
+
+ct$assign(
+  "x",
+  JS(shQuote(sprintf(
+    "JSXParser('%s')",
+    '<Button onClick={{() => alert("hi")}}>Hello</Button>')))
+)
+( x <- ct$get("x", simplifyDataFrame=FALSE) )

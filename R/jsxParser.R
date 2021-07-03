@@ -86,6 +86,7 @@ parsedJSX2component <- function(jsx, ctx){
 #'   \code{\link{chakraComponent}}.
 #'
 #' @param jsxString JSX code given as a string
+#' @param clipboard whether to copy the output to the clipboard
 #'
 #' @export
 #' @importFrom formatR tidy_source
@@ -95,7 +96,7 @@ parsedJSX2component <- function(jsx, ctx){
 #' jsxString2code(jsxString)
 #' jsxString <- '<Button onClick={() => alert("hello")}>Hello</Button>'
 #' jsxString2code(jsxString)
-jsxString2code <- function(jsxString){
+jsxString2code <- function(jsxString, clipboard = TRUE){
   if(!requireNamespace("V8")){
     stop("This function requires the 'V8' package.", call. = TRUE)
   }
@@ -139,6 +140,12 @@ jsxString2code <- function(jsxString){
   code <- parsedJSX2component(x, ctx)
   ctx$reset()
   tidy_source(text = code, args.newline = TRUE, indent = 2)
+  if(clipboard){
+    tidy_source(
+      text = code, args.newline = TRUE, indent = 2, file = "clipboard"
+    )
+    message("Code has been copied to the clipboard.")
+  }
   invisible(NULL)
 }
 
@@ -164,7 +171,7 @@ jsxString2code <- function(jsxString){
 #' @noRd
 jsxParserAddin <- function(){
   jsxString <- paste0(getSourceEditorContext()[["contents"]], collapse="")
-  jsxString2component(jsxString)
+  jsxString2code(jsxString, clipboard = TRUE)
   invisible(NULL)
 }
 

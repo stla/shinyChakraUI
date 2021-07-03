@@ -4,10 +4,12 @@
 \alias{jsxString2code}
 \title{JSX string to React component code}
 \usage{
-jsxString2code(jsxString)
+jsxString2code(jsxString, clipboard = TRUE)
 }
 \arguments{
 \item{jsxString}{JSX code given as a string}
+
+\item{clipboard}{whether to copy the output to the clipboard}
 }
 \description{
 Given a JSX string, this function prints the code of the

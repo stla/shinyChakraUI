@@ -1,3 +1,28 @@
+#' @importFrom stringr str_trim
+#' @noRd
+checkjsx <- function(jsx){
+  jsx <- str_trim(jsx)
+  firstChar <- substring(jsx, 1L, 1L)
+  error <- NULL
+  if(firstChar != "<"){
+    error <- "Invalid JSX element: missing opening '<'."
+  }else{
+    lastChar <- substring(jsx, nchar(jsx))
+    if(lastChar != ">"){
+      error <- "Invalid JSX element: missing closing '>'."
+    }
+  }
+  attr(jsx, "error") <- error
+  jsx
+}
+
+#' @importFrom stringr str_trim
+#' @noRd
+fixjsx <- function(jsx){
+  jsx <- str_trim(sub("^<", "", sub(">$", "", jsx)))
+  sprintf("<%s>", jsx)
+}
+
 #' @title JSX element
 #' @description Create a JSX element.
 #'
@@ -5,7 +30,6 @@
 #' @param preamble JavaScript code to run before
 #'
 #' @export
-#' @importFrom stringr str_trim
 #' @importFrom utils URLencode
 #'
 #' @examples
@@ -66,14 +90,10 @@
 jsx <- function(element, preamble = ""){
   stopifnot(isString(element))
   stopifnot(isString(preamble))
-  element <- str_trim(element)
-  firstChar <- substring(element, 1L, 1L)
-  if(firstChar != "<"){
-    stop("Invalid JSX element.", call. = TRUE)
+  element <- checkjsx(element)
+  if(!is.null(attr(element, "error"))){
+    stop(attr(element, "error"), call. = TRUE)
   }
-  lastChar <- substring(element, nchar(element))
-  if(lastChar != ">"){
-    stop("Invalid JSX element.", call. = TRUE)
-  }
+  element <- fixjsx(element)
   list("__jsx" = URLencode(element), "__preamble" = URLencode(preamble))
 }

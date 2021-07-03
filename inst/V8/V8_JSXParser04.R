@@ -18,13 +18,14 @@ props2attribs <- function(props, ctx){
     prop <- props[[i]]
     if(length(prop) == 2L){ # type #jsx
       nodeValue <- ctx$eval(sprintf('normalize("%s")', prop[[2L]]))
-      attrib <- try(fromJSON(nodeValue, simplifyVector = FALSE), silent = TRUE)
+      attrib <-
+        try(fromJSON(nodeValue, simplifyVector = FALSE), silent = TRUE)
       if(inherits(attrib, "try-error")){
         attrib <- sprintf('jseval("%s")', nodeValue)
       }else{
         attrib <- deparse(attrib)
       }
-    }else{
+    }else{ # type #txt
       x <- suppressWarnings(as.numeric(prop))
       attrib <- deparse(ifelse(is.na(x), prop, x))
     }
@@ -99,7 +100,7 @@ jsxString <-
 jsxString <-
   '<div id=\"divid\"><span txt=\"hi\" obj={{a: 1}}><Pa>Hello</Pa></span></div>'
 jsxString <-
-  '<input type="number" id="in"/>'
+  '<Input type="number" id="in"/>'
 
 jsxString2component(jsxString)
 

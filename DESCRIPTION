@@ -24,4 +24,6 @@ Imports:
     rlang,
     stringr,
     grDevices,
-    utils
+    utils,
+    formatR
+Suggests: V8

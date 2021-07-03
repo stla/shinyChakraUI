@@ -103,9 +103,9 @@ parsedJSX2component <- function(jsx, ctx){
 #'
 #' @examples
 #' jsxString <- '<Input type="email" id="myinput" />'
-#' jsxString2code(jsxString)
+#' \donttest{jsxString2code(jsxString)}
 #' jsxString <- '<Button onClick={() => alert("hello")}>Hello</Button>'
-#' jsxString2code(jsxString)
+#' \donttest{jsxString2code(jsxString)}
 jsxString2code <- function(jsxString, clipboard = TRUE){
   if(!requireNamespace("V8")){
     stop("This function requires the 'V8' package.", call. = TRUE)
@@ -173,8 +173,7 @@ jsxString2code <- function(jsxString, clipboard = TRUE){
 #   </span>
 # </div>'
 #
-#
-# jsxString2component(gsub("\n", "", jsxString))
+# jsxString2code(gsub("\n", "", jsxString))
 #
 # jsxString <- '<Button leftIcon={<EmailIcon />} colorScheme=\"teal\">'
 # jsxString2component(jsxString)

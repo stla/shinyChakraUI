@@ -10,18 +10,24 @@ props2attribs <- function(props, ctx){
   for(i in seq_along(props)){
     prop <- props[[i]]
     if(length(prop) == 2L){ # type #jsx
-      # nodeValue <- attrib <- NULL
-      nodeValue <-
-        try(ctx$eval(sprintf("normalize('%s')", prop[[2L]])), silent = TRUE)
-      if(inherits(nodeValue, "try-error")){
-        attrib <- sprintf('jseval(\"%s\")', gsub("\"", "'", prop[[2L]]))
+      nodeValue <- prop[[2L]]
+      isTag <- is.list(nodeValue) && length(nodeValue) == 1L &&
+        all(c("type", "props", "children") %in% names(nodeValue[[1L]]))
+      if(isTag){
+        attrib <- sprintf("Tag$%s()", nodeValue[[1L]][["type"]])
       }else{
-        attrib <-
-          try(fromJSON(nodeValue, simplifyVector = FALSE), silent = TRUE)
-        if(inherits(attrib, "try-error")){
-          attrib <- sprintf("jseval('%s')", nodeValue)
+        nodeValue <-
+          try(ctx$eval(sprintf("normalize('%s')", prop[[2L]])), silent = TRUE)
+        if(inherits(nodeValue, "try-error")){
+          attrib <- sprintf('jseval(\"%s\")', gsub("\"", "'", prop[[2L]]))
         }else{
-          attrib <- deparse(attrib)
+          attrib <-
+            try(fromJSON(nodeValue, simplifyVector = FALSE), silent = TRUE)
+          if(inherits(attrib, "try-error")){
+            attrib <- sprintf("jseval('%s')", nodeValue)
+          }else{
+            attrib <- deparse(attrib)
+          }
         }
       }
     }else{ # type #text
@@ -169,7 +175,9 @@ jsxString2code <- function(jsxString, clipboard = TRUE){
 #
 #
 # jsxString2component(gsub("\n", "", jsxString))
-
+#
+# jsxString <- '<Button leftIcon={<EmailIcon />} colorScheme=\"teal\">'
+# jsxString2component(jsxString)
 
 jsxParserAddin <- function(){
   #jsxString <- paste0(getSourceEditorContext()[["contents"]], collapse="")

@@ -9,7 +9,14 @@ Authors@R: c(
     person(given = "Segun",
            family = "Adebayo",
            role = "cph",
-           comment = "'Chakra UI' library (https://chakra-ui.com/)"))
+           comment = "'Chakra UI' library (https://chakra-ui.com/)"),
+    person(given = "David",
+           family = "Kaye",
+           role = "ctb",
+           comment = "'json-normalize.js'"),
+    person(given = "司徒正美",
+           role = "cph",
+           comment = "'jsx-parser' library"))
 Description: Makes the 'React' library 'Chakra UI' usable in 'Shiny' apps. 'Chakra UI' components include alert dialogs, drawers (sliding panels), menus, modals, popovers, sliders, and more. 
 License: GPL (>= 3)
 Encoding: UTF-8

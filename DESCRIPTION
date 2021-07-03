@@ -25,5 +25,6 @@ Imports:
     stringr,
     grDevices,
     utils,
-    formatR
+    formatR,
+    rstudioapi
 Suggests: V8

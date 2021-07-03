@@ -1,0 +1,4 @@
+Name: JSX parser
+Description: Transform JSX to code.
+Binding: jsxParserAddin
+Interactive: false

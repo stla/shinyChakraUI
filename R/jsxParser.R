@@ -160,7 +160,13 @@ jsxString2code <- function(jsxString){
 # jsxString2component(gsub("\n", "", jsxString))
 
 
-
+#' @importFrom rstudioapi getSourceEditorContext
+#' @noRd
+jsxParserAddin <- function(){
+  jsxString <- paste0(getSourceEditorContext()[["contents"]], collapse="")
+  jsxString2component(jsxString)
+  invisible(NULL)
+}
 
 
 

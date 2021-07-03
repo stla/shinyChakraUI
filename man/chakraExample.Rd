@@ -18,5 +18,7 @@ chakraExample(example, display.mode = "showcase", ...)
 A function to run examples of Shiny apps with Chakra components.
 }
 \examples{
-chakraExample("Menu")
+if(interactive()){
+  chakraExample("Menu")
+}
 }

@@ -24,7 +24,9 @@ chakraExamples <- function(){
 #' @importFrom shiny runApp
 #'
 #' @examples
-#' chakraExample("Menu")
+#' if(interactive()){
+#'   chakraExample("Menu")
+#' }
 chakraExample <- function(example, display.mode = "showcase", ...) {
 
   Folder <- system.file("examples", package = "shinyChakraUI")

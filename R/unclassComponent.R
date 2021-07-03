@@ -45,6 +45,7 @@ makeScriptTag <- function(script){
 }
 
 #' @importFrom htmltools htmlDependencies
+#' @importFrom utils URLencode URLdecode
 #' @noRd
 unclassComponent <- function(component, inputId, call){
   if(!is.null(statesGroup <- component[["statesGroup"]])){

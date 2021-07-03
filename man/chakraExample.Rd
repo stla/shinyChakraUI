@@ -2,7 +2,7 @@
 % Please edit documentation in R/chakraExample.R
 \name{chakraExample}
 \alias{chakraExample}
-\title{Run a chakra example}
+\title{Run a Chakra example}
 \usage{
 chakraExample(example, display.mode = "showcase", ...)
 }

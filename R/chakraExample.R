@@ -1,5 +1,5 @@
 #' @title Chakra examples
-#' @description List of chakra examples.
+#' @description List of Chakra examples.
 #'
 #' @export
 #'
@@ -12,7 +12,7 @@ chakraExamples <- function(){
   message('Type `chakraExample("ExampleName")` to run an example.')
 }
 
-#' @title Run a chakra example
+#' @title Run a Chakra example
 #' @description A function to run examples of Shiny apps with Chakra components.
 #'
 #' @param example example name
@@ -28,25 +28,15 @@ chakraExamples <- function(){
 #'   chakraExample("Menu")
 #' }
 chakraExample <- function(example, display.mode = "showcase", ...) {
-
   Folder <- system.file("examples", package = "shinyChakraUI")
   Examples <- list.dirs(Folder, full.names = FALSE, recursive = FALSE)
-
-  # appname <- gsub(" ", "", family, fixed = TRUE)
-  # appname <- gsub("_", "", appname, fixed = TRUE)
-
   if(example %in% Examples){
-
     appname <- normalizePath(file.path(Folder, example))
     runApp(appname, display.mode = display.mode, ...)
-
-  } else {
-
+  }else{
     stop(
       "Could not find example: ", example, ".",
       "\nAvailable examples are: ", paste0(Examples, collapse = ", "), "."
     )
-
   }
-
 }

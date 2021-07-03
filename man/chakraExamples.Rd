@@ -7,7 +7,7 @@
 chakraExamples()
 }
 \description{
-List of chakra examples.
+List of Chakra examples.
 }
 \examples{
 chakraExamples()

@@ -89,3 +89,6 @@ if(interactive()){
   shinyApp(ui, server)
 }
 }
+\seealso{
+\code{\link{withStates}}
+}

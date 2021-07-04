@@ -154,7 +154,7 @@ chakraModal <- function(
       openButton,
       shinyTag(
         name = "Modal",
-        attribs = options,
+        attribs = dropNulls(options),
         children = list(
           Tag$ModalOverlay(),
           Tag$ModalContent(

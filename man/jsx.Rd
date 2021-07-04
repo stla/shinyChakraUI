@@ -7,7 +7,7 @@
 jsx(element, preamble = "")
 }
 \arguments{
-\item{element}{the JSX element}
+\item{element}{the JSX element given as a string}
 
 \item{preamble}{JavaScript code to run before}
 }

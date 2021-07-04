@@ -35,7 +35,7 @@ chakraExample <- function(example, display.mode = "showcase", ...) {
     runApp(appname, display.mode = display.mode, ...)
   }else{
     stop(
-      "Could not find example: ", example, ".",
+      "Could not find example: '", example, "'.",
       "\nAvailable examples are: ", paste0(Examples, collapse = ", "), "."
     )
   }

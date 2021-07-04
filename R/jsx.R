@@ -18,7 +18,7 @@ checkjsx <- function(jsx){
 
 #' @importFrom stringr str_trim
 #' @noRd
-fixjsx <- function(jsx){
+fixjsx <- function(jsx){ # assumes `checkjsx` has been executed before
   jsx <- str_trim(sub("^<", "", sub(">$", "", jsx)))
   sprintf("<%s>", jsx)
 }
@@ -26,7 +26,7 @@ fixjsx <- function(jsx){
 #' @title JSX element
 #' @description Create a JSX element.
 #'
-#' @param element the JSX element
+#' @param element the JSX element given as a string
 #' @param preamble JavaScript code to run before
 #'
 #' @export
@@ -91,8 +91,8 @@ jsx <- function(element, preamble = ""){
   stopifnot(isString(element))
   stopifnot(isString(preamble))
   element <- checkjsx(element)
-  if(!is.null(attr(element, "error"))){
-    stop(attr(element, "error"), call. = TRUE)
+  if(!is.null(err <- attr(element, "error"))){
+    stop(err, call. = TRUE)
   }
   element <- fixjsx(element)
   list("__jsx" = URLencode(element), "__preamble" = URLencode(preamble))

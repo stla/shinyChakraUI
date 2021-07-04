@@ -15,3 +15,4 @@
 ^inst/trash$
 ^inst/ztemp$
 ^inst/V8/V8tests$
+^cran-comments\.md$

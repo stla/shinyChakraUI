@@ -12,6 +12,9 @@ useDisclosure(defaultIsOpen = FALSE)
 \description{
 The `useDisclosure` hook.
 }
+\details{
+See \href{https://chakra-ui.com/docs/hooks/use-disclosure}{useDisclosure}.
+}
 \examples{
 library(shiny)
 library(shinyChakraUI)
@@ -60,4 +63,7 @@ server <- function(input, output, session){}
 if(interactive()){
   shinyApp(ui, server)
 }
+}
+\seealso{
+\code{\link{getHookProperty}}
 }

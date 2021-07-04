@@ -9,6 +9,9 @@ createStandaloneToast()
 \description{
 The `createStandaloneToast` hook.
 }
+\details{
+See \href{https://chakra-ui.com/docs/feedback/toast#standalone-toasts}{Standalone toasts}.
+}
 \examples{
 library(shiny)
 library(shinyChakraUI)

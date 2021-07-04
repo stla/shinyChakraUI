@@ -18,6 +18,8 @@ library(shinyChakraUI)
 
 ui <- chakraPage(
 
+  br(),
+
   chakraComponent(
     "mycomponent",
 
@@ -55,4 +57,7 @@ server <- function(input, output, session){}
 if(interactive()){
   shinyApp(ui, server)
 }
+}
+\seealso{
+\code{\link{withStates}}
 }

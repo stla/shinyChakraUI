@@ -1,7 +1,7 @@
 #' @title Evaluate JS code
-#' @description Evaluate JavaScript code.
+#' @description Evaluate JavaScript code in the application.
 #'
-#' @param code JavaScript code
+#' @param code JavaScript code given as a sting
 #'
 #' @export
 #' @importFrom utils URLencode
@@ -11,6 +11,8 @@
 #' library(shinyChakraUI)
 #'
 #' ui <- chakraPage(
+#'
+#'   br(),
 #'
 #'   chakraComponent(
 #'     "mycomponent",
@@ -43,12 +45,15 @@ jseval <- function(code){
 #' @param state name of the state
 #'
 #' @export
+#' @seealso \code{\link{withStates}}
 #'
 #' @examples
 #' library(shiny)
 #' library(shinyChakraUI)
 #'
 #' ui <- chakraPage(
+#'
+#'   br(),
 #'
 #'   chakraComponent(
 #'     "mycomponent",
@@ -88,7 +93,6 @@ jseval <- function(code){
 #'   shinyApp(ui, server)
 #' }
 getState <- function(state){
-  #assign(state, NULL, envir = usedStatesEnvir)
   stopifnot(isString(state))
   jseval(sprintf("getState('%s')", state))
 }
@@ -116,12 +120,14 @@ getState <- function(state){
 # }
 
 #' @title The `useClipboard` hook
-#' @description  The `useClipboard` hook.
+#' @description The `useClipboard` hook.
 #'
 #' @param value a string
 #'
 #' @export
 #' @importFrom utils URLencode
+#' @details See \href{https://chakra-ui.com/docs/hooks/use-clipboard}{useClipboard}.
+#' @seealso \code{\link{getHookProperty}}
 #'
 #' @examples
 #' library(shiny)
@@ -208,12 +214,14 @@ useRef <- function(initialValue = NA){
 }
 
 #' @title The `useDisclosure` hook
-#' @description  The `useDisclosure` hook.
+#' @description The `useDisclosure` hook.
 #'
 #' @param defaultIsOpen Boolean, the initial value of the \code{isOpen} property
 #'
 #' @export
 #' @importFrom utils URLencode
+#' @details See \href{https://chakra-ui.com/docs/hooks/use-disclosure}{useDisclosure}.
+#' @seealso \code{\link{getHookProperty}}
 #'
 #' @examples
 #' library(shiny)
@@ -288,6 +296,7 @@ useToast <- function(){
 #'
 #' @export
 #' @importFrom utils URLencode
+#' @details See \href{https://chakra-ui.com/docs/feedback/toast#standalone-toasts}{Standalone toasts}.
 #'
 #' @examples
 #' library(shiny)
@@ -350,8 +359,6 @@ createStandaloneToast <- function(){
 #'
 #' @export
 getHookProperty <- function(hook, property){
-  #assign(state, NULL, envir = usedStatesEnvir)
-  #jseval(sprintf("states.%s.%s", state, value))
   stopifnot(isString(hook))
   stopifnot(isString(property))
   jseval(sprintf("getHookProperty('%s', '%s')", hook, property))

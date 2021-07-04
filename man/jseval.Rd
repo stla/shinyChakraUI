@@ -7,16 +7,18 @@
 jseval(code)
 }
 \arguments{
-\item{code}{JavaScript code}
+\item{code}{JavaScript code given as a sting}
 }
 \description{
-Evaluate JavaScript code.
+Evaluate JavaScript code in the application.
 }
 \examples{
 library(shiny)
 library(shinyChakraUI)
 
 ui <- chakraPage(
+
+  br(),
 
   chakraComponent(
     "mycomponent",

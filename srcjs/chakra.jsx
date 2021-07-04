@@ -1,20 +1,13 @@
 import { reactShinyInput } from 'reactR';
-//import * as React from 'react';
 import { unmountComponentAtNode } from "react-dom";
 import ReactDOM from 'react-dom';
-//import prettier from "prettier/standalone";
 import parserBabel from "prettier/parser-babel";
-//import { parse } from "@babel/parser";
-//import generate from "@babel/generator";
-//import JsxParser from 'react-jsx-parser';
-//import { transform } from '@babel/standalone';
 import babelPluginTransformJsx from '@babel/plugin-transform-react-jsx';
 import { transform } from '@babel/core';
 import {
   useDisclosure,
   useClipboard,
   useToast,
-  //toast,
   createStandaloneToast,
   useEditableControls,
   useBoolean,
@@ -487,37 +480,14 @@ const ChakraComponents = {
 
 const ChakraTags = Object.keys(ChakraComponents);
 
-//console.log("useToast", useToast);
-
-//window.USETOAST = useToast;
-//window.TOASTMANAGER = toast;
-
-// function ToastExample() {
-//   //const Toaster = new toast.constructor();
-//   const ttoast = useToast();
-//   return (
-//     <Button
-//       onClick={() =>
-//         ttoast({
-//           title: "TitLE",
-//           description: "body",
-//           status: 'success',
-//           duration: null,
-//           isClosable: true
-//         })
-//       }
-//     >
-//       Show Toast
-//     </Button>
-//   );
-// }
 
 const isCapitalized = (word) => (word[0] === word[0].toUpperCase());
 
+
 const getMenuOptionGroupSelections = menuoptiongroup => {
-  let type = menuoptiongroup.attribs.type;
+  const type = menuoptiongroup.attribs.type;
   let selections = [];
-  let menuitemoptions = menuoptiongroup.children;
+  const menuitemoptions = menuoptiongroup.children;
   for(let i = 0; i < menuitemoptions.length; i++){
     let attribs = menuitemoptions[i].attribs;
     if(attribs.isChecked === true || attribs.defaultChecked === true){
@@ -532,7 +502,7 @@ const getMenuOptionGroupSelections = menuoptiongroup => {
 
 const getMenuOptionGroups = menulist => {
   let menuoptiongroups = [];
-  let children = menulist.children;
+  const children = menulist.children;
   for(let i = 0; i < children.length; i++){
     let item = children[i];
     if(item.name === "MenuOptionGroup"){
@@ -543,21 +513,21 @@ const getMenuOptionGroups = menulist => {
 };
 
 const getMenuListSelection = menulist => {
-  let menuoptiongroups = getMenuOptionGroups(menulist);
+  const menuoptiongroups = getMenuOptionGroups(menulist);
   if(menuoptiongroups === null){
     return null;
   }
   let selection = {};
   for(let i = 0; i < menuoptiongroups.length; i++){
     let menuoptiongroup = menuoptiongroups[i];
-    menuoptiongroup.attribs.title = decodeURI(menuoptiongroup.attribs.title);
-    selection[menuoptiongroup.attribs.title] = getMenuOptionGroupSelections(menuoptiongroup);
+    let title = decodeURI(menuoptiongroup.attribs.title);
+    selection[title] = getMenuOptionGroupSelections(menuoptiongroup);
   }
   return selection;
 };
 
 const getMenuList = menu => {
-  let children = menu.children;
+  const children = menu.children;
   for(let i = 0; i < children.length; i++){
     let item = children[i];
     if(item.name === "MenuList"){
@@ -571,12 +541,12 @@ const getMenuSelection = menu => {
 };
 
 const makeMenuComponent = (menu, shinyValue) => {
-  let selected = getMenuSelection(menu);
+  const selected = getMenuSelection(menu);
   if(selected === null){
     return ;
   }
   const [value, setValue] = React.useState(selected);
-  let menuoptiongroups = getMenuOptionGroups(getMenuList(menu));
+  const menuoptiongroups = getMenuOptionGroups(getMenuList(menu));
   for(let i = 0; i < menuoptiongroups.length; i++){
     let groupprops = menuoptiongroups[i].attribs;
     let grouptitle = groupprops.title;
@@ -594,7 +564,6 @@ const makeMenuComponent = (menu, shinyValue) => {
   }
 };
 
-//const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 const isEmptyArray = x => (Array.isArray(x) && x.length === 0);
 
@@ -602,9 +571,10 @@ const isNonEmptyArray = x => (Array.isArray(x) && x.length);
 
 const isNotEmpty = x => Object.keys(x).length > 0;
 
+
 const makeCheckboxWithChildren = (div, shinyValue) => {
   let childCheckboxes = JSON.parse(JSON.stringify(div.children[1].children));
-  let n = childCheckboxes.length;
+  const n = childCheckboxes.length;
   let state = [];
   let indices = [];
   for(let i = 0; i < n; i++){
@@ -621,25 +591,6 @@ const makeCheckboxWithChildren = (div, shinyValue) => {
   const checkedState = state.map(x => React.useState(x));
   let inputId = div.attribs.id + ":shinyChakraUI.widget";
   let parentCheckbox = div.children[0];
-  // div.children[0] = <Checkbox
-  //   isChecked = {allChecked}
-  //   isIndeterminate = {isIndeterminate}
-  //   onChange = {(e) => {
-  //     let state = new Array(n);
-  //     let checked = e.target.checked;
-  //     console.log("checked", checked);
-  //     for(let i = 0; i < n; i++){
-  //       state[i] = checked;
-  //       checkedState[i][1](checked);
-  //     }
-  //     console.log("state", state);
-  //     xsetCheckedItems(state);
-  //     Shiny.setInputValue(inputId, {value: state, widget: "checkboxWithChildren"});
-  //   }}
-  //   >
-  //     Parent checkbox
-  //   </Checkbox>
-
   let attribs = parentCheckbox.attribs;
   if(isEmptyArray(attribs)){
     parentCheckbox.attribs = {};
@@ -651,57 +602,28 @@ const makeCheckboxWithChildren = (div, shinyValue) => {
   attribs.onChange = (e) => {
     let state = new Array(n);
     let checked = e.target.checked;
-    console.log("checked", checked);
     for(let i = 0; i < n; i++){
       state[i] = checked;
       checkedState[i][1](checked);
     }
-    console.log("state", state);
     shinyValue.set(div.attribs.id, state);
     xsetCheckedItems(state);
     Shiny.setInputValue(inputId, {value: state, widget: "checkboxWithChildren"});
   };
-  // for(let i = 0; i < n; i++){
-  //   let checkbox = childCheckboxes[i];
-  //   checkbox.attribs.isChecked = xcheckedItems[i];
-  //   checkbox.attribs.onChange = (e) => {
-  //     console.log("i", i);
-  //     xcheckedItems[i] = e.target.checked;
-  //     xsetCheckedItems(xcheckedItems);
-  //     Shiny.setInputValue(inputId, {value: xcheckedItems, widget: "checkboxWithChildren"});
-  //   };
-  // }
-  //const [index, setindex] = React.useState(0);
-  //const isChecked = xcheckedItems[index];
-  //let zipped = zip(childCheckboxes, xcheckedItems);
-  // const [attribs, setattribs] = React.useState(
-  //   ([0,1]).map(i => {
-  //     return {
-
-  //     };
-  //   })
-  // );
-  //childCheckboxes[0].attribs.isChecked = xcheckedItems[0];
   div.children[1].children = [{
     name: "Fragment",
     attribs: {},
     children: indices.map(i => {
-      //setindex(i);
       let [isChecked, setIsChecked] = checkedState[i];
-      //const [isChecked, setIsChecked] = React.useState(xcheckedItems[i]);
       return $.extend(
         childCheckboxes[i], 
         {attribs: $.extend(
           childCheckboxes[i].attribs,
           {
-//            "data-index": i,
-//            "data-checked": xcheckedItems,
             className: "childrenCheckbox",
             isChecked: isChecked,
             onChange: (e) => {
-              //setindex(i);
               setIsChecked(e.target.checked);
-              console.log("i", i);
               xcheckedItems[i] = e.target.checked;
               shinyValue.set(div.attribs.id, xcheckedItems);
               xsetCheckedItems(xcheckedItems);
@@ -713,16 +635,12 @@ const makeCheckboxWithChildren = (div, shinyValue) => {
     })
   }];
   return state;
-  // let code = "setTimeout(function(){Shiny.setInputValue('" + 
-  //   inputId + "', " +   
-  //   JSON.stringify({value: state, widget: "checkboxWithChildren"}) + 
-  //   ")})";
-  // return code;
 };
+
 
 const formatStringToCamelCase = str => {
   const splitted = str.split("-");
-  if (splitted.length === 1) return splitted[0];
+  if(splitted.length === 1) return splitted[0];
   return (
     splitted[0] +
     splitted
@@ -736,7 +654,7 @@ const getStyleObjectFromString = str => {
   const style = {};
   str.split(";").forEach(el => {
     const [property, value] = el.split(":");
-    if (!property) return;
+    if(!property) return;
     const formattedProperty = formatStringToCamelCase(property.trim());
     style[formattedProperty] = value.trim();
   });
@@ -756,6 +674,7 @@ const fixTagAttribs = attribs => {
     delete attribs.for;
   }
 };
+
 
 const isnonnullobject = x => {
   return x !== null && (typeof x === "object");
@@ -784,93 +703,15 @@ const isJSX = x => {
   return isnonnullobject(x) && x.hasOwnProperty("__jsx");
 };
 
-/* const chakraComponent = (component, patch) => {
-  let props = component.attribs;
-  if(Array.isArray(props) && props.length === 0){
-    props = {};
-  }
-  // if(props && typeof props.onchange === "string"){
-  //   props.onChange = eval(decodeURI(props.onchange));
-  // }
-  for(const key in props){
-    let name = props[key].name; 
-    if(name){
-      if(name[0] === name[0].toUpperCase()){
-        props[key] = React.createElement(ChakraComponents[name], props[key].attribs);
-      }else{
-        fixTagAttribs(props[key].attribs);
-        props[key] = React.createElement(name, props[key].attribs);
-      }
-    }
-  }
-  if(component.children !== undefined){
-    let newprops = $.extend(props, patch[component.name]);
-    // if(component.element === "MenuButton"){
-    //   newprops.children = newprops.isActive ? 
-    //     component.children.textWhenOpen : component.children.textWhenClose;
-    // }
-    if(!newprops.hasOwnProperty("children")){
-      newprops.children = component.children.map((x) => {return chakraComponent(x, patch);});
-    }
-    let tag = component.name;
-    if(tag[0] === tag[0].toUpperCase()){
-      return React.createElement(ChakraComponents[tag], newprops);
-    }else{
-      fixTagAttribs(newprops);
-      return React.createElement(tag, newprops);
-    }
-  }else{
-    if(component.name === undefined){
-      if(component.tag){
-        if(typeof component.tag.attribs.style === "string"){
-          component.tag.attribs.style = getStyleObjectFromString(component.tag.attribs.style);
-        }
-        return hydrate({}, component.tag);
-      }
-      if(component.html){
-        return ReactHtmlParser(decodeURI(component.html));
-      }
-      return decodeURI(component);
-    }else{
-      return React.createElement(ChakraComponents[component.name], props);
-    }
-  }
-};
- */
-
 
 function unescapeHtml(html) {
-  var el = document.createElement('div');
-  return html.replace(/\&[#0-9a-z]+;/gi, function (enc) {
+  let el = document.createElement('div');
+  return html.replace(/\&[#0-9a-z]+;/gi, function(enc) {
       el.innerHTML = enc;
-      return el.innerText
+      return el.innerText;
   });
 }
 
-const getArguments = f => {
-  let acornParse = acorn.parse(f).body[0];
-  let params;
-  if(acornParse.expression){
-    params = acornParse.expression.params;
-  }else{
-    params = acornParse.params;
-  }
-  return params.map(x => x.name);
-}; 
-
-console.log("ARGUMENTS", getArguments(unescapeHtml));
-//console.log("ARGUMENTS", getArguments(invalidComponent));
-//console.log("ARGUMENTS", getArguments(() => 0));
-//window.Acorn = acorn;
-
-// const appendDisclosure = (component, disclosure) => {
-//   for(let i = 0; i < component.children.length; i++){
-//     if(isTag(component.children[i])){
-//       component.children[i].disclosure = disclosure;
-//       appendDisclosure(component.children[i], disclosure);
-//     }
-//   }
-// };
 
 const getHookProperty = (states, inputId) => ((hook, key) => {
   if(!states.hasOwnProperty(hook)){
@@ -899,6 +740,7 @@ const setState = (states, inputId) => ((state, value) => {
   states[state].set(value);
 });
 
+
 const Eval = (ev, states, inputId) => {
   const scope = $.extend(Hooks, {
     states: states,
@@ -909,12 +751,9 @@ const Eval = (ev, states, inputId) => {
   const scopeKeys = Object.keys(scope);
   const scopeValues = Object.values(scope);
   const fn = new Function(...scopeKeys, "return " + ev);
-  let x = fn(...scopeValues);
-  console.log("EEEEEVVVVVAAAAAALLLLLL", x);
-  console.log("ev", ev);
-  console.log("states", states);
-  return x;
+  return fn(...scopeValues);
 };
+
 
 const makeState = (x, states, inputId) => {
   if(isJseval(x)){
@@ -934,9 +773,7 @@ const makeState = (x, states, inputId) => {
 };
 
 const appendStates = (component, states, inputId) => {
-
   let attribs = component.attribs;
-
   if(attribs.hasOwnProperty("id") && attribs.shinyAuto !== false){
     const stateName = "chakra" + attribs.id;
     if(component.name === "Input"){
@@ -986,6 +823,7 @@ const appendStates = (component, states, inputId) => {
   }
 };
 
+
 const InvalidTag = ({message}) => {
   const text = `INVALID TAG (${message})`;
   return (
@@ -1031,16 +869,17 @@ const ErrorApp = ({ message, code }) => {
   );
 };
 
+
 const isJSXElement = (ast) => {
-  let body = ast.body;
+  const body = ast.body;
   if(body.length !== 1){
     return false;
   }
-  let node = body[0];
+  const node = body[0];
   if(node.type !== "ExpressionStatement"){
     return false;
   }
-  let expressionType = node.expression.type;
+  const expressionType = node.expression.type;
   if(expressionType !== "JSXElement" && expressionType !== "JSXFragment"){
     return false;
   }
@@ -1060,9 +899,10 @@ function ShinyValue(inputId){
     }
   };
   this.set = (key, v) => {
-    this.add(key, v, true);//Shiny.setInputValue(inputId, $el.data("value"))
+    this.add(key, v, true);
   };
 }
+
 
 const mergeOnClick = (component, funcs, states, inputId) => {
   for(let i = 0; i < component.children.length; i++){
@@ -1087,50 +927,13 @@ const mergeOnClick = (component, funcs, states, inputId) => {
   }
 };
 
-// Object.assign(walk.base, {
-//   JSXAttribute(node, state, callback) {
-//       if (node.value !== null) {
-//           callback(node.value, state);
-//       }
-//   },
-
-//   JSXElement(node, state, callback) {
-//       node.openingElement.attributes.forEach(attribute => {
-//           callback(attribute, state);
-//       });
-//       node.children.forEach(node => {
-//           callback(node, state);
-//       });
-//   },
-
-//   JSXExpressionContainer(node, state, callback) {
-//       callback(node.expression, state);
-//   },
-
-//   JSXFragment(node, state, callback) {
-//       node.children.forEach(node => {
-//           callback(node, state);
-//       });
-//   },
-
-//   JSXSpreadAttribute(node, state, callback) {
-//       callback(node.argument, state);
-//   },
-
-//   JSXText() {}
-// });
-
-// window.WALK = walk;
-// window.ESCODEGEN = escodegen;
-// window.PARSER = acorn.Parser.extend(jsx()).parse;
-// window.BABELPARSER = parse;
-// window.BABELGENERATOR = generate;
 
 const Modules = {
   acorn,
   acornjsx,
   prettier
 };
+
 
 const transformSrc = code => {
   const result = transform(code, {
@@ -1139,12 +942,14 @@ const transformSrc = code => {
   return result.code.replace(/\n/g, "");
 };
 
+
 const throwApp = (inputId, app) => {
-  let root = document.getElementById(inputId);
+  const root = document.getElementById(inputId);
   unmountComponentAtNode(root);
   ReactDOM.render(app, root);
-  throw "";    
+  throw "An error occured!";    
 };
+
 
 const jsxParser = (jsxString, preamble, inputId, states) => {
   jsxString = decodeURI(jsxString);
@@ -1166,10 +971,9 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
         code = err.message;
       }
     }
-    throwApp(inputId, <ErrorApp message={message} code={code}/>);
+    throwApp(inputId, <ErrorApp message={message} code={code} />);
   }
   const transformedCode = transformSrc(jsxString);
-  console.log("transformedCode", transformedCode);
   if(preamble){
     preamble = decodeURI(preamble);
     try {
@@ -1177,7 +981,7 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
     } catch (error) {
       let message = "Error in `jsx()` preamble.";
       let code = error.name + ": " + error.message;
-      throwApp(inputId, <ErrorApp message={message} code={code}/>);
+      throwApp(inputId, <ErrorApp message={message} code={code} />);
     }
   }
   const scope = $.extend(
@@ -1207,18 +1011,12 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
     throwApp(inputId, <ErrorApp message={message} code={code}/>);
   }
   return output;
-  // let x = Function(ChakraTags.join(","), "return " + jsxString)
-  //   .apply(null, ChakraTags.map(tag => ChakraComponents[tag]));
-  // return x; 
 };
 
 
 const chakraComponent = (
   component, shinyValue, states, patch, inputId, radiogroupValues, setRadiogroupValues
 ) => {
-//  console.log("XXXXXXXXXXX");
-  console.log("COMPONENT", component);
-  console.log("states", states);
   if(React.isValidElement(component)){
     return component;
   }
@@ -1226,17 +1024,13 @@ const chakraComponent = (
     return decodeURI(component);
   }
   if(isHTML(component)){
-    console.log("XXXXXXXXXXX");
-    console.log(component.__html);
     return ReactHtmlParser(unescapeHtml(decodeURI(component.__html)));
   }
   if(isJSX(component)){
     return jsxParser(component.__jsx, component.__preamble, inputId, states);
   }
   if(isJseval(component)){
-    let ev = Eval(
-      decodeURI(component.__eval), states, inputId
-    );
+    const ev = Eval(decodeURI(component.__eval), states, inputId);
     if(isHTML(ev)){
       return ReactHtmlParser(unescapeHtml(decodeURI(ev.__html)));
     }
@@ -1252,72 +1046,23 @@ const chakraComponent = (
   if(component === null){
     return ;
   }
-  let tagName = component.name;
+  const tagName = component.name;
   if(isCapitalized(tagName) && !ChakraTags.includes(tagName)){
     throwApp(inputId, <InvalidTag message={`tag '${tagName}'`} />);
   }
-  if(tagName === "input" && component.attribs.id === "ii"){
-    console.log("INPUT", component);
-//    return <ToastExample/>;
-    // const fn = new Function(
-    //   "React, " + ChakraTags.join(","),
-    //   `return ${transformedCode}`
-    // );
-    // return fn.apply(null, [React].concat(ChakraTags.map(tag => ChakraComponents[tag])));
 
-//     let rr = Function("React, " + ChakraTags.join(","), 
-//       `const ___Component = () => (${jsxString}); return React.createElement(___Component)`)
-//       .apply(null, [React].concat(ChakraTags.map(tag => ChakraComponents[tag])));
-//     //let rr = jsxParser("<Button onClick={() => {alert(\"JSX\")}}>JSX</Button>");
-//     console.log("rr", rr);
-//     return rr;
-//     let r = <JsxParser
-//       components={ChakraComponents}
-//       jsx={`
-//     <Button onClick={() => {alert("JSX")}}>JSX</Button>
-//         `}
-//     />;
-//     //return r;
-//     console.log("JSXPARSER", r);
-//     console.log("BABELPARSER", 
-//       parse("<Button onClick={() => {alert(\"JSX\")}}>JSX</Button>", {plugins: ["jsx"]}));
-//     let JSX = acorn.Parser.extend(jsx()).parse("my(<jsx/>, '<Button onClick={() => {alert(\"JSX\")}}>JSX</Button>');");
-//     console.log("JSX", JSX);
-//     let JSX2 = acorn.Parser.extend(jsx()).parse("<Button onClick={() => {alert(\"JSX\")}}>JSX</Button>");
-// console.log("JSX2", JSX2);
-// let w = walk.simple(JSX2, {
-//       CallExpression: (node) => {
-//           console.log("NODE", node);
-//       }
-//   }, walk.base);
-//   console.log(w);
-//   //console.log("ESCODEGEN", escodegen.generate(JSX2, {parse: acorn.Parser.extend(jsx()).parse}));
-//     throw "";
-  }
-  let States = {};
+//  let States = {};
   if(component.statesGroup && states.done !== true){
     states = JSON.parse(decodeURI(component.states));
-    states.chakraState = {};
-    for(let key in states){
+//    states.chakraState = {};
+    for(const key in states){
       states[key] = makeState(states[key], states, inputId);
-      console.log("states[key]", states[key]);
     }
     appendStates(component, states, inputId);
-    console.log("states", states);
-    // for(let key in states){
-    //   if(states[key].get && states[key].get().get) states[key].get = states[key].get().get;
-    // }
     let statesGroup = component.statesGroup;
     delete component.statesGroup;
     //states.done = true;
     Shiny.addCustomMessageHandler(statesGroup, function(x){
-      // if(states[x.state] === undefined){
-      //   let root = document.getElementById(inputId);
-      //   unmountComponentAtNode(root);
-      //   let app = <InvalidState message={`Invalid state '${x.state}'.`}/>;
-      //   ReactDOM.render(app, root);
-      //   throw "";
-      // }
       let bind = false;
       if(x.type === "html"){
         x.value = ReactHtmlParser(decodeURI(x.value));
@@ -1335,19 +1080,9 @@ const chakraComponent = (
       states[x.state].set(x.value);
       if(bind) Shiny.bindAll();
     });
-//    States[component.statesGroup] = states;
     component.hasStates = true;
   }
-  // if(component.withDisclosure){
-  //   delete component.withDisclosure;
-  //   const disclosure = useDisclosure();
-  //   appendDisclosure(component, disclosure);
-  //   // for(let i = 0; i < component.children.length; i++){
-  //   //   if(isTag(component.children[i])){
-  //   //     component.children[i].disclosure = disclosure;
-  //   //   }
-  //   // }
-  // }
+
   let props = component.attribs;
   if(isEmptyArray(props)){
     props = {};
@@ -1356,37 +1091,18 @@ const chakraComponent = (
     if(typeof props[key] === "string"){
       props[key] = decodeURI(props[key]);
     }else if(isJseval(props[key])){
-      // ReactDOM.render(<InvalidState/>, document.getElementById("invalidstate"));
-      // throw "" ;
-      //let disclosure = component.disclosure; 
       props[key] = Eval(decodeURI(props[key].__eval), states, inputId);
     }else if(isJSX(props[key])){
       props[key] = jsxParser(props[key].__jsx, props[key].__preamble, inputId, states);
     }
   }
-  // if(component.disclosure){
-  //   for(const key in props){
-  //     if(typeof props[key] === "object" && props[key].disclosure){
-  //       props[key] = component.disclosure[props[key].disclosure];
-  //     }
-  //   }  
-  // }
-  // if(props.title){
-  //   props.title = decodeURI(props.title);
-  // }
-  // if(typeof props.value === "string"){
-  //   props.value = decodeURI(props.value);
-  // }
-  // if(typeof props["data-val"] === "string"){
-  //   props["data-val"] = decodeURI(props["data-val"]);
-  // }
-  // if(typeof props.onClick === "string"){
-  //   props.onClick = eval(decodeURI(props.onClick));
-  // }
   if(typeof props.onClick === "string"){
     props.onClick = Eval(props.onClick, states, inputId);
   }
-  if(component.widget === "alertdialog"){
+
+  if( //////////////////////////////// WIDGET ALERTDIALOG
+    component.widget === "alertdialog"
+  ){ 
     delete component.widget;
     shinyValue.add(props.id, null);
     const [isOpen, setIsOpen] = React.useState(false);
@@ -1435,70 +1151,18 @@ const chakraComponent = (
     };
     mergeOnClick(component, funcs, states, inputId);
     patch = {
-      // Button: {
-      //   onClick: onCloseButton
-      // },
       OpenButton: {
-        // onClick: () => {setIsOpen(true);},
         isDisabled: disabled
       },
-      // DisableButton: {
-      //   onClick: (e) => {
-      //     setShinyValue(e.currentTarget.dataset.val);
-      //     setDisabled(true);
-      //     setIsOpen(false);
-      //   }
-      // },
       CancelButton: {
         ref: cancelRef
-        // onClick: onCloseButton
       },
-      // RemoveButton: {
-      //   onClick: (e) => {
-      //     setShinyValue(e.currentTarget.dataset.val);
-      //     setIsOpen(false);
-      //     $("#" + props.id).remove();
-      //   }
-      // },
-      // UnmountingButton: {
-      //   onClick: (e) => {
-      //     let value = e.currentTarget.dataset.val;
-      //     if(value) setShinyValue(decodeURI(value));
-      //     unmountComponentAtNode(document.getElementById(props.id));
-      //   }
-      // },
-      // IconButton: {
-      //   onClick: onCloseButton
-      // },
       OpenIconButton: {
-        // onClick: () => {setIsOpen(true);},
         isDisabled: disabled
       },
-      // DisableIconButton: {
-      //   onClick: (e) => {
-      //     setShinyValue(e.currentTarget.dataset.val);
-      //     setDisabled(true);
-      //     setIsOpen(false);
-      //   }
-      // },
       CancelIconButton: {
         ref: cancelRef
-        // onClick: onCloseButton
       },
-      // RemoveIconButton: {
-      //   onClick: (e) => {
-      //     setShinyValue(e.currentTarget.dataset.val);
-      //     setIsOpen(false);
-      //     $("#" + props.id).remove();
-      //   }
-      // },
-      // UnmountingIconButton: {
-      //   onClick: (e) => {
-      //     let value = e.currentTarget.dataset.val;
-      //     if(value) setShinyValue(decodeURI(value));
-      //     unmountComponentAtNode(document.getElementById(props.id));
-      //   }
-      // },
       AlertDialog: {
         isOpen: isOpen,
         leastDestructiveRef: cancelRef,
@@ -1506,7 +1170,9 @@ const chakraComponent = (
         onEsc: () => {setShinyValue("esc");}
       }
     };
-  }else if(component.widget === "drawer"){
+  }else if( //////////////////////////// WIDGET DRAWER
+    component.widget === "drawer"
+  ){ 
     delete component.widget;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const btnRef = React.useRef();
@@ -1527,27 +1193,16 @@ const chakraComponent = (
     patch = {
       OpenButton: {
         ref: btnRef
-        // onClick: onOpen
       },
       Drawer: {
         isOpen: isOpen,
         onClose: onClose,
         finalFocusRef: btnRef
       }
-      // ClosingButton: {
-      //   onClick: onClose
-      // },
-      // Button: {
-      //   onClick: (e) => {
-      //     let value = e.currentTarget.dataset.val;
-      //     if(value !== undefined){
-      //       setShinyValue(value);
-      //       shinyValue.set(props.id, value);
-      //     }
-      //   }
-      // }
     };  
-  }else if(component.widget === "modal"){
+  }else if( //////////////////////////////// WIDGET MODAL
+    component.widget === "modal"
+  ){
     delete component.widget;
     const { isOpen, onOpen, onClose } = useDisclosure({defaultIsOpen: component.isOpen});
     shinyValue.add(props.id, null);
@@ -1611,30 +1266,25 @@ const chakraComponent = (
         onClose: onClose
       }
     };  
-  }else if(component.name === "Menu" && component.process !== false){
+  }else if( ////////////////////////////////////////////// COMPONENT MENU
+    component.name === "Menu" && component.process !== false
+  ){ 
     component.process = false;
     let selected = getMenuSelection(component);
     if(selected){
       shinyValue.add(props.id, selected);
       selected = JSON.stringify(selected);
       makeMenuComponent(component, shinyValue);
-      // let code = "setTimeout(function(){Shiny.setInputValue('" + 
-      //   component.attribs.id + 
-      //   ":shinyChakraUI.widget', {value: " + 
-      //   JSON.stringify(selected) + 
-      //   ", widget: 'menuWithGroups'})})";
-      let menubutton = component.children[0];
+      const menubutton = component.children[0];
       patch.MenuButton = {
         as: menubutton.attribs.icon ? IconButton : Button
       };
-      // let id = props.id;
-      // delete props.id;
       if(menubutton.attribs.text){
         let buttonprops = menubutton.attribs;
-        let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
-        let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
+        const textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
+        const textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
-        let menulist = chakraComponent(component.children[1], shinyValue, {}, {}, inputId);
+        const menulist = chakraComponent(component.children[1], shinyValue, {}, {}, inputId);
         component = {
           name: "div",
           attribs: {
@@ -1670,39 +1320,25 @@ const chakraComponent = (
         };
       }
       props = component.attribs;
-      // component = {
-      //   name: "Fragment",
-      //   attribs: {},
-      //   children: [
-      //     component,
-      //     <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
-      //   ]
-      // };
     }else{
       shinyValue.add(props.id, null);
-      let funcs = {
+      const funcs = {
         MenuItem: (e) => {
           shinyValue.set(props.id, e.currentTarget.dataset.val);
           Shiny.setInputValue(props.id, e.currentTarget.dataset.val);
         }
       };
       mergeOnClick(component, funcs, states, inputId);
-      // patch = $.extend(patch, {MenuItem: {
-      //   onClick: (e) => {
-      //     shinyValue.set(props.id, e.currentTarget.dataset.val);
-      //     Shiny.setInputValue(props.id, e.currentTarget.dataset.val);
-      //   }
-      // }});
-      let menubutton = component.children[0];
+      const menubutton = component.children[0];
       patch.MenuButton = {
         as: menubutton.attribs.icon ? IconButton : Button
       };
       if(menubutton.attribs.text){
         let buttonprops = menubutton.attribs;
-        let textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
-        let textWhenClose = decodeURI(buttonprops.text.textWhenClose);
+        const textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
+        const textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
-        let menulist = chakraComponent(component.children[1], shinyValue, {}, patch, inputId);
+        const menulist = chakraComponent(component.children[1], shinyValue, {}, patch, inputId);
         component = 
             <Menu {...props}>
               {({ isOpen }) => (
@@ -1717,7 +1353,9 @@ const chakraComponent = (
         return component;  
       }
     }
-  }else if(component.name === "Popover" && props.hasOwnProperty("id")){
+  }else if( ///////////////////////////////////////////// COMPONENT POPOVER
+    component.name === "Popover" && props.hasOwnProperty("id")
+  ){ 
     props.className = "chakraShiny";
     props["data-shinyinitvalue"] = JSON.stringify(null);
     shinyValue.add(props.id, null);
@@ -1732,17 +1370,14 @@ const chakraComponent = (
       IconButton: (e) => {setShinyValue(e.currentTarget.dataset.val)}
     };
     mergeOnClick(component, funcs, states, inputId);
-    // patch = {
-    //   Button: {
-    //     onClick: (e) => {
-    //       setShinyValue(e.currentTarget.dataset.val);
-    //     }
-    //   }
-    // };  
-  }else if(component.name === "PopoverTrigger"){
+  }else if( //////////////////////////////// COMPONENT POPOVERTRIGGER
+    component.name === "PopoverTrigger"
+  ){ 
     const child = chakraComponent(component.children[0], shinyValue, {}, {}, inputId);
     return <PopoverTrigger>{child}</PopoverTrigger>;
-  }else if(component.name === "Tabs" && props.hasOwnProperty("id")){
+  }else if( /////////////////////////////////////////// COMPONENT TABS
+    component.name === "Tabs" && props.hasOwnProperty("id")
+  ){ 
     const defaultIndex = props.defaultIndex ? props.defaultIndex : 0;
     shinyValue.add(props.id, defaultIndex);
     props.onChange = index => {
@@ -1751,22 +1386,16 @@ const chakraComponent = (
     };
     props.className = "chakraShiny";
     props["data-shinyinitvalue"] = defaultIndex;
-  }else if(props.class === "checkboxWithChildren"){
+  }else if( ////////////////////////// CHECKBOXWITHCHILDREN
+    props.class === "checkboxWithChildren"
+  ){ 
     const state = makeCheckboxWithChildren(component, shinyValue);
     shinyValue.add(props.id, state);
     props.className = "chakraShiny";
     delete props.class;
     props["data-shinyinitvalue"] = JSON.stringify(state);
     props["data-widget"] = "checkboxWithChildren";
-    // component = {
-    //   name: "Fragment",
-    //   attribs: {},
-    //   children: [
-    //     component,
-    //     <ScriptTag dangerouslySetInnerHTML={{__html: code}}/>
-    //   ]
-    // };
-  }else if(
+  }else if( //////////////////////// COMPONENT NUMBERINPUT
     component.name === "NumberInput" && 
     component.parent !== "combinedslider" &&
     //props.shinyAuto !== false && 
@@ -1774,7 +1403,6 @@ const chakraComponent = (
   ){
     if(isNotEmpty(states) && states.hasOwnProperty("chakra" + props.id)){
       const chakraState = states["chakra" + props.id];
-      //props["data-shinyinitvalue"] = chakraState.get();
       const getter = () => {
         let value = chakraState.get();
         if(Shiny.shinyapp.isConnected()){
@@ -1797,13 +1425,13 @@ const chakraComponent = (
         f(valueAsString, valueAsNumber);
       };
     }
-  }else if(
+  }else if( /////////////////////// COMPONENT SWITCH
     component.name === "Switch" && 
     //props.shinyAuto !== false && 
     props.hasOwnProperty("id")
   ){
     if(typeof props.isChecked !== "object"){
-      if(props.defaultChecked === undefined){
+      if(!props.hasOwnProperty("defaultChecked")){
         props.defaultChecked = props.isChecked === true;
       }
       delete props.isChecked;
@@ -1818,7 +1446,7 @@ const chakraComponent = (
         props.onChange = event => shinyValue.set(props.id, event.target.checked)
       }
     }
-  }else if(
+  }else if( ///////////////////////// COMPONENT CHECKBOX
     component.name === "Checkbox" && 
     //props.shinyAuto !== false && 
     !component.dontprocess &&
@@ -1831,8 +1459,6 @@ const chakraComponent = (
       }
       delete props.isChecked;
       shinyValue.add(props.id, props.defaultChecked, component.force);
-      //Shiny.setInputValue("id", 1, {priority: "event"});
-      //shinyValue.set(props.id, props.defaultChecked);
       const f = props.onChange;
       if(f){
         props.onChange = event => {
@@ -1843,37 +1469,9 @@ const chakraComponent = (
         props.onChange = event => shinyValue.set(props.id, event.target.checked)
       }
     }
-    // let reactState;
-    // if(states){
-    //   let chakraState = states["chakra" + props.id];
-    //   reactState = [chakraState.get(), chakraState.set];
-    // }else{
-    //   reactState = React.useState(props.isChecked === true);
-    // }
-    // const [isChecked, setChecked] = reactState;
-    // let onChange = null;
-    // if(props.onChange){
-    //   let f = props.onChange;
-    //   onChange = event => {
-    //     //alert(event.target.checked);
-    //     //console.log("EEEEEEEEEVVVVVVVVENT",event);
-    //     setChecked(event.target.checked);
-    //     Shiny.setInputValue(props.id, event.target.checked);
-    //     f(event);
-    //   };
-    // }else{
-    //   onChange = event => {
-    //     setChecked(event.target.checked);
-    //     Shiny.setInputValue(props.id, event.target.checked);
-    //   };
-    // }
-    // props = $.extend(props, 
-    //   {
-    //     isChecked: isChecked,
-    //     onChange: onChange
-    //   }
-    // );
-  }else if(component.name === "CheckboxGroup" && component.processed !== true){
+  }else if( ////////////////////////////////// COMPONENT CHECKBOXGROUP
+    component.name === "CheckboxGroup" && component.processed !== true
+  ){
     component.processed = true;
     let divattrs = {id: props.id};
     if(props.hasOwnProperty("defaultValue")){
@@ -1894,7 +1492,9 @@ const chakraComponent = (
       children: [component]
     };
     props = divattrs;
-  }else if(component.name === "RadioGroup"){
+  }else if( //////////////////// COMPONENT RADIOGROUP
+    component.name === "RadioGroup"
+  ){
     shinyValue.add(props.id, radiogroupValues[props.id]);
     props = $.extend(props, 
       {
@@ -1916,10 +1516,12 @@ const chakraComponent = (
         "data-shinyinitvalue": radiogroupValues[props.id]
       }
     );
-  }else if(component.name === "ScriptTag" && component.decoded !== true){
+  }else if( /////////////////////////////// COMPONENT SCRIPTTAG
+    component.name === "ScriptTag" && component.decoded !== true
+  ){
     props.dangerouslySetInnerHTML.__html = decodeURI(props.dangerouslySetInnerHTML.__html);
     component.decoded = true;
-  }else if(
+  }else if( ///////////////////////////////////// COMPONENT EDITABLE
     component.name === "Editable" && props.hasOwnProperty("id") && props.shinyAuto !== false
   ){
     const defaultValue = props.hasOwnProperty("defaultValue") ? props.defaultValue : "";
@@ -1939,7 +1541,7 @@ const chakraComponent = (
       f(val);
     };
     props.onCancel = onChange_onCancel;
-  }else if(
+  }else if( ////////////////////////////////// COMPONENT INPUT
     component.name === "Input" && props.hasOwnProperty("id") && props.shinyAuto !== false
   ){
     props.className = "chakraShiny";
@@ -1978,7 +1580,9 @@ const chakraComponent = (
         };
       }  
     }
-  }else if(component.widget === "slider"){
+  }else if( ///////////////////////// WIDGET SLIDER
+    component.widget === "slider"
+  ){
     let slider = component.children[component.children.length - 1];
     const defaultValue = slider.attribs.defaultValue;
     //props.class = "chakraShiny";
@@ -2017,7 +1621,9 @@ const chakraComponent = (
         setSliderValue(val);
       };
     }
-  }else if(component.widget === "combinedslider"){
+  }else if( ////////////////////// WIDGET COMBINEDSLIDER
+    component.widget === "combinedslider"
+  ){
     let numberinput = component.children[0].children[0];
     let slider = component.children[0].children[1];
     const defaultValue = component.value;
@@ -2045,7 +1651,7 @@ const chakraComponent = (
       setSliderValue(valNumber);
     };
   }
-  /* --- */
+  /* -------------------------------------------------------- */
   for(const key in props){
     if(isTag(props[key])){
       const name = props[key].name; 
@@ -2084,7 +1690,6 @@ const chakraComponent = (
         component.children[i] = chakraComponent(
           component.children[i], shinyValue, x, patch, inputId, radiogroupValues, setRadiogroupValues
         );
-        // component.children[i] = cc; 
         // newpropsChildren[i] = chakraComponent(
         //   component.children[i], x, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
         // );
@@ -2098,21 +1703,7 @@ const chakraComponent = (
       // });
   }
   const tag = component.name;
-  if(tag === "input"){
-    console.log("IIIIIINPuT", component);
-  }
   if(isCapitalized(tag)){
-    if(tag === "ScriptTag"){
-      console.log(component);
-      console.log(newprops);
-    }
-    // if(newprops.id === "uuuuu"){
-    //   alert(JSON.stringify(component));
-    //   alert(JSON.stringify(newprops));
-    // }
-    // if(tag === "PopoverTrigger"){
-    //   return React.createElement(ChakraComponents[tag], {children: component.children});
-    // }
     if(isNonEmptyArray(component.children)){
       return React.createElement(ChakraComponents[tag], newprops, component.children);
     }else{
@@ -2128,234 +1719,6 @@ const chakraComponent = (
   }
 };
 
-// const ChakraAlert = ({component}) => {
-//    return (
-//     <ChakraProvider>
-//       {chakraComponent(component, {})}
-//     </ChakraProvider>
-//   );
-//  };
-
-// const ChakraAlertDialog = ({component, setShinyValue, inputId}) => {
-//   const [isOpen, setIsOpen] = React.useState(false);
-//   const [disabled, setDisabled] = React.useState(false);
-//   const onClose = () => {
-//     setIsOpen(false);
-//   };
-//   const onCloseButton = (e) => {
-//     setShinyValue(decodeURI(e.currentTarget.dataset.val));
-//     setIsOpen(false);
-//   };
-//   const cancelRef = React.useRef();
-//   const patch = {
-//     Button: {
-//       onClick: onCloseButton
-//     },
-//     OpenButton: {
-//       onClick: () => {setIsOpen(true);},
-//       isDisabled: disabled
-//     },
-//     DisableButton: {
-//       onClick: (e) => {
-//         setShinyValue(decodeURI(e.currentTarget.dataset.val));
-//         setDisabled(true);
-//         setIsOpen(false);
-//       }
-//     },
-//     CancelButton: {
-//       ref: cancelRef,
-//       onClick: onCloseButton
-//     },
-//     UnmountingButton: {
-//       onClick: (e) => {
-//         setShinyValue(decodeURI(e.currentTarget.dataset.val));
-//         unmountComponentAtNode(document.getElementById(inputId));
-//       }
-//     },
-//     IconButton: {
-//       onClick: onCloseButton
-//     },
-//     OpenIconButton: {
-//       onClick: () => {setIsOpen(true);},
-//       isDisabled: disabled
-//     },
-//     DisableIconButton: {
-//       onClick: (e) => {
-//         setShinyValue(decodeURI(e.currentTarget.dataset.val));
-//         setDisabled(true);
-//         setIsOpen(false);
-//       }
-//     },
-//     CancelIconButton: {
-//       ref: cancelRef,
-//       onClick: onCloseButton
-//     },
-//     UnmountingIconButton: {
-//       onClick: (e) => {
-//         setShinyValue(decodeURI(e.currentTarget.dataset.val));
-//         unmountComponentAtNode(document.getElementById(inputId));
-//       }
-//     },
-//     AlertDialog: {
-//       isOpen: isOpen,
-//       leastDestructiveRef: cancelRef,
-//       onClose: onClose,
-//       onEsc: () => {setShinyValue("esc");}
-//     }
-//   };
-//   return (
-//     <ChakraProvider>
-//       {chakraComponent(component, patch)}
-//     </ChakraProvider>
-//   );
-// };
-
-// const ChakraMenu = ({component, text, closeOnSelect, selected, optiongroups, setShinyValue}) => {
-//   if(optiongroups){
-//     const [value, setValue] = React.useState(selected);
-//     let menulist = component.children[1].children;
-//     for(let i = 0; i < optiongroups.length; i++){
-//       let groupprops = menulist[optiongroups[i]].attribs;
-//       let grouptitle = groupprops.title;
-//       groupprops.onChange = (selection) => {
-//         value[grouptitle] = Array.isArray(selection) ? selection.map(decodeURI) : decodeURI(selection);
-//         setValue(value);
-//         setShinyValue(value);
-//       };
-//     }
-//   }
-//   if(text){
-//     let buttonprops = component.children[0].attribs;
-//     component = component.children[1];
-//     let textWhenOpen = decodeURI(text.textWhenOpen);
-//     let textWhenClose = decodeURI(text.textWhenClose);
-//     const patch = {
-//       // MenuButton: {
-//       //   as: Button,
-//       //   isActive: isOpen,
-//       //   children: [isOpen ? textWhenOpen : textWhenClose]
-//       // },
-//       MenuItem: {
-//         onClick: (e) => {
-//           setShinyValue(decodeURI(e.currentTarget.dataset.val));
-//         }
-//       }
-//     };
-//     return (
-//       <ChakraProvider>
-//         <Menu closeOnSelect={closeOnSelect}>
-//           {({ isOpen }) => (
-//             <React.Fragment>
-//               <MenuButton isActive={isOpen} as={Button} {...buttonprops}>
-//                 {isOpen ? textWhenOpen : textWhenClose}
-//               </MenuButton>
-//               {chakraComponent(component, patch)}
-//             </React.Fragment>
-//           )}
-//         </Menu>
-//       </ChakraProvider>
-//     );  
-//   }else{
-//     const patch = {
-//       MenuButton: {
-//         as: Button
-//       },
-//       MenuItem: {
-//         onClick: (e) => {
-//           setShinyValue(decodeURI(e.currentTarget.dataset.val));
-//         }
-//       }
-//     };
-//     return (
-//       <ChakraProvider>
-//         <Menu closeOnSelect={closeOnSelect}>
-//           {chakraComponent(component, patch)}
-//         </Menu>
-//       </ChakraProvider>
-//     );  
-//   }
-// };
-
-// const ChakraDrawer = ({component, setShinyValue}) => {
-// //  const [isOpen, setOpen] = React.useState(false);
-//   const { isOpen, onOpen, onClose } = useDisclosure();
-//   const btnRef = React.useRef();
-//   const patch = {
-//     OpenButton: {
-//       ref: btnRef,
-//       onClick: onOpen
-//     },
-//     Drawer: {
-//       isOpen: isOpen,
-//       onClose: onClose,
-//       finalFocusRef: btnRef
-//     },
-//     CloseButton: {
-//       onClick: onClose
-//     },
-//     Button: {
-//       onClick: (e) => {
-//         setShinyValue(decodeURI(e.currentTarget.dataset.val));
-//       }
-//     }
-//   };
-//   return (
-//     <ChakraProvider>
-//       {chakraComponent(component, patch)}
-//     </ChakraProvider>
-//   );
-// };
-
-// const ChakraInput = ({ configuration, value, setValue }) => {
-//   let widget = configuration.widget;
-//   const setShinyValue = (value) => { setValue({value: value, widget: widget}); };
-//   value = value.value;
-//   switch(widget) {
-//     case "alert":
-//       return <ChakraAlert component={configuration.component}/>;
-//     break;
-//     case "alertdialog":
-//       return (
-//         <ChakraAlertDialog 
-//           component={configuration.component} 
-//           setShinyValue={setShinyValue} 
-//           inputId={configuration.inputId}
-//         />
-//       );
-//     break;
-//     case "menu":
-//       return (
-//         <ChakraMenu 
-//           component={configuration.component} 
-//           text={configuration.text}
-//           closeOnSelect={configuration.closeOnSelect} 
-//           setShinyValue={setShinyValue} 
-//         />
-//       );
-//     break;
-//     case "menuWithGroups":
-//       return (
-//         <ChakraMenu 
-//           component={configuration.component} 
-//           text={configuration.text}
-//           closeOnSelect={configuration.closeOnSelect} 
-//           selected={value}
-//           optiongroups={configuration.optiongroups}
-//           setShinyValue={setShinyValue} 
-//         />
-//       );
-//     break;
-//     case "drawer":
-//       console.log(JSON.stringify(configuration.component));
-//       return (
-//         <ChakraDrawer
-//           component={configuration.component}
-//           setShinyValue={setShinyValue}
-//         />
-//       );
-//     break;
-//   }
-// };
 
 const Hooks = {
   useDisclosure,
@@ -2366,57 +1729,13 @@ const Hooks = {
   useBoolean
 };
 
+
 const ChakraComponent = ({ configuration, value, setValue }) => {
-  console.log("DOCBODY - ChakraComponent", JSON.stringify(document.body));
 
   let patch = {
-    // MenuButton: {
-    //   as: Button
-    // },
     process: true
   };
-  // states
-  // let states = configuration.states;
-  // if(states){
-  //   states = JSON.parse(decodeURI(states));
-  //   for(let key in states){
-  //     if(typeof states[key] === "object" && states[key].eval){
-  //       states[key] = eval(states[key].eval);
-  //     }else{
-  //       let [state, setState] = React.useState(states[key]);
-  //       states[key] = {get: () => state, set: setState};
-  //     }
-  //   }
-  //   Shiny.addCustomMessageHandler("setState_" + configuration.inputId, function(x){
-  //     let bind = false;
-  //     if(typeof x.value === "object"){
-  //       if(x.value.html){
-  //         x.value = ReactHtmlParser(x.value.html);
-  //         bind = true;
-  //       }else if(x.value.react){
-  //         x.value = chakraComponent(JSON.parse(JSON.stringify(x.value.react)), states, {});
-  //         bind = true;
-  //       }
-  //     }
-  //     states[x.state].set(x.value);
-  //     if(bind) Shiny.bindAll();
-  //   });
-  // }
-  // Checkbox elements
-  // const [checkedItems, setCheckedItems] = React.useState(configuration.Checkboxes);
-  // const checkboxOnChange = (e) => {
-  //   let obj = {};
-  //   for(let key in checkedItems){
-  //     if(key === e.currentTarget.id){
-  //       obj[key] = e.target.checked;
-  //     }else{
-  //       obj[key] = checkedItems[key];
-  //     }
-  //   }
-  //   setCheckedItems(obj);
-  //   Shiny.setInputValue(e.currentTarget.id, e.target.checked);    
-  // };
-  // RadioGroup
+
   let RadioGroups = configuration.RadioGroups; 
   if(RadioGroups){
     RadioGroups = Object.fromEntries(
@@ -2424,57 +1743,24 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
     );
   }
   const [radiogroupValues, setRadiogroupValues] = React.useState(RadioGroups);
+ 
   let shinyValue = new ShinyValue(configuration.inputId);
-  //setValue("xxx");
-  //$("#id").addClass("chakraShiny");
+
   return (
-    // <ChakraProvider>
-    // {
-      chakraComponent(
-        JSON.parse(JSON.stringify(configuration.component)),
-        shinyValue,
-        {},
-        patch,
-        configuration.inputId,
-        // null,//checkedItems,
-        // null,//checkboxOnChange,
-        radiogroupValues,
-        setRadiogroupValues
-      )
-    // }
-    // </ChakraProvider>
+    chakraComponent(
+      JSON.parse(JSON.stringify(configuration.component)),
+      shinyValue,
+      {},
+      patch,
+      configuration.inputId,
+      radiogroupValues,
+      setRadiogroupValues
+    )
   );
 };
 
 
-// const App = () => {
-//   console.log("APP");
-//   const [value, setValue] = React.useState("OOOOOOOOOOOOO");
-//   return (
-//     <ChakraProvider>
-//       <Input value={value} onChange={(event) => setValue(event.target.value)}/>
-//     </ChakraProvider>
-//   );
-// };
-
-// window.app = <App/>;
-
-// //ReactDOM.render(<App/>, window.app);
-
-// window.ChakraComponent = ChakraComponent;
-
-var chakraBinding = new Shiny.InputBinding();
-
-// setTimeout(function(){
-//   const el = document.getElementById("id");
-//   console.log(el);
-//   $(el).data("configuration", JSON.parse($(el).next().next().text()));
-//   const element = React.createElement(ChakraComponent, {
-//     configuration: $(el).data("configuration")
-//   });
-//   ReactDOM.render(element, el);  
-// });
-
+let chakraBinding = new Shiny.InputBinding();
 $.extend(chakraBinding, {
   find: function (scope) {
     return $(scope).find(".chakraShiny");
@@ -2497,16 +1783,10 @@ $.extend(chakraBinding, {
     // });
   },
   unsubscribe: function (el) {
-    // $(el).off(".chakradBinding");
+    // $(el).off(".chakraBinding");
   },
   receiveMessage: function (el, data) {
-    // if (data.hasOwnProperty('value'))
-    //     this.setValue(el, data.value);
-    // if (data.hasOwnProperty('label'))
-    //     $(el).parent().parent().find("[id$=xylabel]").text(data.label);
-    // if (data.hasOwnProperty('options'))
-    //     $(el).data('setOptions')(data.options);
-    // $(el).trigger('change');
+
   },
   getRatePolicy: function () {
     return {
@@ -2518,7 +1798,6 @@ $.extend(chakraBinding, {
     console.log("INITIALIZE", el);
   }
 });
-
 Shiny.inputBindings.register(chakraBinding);
 
 

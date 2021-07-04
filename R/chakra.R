@@ -12,6 +12,7 @@
 #'
 #' @export
 #' @importFrom utils URLencode
+#' @seealso \code{\link{withStates}}
 #'
 #' @examples
 #' library(shiny)
@@ -191,8 +192,6 @@ setReactState <- function(session, componentId, stateName, value){
 #'   shinyApp(ui, server)
 #' }
 withStates <- function(component, states){
-  #print(ls(sys.frame(-1)))
-  #print(lapply(sys.frames(),ls))
   stopifnot(isNamedList(states))
   forbiddenTypes <- ForbiddenTypes()
   Rstates <- Filter(function(s){
@@ -211,17 +210,9 @@ withStates <- function(component, states){
   if(component[["name"]] == "Menu"){
     component <- Tag$Fragment(component)
   }
-  # component[["states"]] <-
-  #   URLencode(as.character(toJSON(states, auto_unbox = TRUE)))
   statesGroup <- paste0("setState_", randomString(15L))
   component[["statesGroup"]] <- statesGroup
   component[["states"]] <- states
-  # for(state in names(states)){
-  #   s <- states[[state]]
-  #   if(!(is.list(s) && identical(names(s), "eval"))){
-  #     assign(state, statesGroup, envir = statesEnvir)
-  #   }
-  # }
   component
 }
 
@@ -273,19 +264,6 @@ chakraComponent <- function(componentId, ...){
       call. = TRUE
     )
   }
-  # states <- ls(statesEnvir)
-  # usedStates <- ls(usedStatesEnvir)
-  # for(usedState in usedStates){
-  #   if(!is.element(usedState, states)){
-  #     rm(list = states, envir = statesEnvir)
-  #     rm(list = usedStates, envir = usedStatesEnvir)
-  #     stop(
-  #       sprintf("Unknown state '%s'.", usedState),
-  #       call. = FALSE
-  #     )
-  #   }
-  # }
-  # rm(list = usedStates, envir = usedStatesEnvir)
   configuration <- unclassComponent(
     Tag$ChakraProvider(do.call(Tag$Fragment, component)),
     componentId,
@@ -298,20 +276,8 @@ chakraComponent <- function(componentId, ...){
     )
   }
   dependencies <- configuration[["dependencies"]]
-  # dependencies <- c(
-  #   dependencies,
-  #   list(htmlDependency(
-  #     name = "chakraBinding",
-  #     version = "1.0.0",
-  #     src = "www/bindings",
-  #     script = "chakraBindings.js",
-  #     package = "shinyChakraUI"
-  #   ))
-  # )
   configuration[["dependencies"]] <- NULL
   configuration[["inputId"]] <- componentId
-  # configuration[["states"]] <-
-  #   URLencode(as.character(toJSON(configuration[["states"]], auto_unbox = TRUE)))
   attachDependencies(createReactShinyInput(
     inputId = componentId,
     class = "chakracomponent",
@@ -430,4 +396,3 @@ chakraIcons <- function(){
     "WarningTwoIcon"
   )
 }
-

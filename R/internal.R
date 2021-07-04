@@ -76,8 +76,6 @@ randomString <- function(size){
 
 statesEnvir <- new.env()
 
-usedStatesEnvir <- new.env()
-
 dropNulls <- function(x){
   Filter(Negate(is.null), x)
 }
@@ -92,13 +90,11 @@ isUnnamedList <- function(x){
 }
 
 isChakraBox <- function(x){
-  inherits(x, "box") || x[["name"]] == "Box"
+  isShinyTag(x) && x[["name"]] == "Box"
 }
 
 isChakraButton <- function(x){
-  inherits(x, "button") ||
-    identical(x[["name"]], "Button") ||
-    identical(x[["name"]], "IconButton")
+  isShinyTag(x) && (x[["name"]] %in% c("Button", "IconButton"))
 }
 
 isChakraIcon <- function(x){
@@ -107,28 +103,27 @@ isChakraIcon <- function(x){
 }
 
 isChakraCheckbox <- function(x){
-  inherits(x, "shiny.tag") && x[["name"]] == "Checkbox"
+  isShinyTag(x) && x[["name"]] == "Checkbox"
 }
 
 isReactComponent <- function(x){
   inherits(x, "ReactTag")
 }
 
-encode <- function(x){
-  if(inherits(x, "shiny.tag")){
-    list(x)
-  }else if(inherits(x, "html")){
-    list(list("__html" = URLencode(as.character(x))))
-  }else if(is.list(x) && is.null(names(x))){
-    x
-  }else{
-    list(x)
-  }
-}
+# encode <- function(x){
+#   if(inherits(x, "shiny.tag")){
+#     list(x)
+#   }else if(inherits(x, "html")){
+#     list(list("__html" = URLencode(as.character(x))))
+#   }else if(is.list(x) && is.null(names(x))){
+#     x
+#   }else{
+#     list(x)
+#   }
+# }
 
 asShinyTag <- function(x){
-  class(x) <- "shiny.tag"
-  x
+  structure(x, class = "shiny.tag")
 }
 
 shinyTag <- function(name, attribs = emptyNamedList, children = list(), ...){

@@ -955,6 +955,16 @@ const Modules = {
 };
 
 
+const Hooks = {
+  useDisclosure,
+  useClipboard,
+  useToast, 
+  createStandaloneToast,
+  useEditableControls,
+  useBoolean
+};
+
+
 const transformSrc = code => {
   const result = transform(code, {
     plugins: [babelPluginTransformJsx]
@@ -1040,6 +1050,7 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
 };
 
 
+/* MAIN FUNCTION ----------------------------------------------------------- */
 const chakraComponent = (
   component, shinyValue, states, patch, 
   inputId, radiogroupValues, setRadiogroupValues
@@ -1078,10 +1089,9 @@ const chakraComponent = (
     throwApp(inputId, <InvalidTag message={`tag '${tagName}'`} />);
   }
 
-//  let States = {};
+  /* ------------------------------------------------------------------------ */
   if(component.statesGroup && states.done !== true){
     states = JSON.parse(decodeURI(component.states));
-//    states.chakraState = {};
     for(const key in states){
       states[key] = makeState(states[key], states, inputId);
     }
@@ -1110,6 +1120,7 @@ const chakraComponent = (
     component.hasStates = true;
   }
 
+  /* ------------------------------------------------------------------------ */
   let props = component.attribs;
   if(isEmptyArray(props)){
     props = {};
@@ -1681,7 +1692,7 @@ const chakraComponent = (
       const thumbAttribs = child1.children[0].attribs;
       slider.children[1] = 
         <Tooltip {...tooltipAttribs}>
-            <SliderThumb {...thumbAttribs}/>
+          <SliderThumb {...thumbAttribs}/>
         </Tooltip>;
     }
     slider.attribs.value = sliderValue;
@@ -1773,16 +1784,6 @@ const chakraComponent = (
 };
 
 
-const Hooks = {
-  useDisclosure,
-  useClipboard,
-  useToast, 
-  createStandaloneToast,
-  useEditableControls,
-  useBoolean
-};
-
-
 const ChakraComponent = ({ configuration, value, setValue }) => {
 
   let patch = {
@@ -1823,9 +1824,8 @@ $.extend(chakraBinding, {
     return $(el).data("widget") ? "shinyChakraUI.widget" : false;
   },
   getValue: function (el) {
-    let value = $(el).data("shinyinitvalue");
-    let widget = $(el).data("widget");
-    console.log("GETVALUE", el, value);
+    const value = $(el).data("shinyinitvalue");
+    const widget = $(el).data("widget");
     return widget ? {value: value, widget: widget} : value;
   },
   setValue: function (el, value) {
@@ -1849,27 +1849,18 @@ $.extend(chakraBinding, {
     };
   },
   initialize: function initialize(el) {
-    console.log("INITIALIZE", el);
+    console.log("INITIALIZE", el); // why this does not appear?
   }
 });
 Shiny.inputBindings.register(chakraBinding);
 
 
-//reactShinyInput('.chakracomponent', 'shinyChakraUI.chakracomponent', ChakraComponent);
-// reactShinyInput('.chakra', 'shinyChakraUI.chakra', ChakraInput, {type: "shinyChakraUI.widget"});
-
-
 Shiny.inputBindings.register(new class extends Shiny.InputBinding {
-
-  /*
-   * Methods override those in Shiny.InputBinding
-   */
 
   find(scope) {
     return $(scope).find(".chakracomponent");
   }
   getValue(el) {
-    console.log("DOCBODY - getValue", JSON.stringify(document.body));
     const element = React.createElement(ChakraComponent, {
       configuration: $(el).data("configuration")
     });
@@ -1877,44 +1868,19 @@ Shiny.inputBindings.register(new class extends Shiny.InputBinding {
     return $(el).data("value");
   }
   setValue(el, value, rateLimited = false) {
-    /*
-     * We have to check whether $(el).data('callback') is undefined here
-     * in case shiny::renderUI() is involved. If an input is contained in a
-     * shiny::uiOutput(), the following strange thing happens occasionally:
-     *
-     *   1. setValue() is bound to an el in this.render(), below
-     *   2. An event that will call setValue() is enqueued
-     *   3. While the event is still enqueued, el is unbound and removed
-     *      from the DOM by the JS code associated with shiny::uiOutput()
-     *      - That code uses jQuery .html() in output_binding_html.js
-     *      - .html() removes el from the DOM and clears ist data and events
-     *   4. By the time the setValue() bound to the original el is invoked,
-     *      el has been unbound and its data cleared.
-     *
-     *  Since the original input is gone along with its callback, it
-     *  seems to make the most sense to do nothing.
-     */
-    if ($(el).data('callback') !== undefined) {
-      this.setInputValue(el, value);
-      this.getCallback(el)(rateLimited);
-      this.render(el);
-    }
+
   }
   initialize(el) {
-    console.log("DOCBODY - initialize", JSON.stringify(document.body));
-    //$(el).data('value', JSON.parse($(el).next().text()));
-    $(el).data('configuration', JSON.parse($(el).next().next().text()));
+    $(el).data("configuration", JSON.parse($(el).next().next().text()));
   }
   subscribe(el, callback) {
-//    $(document).ready(function(){
-      console.log("DOCBODY - subscribe", JSON.stringify(document.body));
-//    });
+
   }
   unsubscribe(el) {
     ReactDOM.render(null, el);
   }
   receiveMessage(el, data) {
-//    options.receiveMessage.call(this, el, data);
+
   }
   getType(el) {
     return "shinyChakraUI.component";

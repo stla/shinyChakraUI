@@ -558,7 +558,8 @@ const makeMenuComponent = (menu, shinyValue) => {
       shinyValue.set(menu.attribs.id, value);
       setValue(value);
       Shiny.setInputValue(
-        menu.attribs.id + ":shinyChakraUI.widget", {value: value, widget: "menuWithGroups"}
+        menu.attribs.id + ":shinyChakraUI.widget", 
+        {value: value, widget: "menuWithGroups"}
       );
     };
   }
@@ -608,7 +609,10 @@ const makeCheckboxWithChildren = (div, shinyValue) => {
     }
     shinyValue.set(div.attribs.id, state);
     xsetCheckedItems(state);
-    Shiny.setInputValue(inputId, {value: state, widget: "checkboxWithChildren"});
+    Shiny.setInputValue(
+        inputId, 
+        {value: state, widget: "checkboxWithChildren"}
+    );
   };
   div.children[1].children = [{
     name: "Fragment",
@@ -627,7 +631,10 @@ const makeCheckboxWithChildren = (div, shinyValue) => {
               xcheckedItems[i] = e.target.checked;
               shinyValue.set(div.attribs.id, xcheckedItems);
               xsetCheckedItems(xcheckedItems);
-              Shiny.setInputValue(inputId, {value: xcheckedItems, widget: "checkboxWithChildren"});
+              Shiny.setInputValue(
+                inputId, 
+                {value: xcheckedItems, widget: "checkboxWithChildren"}
+              );
             }
           }
         )}
@@ -715,27 +722,33 @@ function unescapeHtml(html) {
 
 const getHookProperty = (states, inputId) => ((hook, key) => {
   if(!states.hasOwnProperty(hook)){
-    throwApp(inputId, <InvalidState message={`Hook '${hook}' not found.`}/>);
+    throwApp(inputId, <InvalidState message={`Hook '${hook}' not found.`} />);
   }
   if(!states[hook].hasOwnProperty(key)){
-    throwApp(inputId, <InvalidState message={`Hook '${hook}' has no property '${key}'.`}/>);
+    throwApp(
+        inputId, 
+        <InvalidState message={`Hook '${hook}' has no property '${key}'.`} />
+    );
   }
   return states[hook][key];
 });
 
 const getState = (states, inputId) => ((state) => {
   if(!states.hasOwnProperty(state)){
-    throwApp(inputId, <InvalidState message={`State '${state}' not found.`}/>);
+    throwApp(inputId, <InvalidState message={`State '${state}' not found.`} />);
   }
   return states[state].get();
 });
 
 const setState = (states, inputId) => ((state, value) => {
   if(!states.hasOwnProperty(state)){
-    throwApp(inputId, <InvalidState message={`State '${state}' not found.`}/>);
+    throwApp(inputId, <InvalidState message={`State '${state}' not found.`} />);
   }
   if(!states[state].hasOwnProperty("set")){
-    throwApp(inputId, <InvalidState message={`State '${state}' has no 'set' method.`}/>);
+    throwApp(
+        inputId, 
+        <InvalidState message={`State '${state}' has no 'set' method.`} />
+    );
   }
   states[state].set(value);
 });
@@ -795,8 +808,12 @@ const appendStates = (component, states, inputId) => {
       if(defaultValue !== null){
         attribs.defaultValue = defaultValue;
       }
-    }else if(component.name === "NumberInput" && component.parent !== "combinedslider"){
-      let defaultValue = attribs.hasOwnProperty("defaultValue") ? attribs.defaultValue : null;
+    }else if(
+        component.name === "NumberInput" && 
+        component.parent !== "combinedslider"
+    ){
+      let defaultValue = 
+        attribs.hasOwnProperty("defaultValue") ? attribs.defaultValue : null;
       if(defaultValue === null){
         const hasValue = attribs.hasOwnProperty("value");
         const value = hasValue ? attribs.value : null;
@@ -894,7 +911,10 @@ function ShinyValue(inputId){
     if(force || value === undefined || value[key] === undefined){
       $el.data("value", $.extend(value, Object.fromEntries([[key,v]])));
       if(Shiny.shinyapp.isConnected()){
-        Shiny.setInputValue(inputId + ":shinyChakraUI.component", $el.data("value"));
+        Shiny.setInputValue(
+            inputId + ":shinyChakraUI.component", 
+            $el.data("value")
+        );
       }
     }
   };
@@ -965,7 +985,10 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
       code = jsxString;
     }else{
       try {
-        let p = prettier.format(jsxString, { parser: "babel", plugins: [parserBabel] });
+        let p = prettier.format(
+            jsxString, 
+            { parser: "babel", plugins: [parserBabel] }
+        );
       } catch (err) {
         message = "Error in `jsx()`.";
         code = err.message;
@@ -977,7 +1000,10 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
   if(preamble){
     preamble = decodeURI(preamble);
     try {
-      let p = prettier.format(preamble, { parser: "babel", plugins: [parserBabel] });
+      let p = prettier.format(
+        preamble, 
+        { parser: "babel", plugins: [parserBabel] }
+      );
     } catch (error) {
       let message = "Error in `jsx()` preamble.";
       let code = error.name + ": " + error.message;
@@ -1008,14 +1034,15 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
   } catch (error) {
     let message = "Error in `jsx()`.";
     let code = error.name + ": " + error.message;
-    throwApp(inputId, <ErrorApp message={message} code={code}/>);
+    throwApp(inputId, <ErrorApp message={message} code={code} />);
   }
   return output;
 };
 
 
 const chakraComponent = (
-  component, shinyValue, states, patch, inputId, radiogroupValues, setRadiogroupValues
+  component, shinyValue, states, patch, 
+  inputId, radiogroupValues, setRadiogroupValues
 ) => {
   if(React.isValidElement(component)){
     return component;
@@ -1093,14 +1120,15 @@ const chakraComponent = (
     }else if(isJseval(props[key])){
       props[key] = Eval(decodeURI(props[key].__eval), states, inputId);
     }else if(isJSX(props[key])){
-      props[key] = jsxParser(props[key].__jsx, props[key].__preamble, inputId, states);
+      props[key] = 
+        jsxParser(props[key].__jsx, props[key].__preamble, inputId, states);
     }
   }
   if(typeof props.onClick === "string"){
     props.onClick = Eval(props.onClick, states, inputId);
   }
 
-  if( //////////////////////////////// WIDGET ALERTDIALOG
+  if( /*************************************************** WIDGET ALERTDIALOG */
     component.widget === "alertdialog"
   ){ 
     delete component.widget;
@@ -1170,7 +1198,7 @@ const chakraComponent = (
         onEsc: () => {setShinyValue("esc");}
       }
     };
-  }else if( //////////////////////////// WIDGET DRAWER
+  }else if( /************************************************** WIDGET DRAWER */
     component.widget === "drawer"
   ){ 
     delete component.widget;
@@ -1200,11 +1228,12 @@ const chakraComponent = (
         finalFocusRef: btnRef
       }
     };  
-  }else if( //////////////////////////////// WIDGET MODAL
+  }else if( /*************************************************** WIDGET MODAL */
     component.widget === "modal"
   ){
     delete component.widget;
-    const { isOpen, onOpen, onClose } = useDisclosure({defaultIsOpen: component.isOpen});
+    const { isOpen, onOpen, onClose } = 
+        useDisclosure({defaultIsOpen: component.isOpen});
     shinyValue.add(props.id, null);
     const setShinyValue = (e) => {
       let value = e.currentTarget.dataset.val;
@@ -1266,7 +1295,7 @@ const chakraComponent = (
         onClose: onClose
       }
     };  
-  }else if( ////////////////////////////////////////////// COMPONENT MENU
+  }else if( /************************************************* COMPONENT MENU */
     component.name === "Menu" && component.process !== false
   ){ 
     component.process = false;
@@ -1284,7 +1313,8 @@ const chakraComponent = (
         const textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
         const textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
-        const menulist = chakraComponent(component.children[1], shinyValue, {}, {}, inputId);
+        const menulist = 
+            chakraComponent(component.children[1], shinyValue, {}, {}, inputId);
         component = {
           name: "div",
           attribs: {
@@ -1338,7 +1368,9 @@ const chakraComponent = (
         const textWhenOpen = decodeURI(buttonprops.text.textWhenOpen);
         const textWhenClose = decodeURI(buttonprops.text.textWhenClose);
         delete buttonprops.text;
-        const menulist = chakraComponent(component.children[1], shinyValue, {}, patch, inputId);
+        const menulist = chakraComponent(
+            component.children[1], shinyValue, {}, patch, inputId
+        );
         component = 
             <Menu {...props}>
               {({ isOpen }) => (
@@ -1353,7 +1385,7 @@ const chakraComponent = (
         return component;  
       }
     }
-  }else if( ///////////////////////////////////////////// COMPONENT POPOVER
+  }else if( /********************************************** COMPONENT POPOVER */
     component.name === "Popover" && props.hasOwnProperty("id")
   ){ 
     props.className = "chakraShiny";
@@ -1370,12 +1402,13 @@ const chakraComponent = (
       IconButton: (e) => {setShinyValue(e.currentTarget.dataset.val)}
     };
     mergeOnClick(component, funcs, states, inputId);
-  }else if( //////////////////////////////// COMPONENT POPOVERTRIGGER
+  }else if( /*************************************** COMPONENT POPOVERTRIGGER */
     component.name === "PopoverTrigger"
   ){ 
-    const child = chakraComponent(component.children[0], shinyValue, {}, {}, inputId);
+    const child = 
+        chakraComponent(component.children[0], shinyValue, {}, {}, inputId);
     return <PopoverTrigger>{child}</PopoverTrigger>;
-  }else if( /////////////////////////////////////////// COMPONENT TABS
+  }else if( /************************************************* COMPONENT TABS */
     component.name === "Tabs" && props.hasOwnProperty("id")
   ){ 
     const defaultIndex = props.defaultIndex ? props.defaultIndex : 0;
@@ -1386,7 +1419,7 @@ const chakraComponent = (
     };
     props.className = "chakraShiny";
     props["data-shinyinitvalue"] = defaultIndex;
-  }else if( ////////////////////////// CHECKBOXWITHCHILDREN
+  }else if( /******************************************* CHECKBOXWITHCHILDREN */
     props.class === "checkboxWithChildren"
   ){ 
     const state = makeCheckboxWithChildren(component, shinyValue);
@@ -1395,7 +1428,7 @@ const chakraComponent = (
     delete props.class;
     props["data-shinyinitvalue"] = JSON.stringify(state);
     props["data-widget"] = "checkboxWithChildren";
-  }else if( //////////////////////// COMPONENT NUMBERINPUT
+  }else if( /****************************************** COMPONENT NUMBERINPUT */
     component.name === "NumberInput" && 
     component.parent !== "combinedslider" &&
     //props.shinyAuto !== false && 
@@ -1413,7 +1446,8 @@ const chakraComponent = (
       };
       props.value = getter();
     }else{
-      const defaultValue = props.hasOwnProperty("defaultValue") ? props.defaultValue : 0;
+      const defaultValue = 
+        props.hasOwnProperty("defaultValue") ? props.defaultValue : 0;
       shinyValue.add(props.id, defaultValue);
       const f = props.onChange || (() => { });
       const [value, setValue] = React.useState(defaultValue);
@@ -1425,7 +1459,7 @@ const chakraComponent = (
         f(valueAsString, valueAsNumber);
       };
     }
-  }else if( /////////////////////// COMPONENT SWITCH
+  }else if( /*********************************************** COMPONENT SWITCH */
     component.name === "Switch" && 
     //props.shinyAuto !== false && 
     props.hasOwnProperty("id")
@@ -1446,7 +1480,7 @@ const chakraComponent = (
         props.onChange = event => shinyValue.set(props.id, event.target.checked)
       }
     }
-  }else if( ///////////////////////// COMPONENT CHECKBOX
+  }else if( /********************************************* COMPONENT CHECKBOX */
     component.name === "Checkbox" && 
     //props.shinyAuto !== false && 
     !component.dontprocess &&
@@ -1469,7 +1503,7 @@ const chakraComponent = (
         props.onChange = event => shinyValue.set(props.id, event.target.checked)
       }
     }
-  }else if( ////////////////////////////////// COMPONENT CHECKBOXGROUP
+  }else if( /**************************************** COMPONENT CHECKBOXGROUP */
     component.name === "CheckboxGroup" && component.processed !== true
   ){
     component.processed = true;
@@ -1492,7 +1526,7 @@ const chakraComponent = (
       children: [component]
     };
     props = divattrs;
-  }else if( //////////////////// COMPONENT RADIOGROUP
+  }else if( /******************************************* COMPONENT RADIOGROUP */
     component.name === "RadioGroup"
   ){
     shinyValue.add(props.id, radiogroupValues[props.id]);
@@ -1516,15 +1550,19 @@ const chakraComponent = (
         "data-shinyinitvalue": radiogroupValues[props.id]
       }
     );
-  }else if( /////////////////////////////// COMPONENT SCRIPTTAG
+  }else if( /******************************************** COMPONENT SCRIPTTAG */
     component.name === "ScriptTag" && component.decoded !== true
   ){
-    props.dangerouslySetInnerHTML.__html = decodeURI(props.dangerouslySetInnerHTML.__html);
+    props.dangerouslySetInnerHTML.__html = 
+        decodeURI(props.dangerouslySetInnerHTML.__html);
     component.decoded = true;
-  }else if( ///////////////////////////////////// COMPONENT EDITABLE
-    component.name === "Editable" && props.hasOwnProperty("id") && props.shinyAuto !== false
+  }else if( /********************************************* COMPONENT EDITABLE */
+    component.name === "Editable" && 
+    props.hasOwnProperty("id") && 
+    props.shinyAuto !== false
   ){
-    const defaultValue = props.hasOwnProperty("defaultValue") ? props.defaultValue : "";
+    const defaultValue = 
+        props.hasOwnProperty("defaultValue") ? props.defaultValue : "";
     props.className = "chakraShiny";
     props["data-shinyinitvalue"] = defaultValue;
     shinyValue.add(props.id, defaultValue);
@@ -1541,8 +1579,10 @@ const chakraComponent = (
       f(val);
     };
     props.onCancel = onChange_onCancel;
-  }else if( ////////////////////////////////// COMPONENT INPUT
-    component.name === "Input" && props.hasOwnProperty("id") && props.shinyAuto !== false
+  }else if( /************************************************ COMPONENT INPUT */
+    component.name === "Input" && 
+    props.hasOwnProperty("id") && 
+    props.shinyAuto !== false
   ){
     props.className = "chakraShiny";
     if(isNotEmpty(states) && states.hasOwnProperty("chakra" + props.id)){
@@ -1580,7 +1620,7 @@ const chakraComponent = (
         };
       }  
     }
-  }else if( ///////////////////////// WIDGET SLIDER
+  }else if( /************************************************** WIDGET SLIDER */
     component.widget === "slider"
   ){
     let slider = component.children[component.children.length - 1];
@@ -1601,7 +1641,10 @@ const chakraComponent = (
       }else{ // tooltip
         const tooltipAttribs = $.extend(child1.attribs, {label: sliderValue});
         const thumbAttribs = child1.children[0].attribs;
-        slider.children[1] = <Tooltip {...tooltipAttribs}><SliderThumb {...thumbAttribs}/></Tooltip>;
+        slider.children[1] = 
+          <Tooltip {...tooltipAttribs}>
+            <SliderThumb {...thumbAttribs}/>
+          </Tooltip>;
       }
     }
     if(component.shinyValueOn === "end"){
@@ -1621,7 +1664,7 @@ const chakraComponent = (
         setSliderValue(val);
       };
     }
-  }else if( ////////////////////// WIDGET COMBINEDSLIDER
+  }else if( /****************************************** WIDGET COMBINEDSLIDER */
     component.widget === "combinedslider"
   ){
     let numberinput = component.children[0].children[0];
@@ -1636,7 +1679,10 @@ const chakraComponent = (
       const child1 = slider.children[1]; 
       const tooltipAttribs = $.extend(child1.attribs, {label: sliderValue});
       const thumbAttribs = child1.children[0].attribs;
-      slider.children[1] = <Tooltip {...tooltipAttribs}><SliderThumb {...thumbAttribs}/></Tooltip>;
+      slider.children[1] = 
+        <Tooltip {...tooltipAttribs}>
+            <SliderThumb {...thumbAttribs}/>
+        </Tooltip>;
     }
     slider.attribs.value = sliderValue;
     numberinput.attribs.value = sliderValue;
@@ -1651,16 +1697,18 @@ const chakraComponent = (
       setSliderValue(valNumber);
     };
   }
-  /* -------------------------------------------------------- */
+  /* ------------------------------------------------------------------------ */
   for(const key in props){
     if(isTag(props[key])){
       const name = props[key].name; 
       if(isCapitalized(name)){
         if(!ChakraTags.includes(name)){
-          const x = `'${name}' in attribute '${key}' of component '${component.name}'`;
+          const x = 
+            `'${name}' in attribute '${key}' of component '${component.name}'`;
           throwApp(inputId, <InvalidTag message={x} />);
         }
-        props[key] = React.createElement(ChakraComponents[name], props[key].attribs);
+        props[key] = 
+            React.createElement(ChakraComponents[name], props[key].attribs);
       }else{
         fixTagAttribs(props[key].attribs);
         props[key] = React.createElement(name, props[key].attribs);
@@ -1668,7 +1716,8 @@ const chakraComponent = (
     }
   }
   let newprops = $.extend(props, patch[component.name]);
-  const nchildren = Array.isArray(component.children) ? component.children.length : 0;
+  const nchildren = 
+    Array.isArray(component.children) ? component.children.length : 0;
   if(!newprops.hasOwnProperty("children") && nchildren > 0){
     let newpropsChildren = new Array(nchildren);
     for(let i = 0; i < nchildren; i++){
@@ -1679,7 +1728,8 @@ const chakraComponent = (
           component.children[i].hasStates = true;
           component.children[i].force = component.force;
         }
-        const x = component.hasStates || isJseval(component.children[i]) ? states : {};
+        const x = component.hasStates || isJseval(component.children[i]) ? 
+            states : {};
         if(props.shinyAuto === false && isTag(component.children[i])){
           let attribs = component.children[i].attribs;
           if(isEmptyArray(attribs)){
@@ -1688,7 +1738,8 @@ const chakraComponent = (
           attribs.shinyAuto = false;
         }
         component.children[i] = chakraComponent(
-          component.children[i], shinyValue, x, patch, inputId, radiogroupValues, setRadiogroupValues
+          component.children[i], shinyValue, x, patch, 
+          inputId, radiogroupValues, setRadiogroupValues
         );
         // newpropsChildren[i] = chakraComponent(
         //   component.children[i], x, patch, checkedItems, checkboxOnChange, radiogroupValues, setRadiogroupValues
@@ -1705,7 +1756,9 @@ const chakraComponent = (
   const tag = component.name;
   if(isCapitalized(tag)){
     if(isNonEmptyArray(component.children)){
-      return React.createElement(ChakraComponents[tag], newprops, component.children);
+      return React.createElement(
+          ChakraComponents[tag], newprops, component.children
+      );
     }else{
       return React.createElement(ChakraComponents[tag], newprops);
     }
@@ -1739,7 +1792,8 @@ const ChakraComponent = ({ configuration, value, setValue }) => {
   let RadioGroups = configuration.RadioGroups; 
   if(RadioGroups){
     RadioGroups = Object.fromEntries(
-      Object.entries(RadioGroups).map(entry => {return [entry[0], decodeURI(entry[1])];})
+      Object.entries(RadioGroups)
+        .map(entry => {return [entry[0], decodeURI(entry[1])];})
     );
   }
   const [radiogroupValues, setRadiogroupValues] = React.useState(RadioGroups);
@@ -1866,5 +1920,5 @@ Shiny.inputBindings.register(new class extends Shiny.InputBinding {
     return "shinyChakraUI.component";
   }
 
-}, 'shinyChakraUI.chakracomponent');
+}, "shinyChakraUI.chakracomponent");
 

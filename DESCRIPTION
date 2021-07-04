@@ -14,7 +14,7 @@ Authors@R: c(
            family = "Kaye",
            role = "ctb",
            comment = "'json-normalize.js'"),
-    person(given = "司徒正美",
+    person(given = "RubyLouvre",
            role = "cph",
            comment = "'jsx-parser' library"))
 Description: Makes the 'React' library 'Chakra UI' usable in 'Shiny' apps. 'Chakra UI' components include alert dialogs, drawers (sliding panels), menus, modals, popovers, sliders, and more. 

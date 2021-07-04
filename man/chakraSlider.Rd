@@ -47,7 +47,7 @@ chakraSlider(
 
 \item{size}{size, \code{"sm"}, \code{"md"}, or \code{"lg"}}
 
-\item{colorScheme}{a chakra color scheme}
+\item{colorScheme}{a Chakra color scheme}
 
 \item{orientation}{slider orientation, \code{"horizontal"} or
 \code{"vertical"}}

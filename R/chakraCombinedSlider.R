@@ -116,7 +116,8 @@ numberInputOptions <- function(
 #'       tooltip = TRUE,
 #'       trackColor = "green.300",
 #'       thumbOptions = sliderThumbOptions(
-#'         width = 20, height = 20, borderColor = "firebrick", borderWidth = "3px"
+#'         width = 20, height = 20,
+#'         borderColor = "firebrick", borderWidth = "3px"
 #'       )
 #'     )
 #'

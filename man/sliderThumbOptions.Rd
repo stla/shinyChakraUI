@@ -31,5 +31,5 @@ A list of attributes for usage in \code{\link{chakraSlider}} or
   \code{\link{chakraCombinedSlider}}.
 }
 \description{
-Define the slider thumb options.
+Define the Chakra slider thumb options.
 }

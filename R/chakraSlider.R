@@ -1,5 +1,5 @@
 #' @title Slider thumb options
-#' @description Define the slider thumb options.
+#' @description Define the Chakra slider thumb options.
 #'
 #' @param width thumb width
 #' @param height thumb height
@@ -10,6 +10,7 @@
 #'
 #' @return A list of attributes for usage in \code{\link{chakraSlider}} or
 #'   \code{\link{chakraCombinedSlider}}.
+#'
 #' @export
 #' @importFrom htmltools validateCssUnit
 sliderThumbOptions <- function(
@@ -131,7 +132,7 @@ sliderTooltipOptions <- function(
 #' @param step increment step
 #' @param width slider width
 #' @param size size, \code{"sm"}, \code{"md"}, or \code{"lg"}
-#' @param colorScheme a chakra color scheme
+#' @param colorScheme a Chakra color scheme
 #' @param orientation slider orientation, \code{"horizontal"} or
 #'   \code{"vertical"}
 #' @param focusThumbOnChange whether to focus the thumb on change
@@ -231,7 +232,6 @@ chakraSlider <- function(
   stopifnot(isBoolean(mark))
   stopifnot(isBoolean(tooltip))
   attribs <- dropNulls(list(
-    #    id = id,
     defaultValue = value,
     min = min,
     max = max,

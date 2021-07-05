@@ -40,7 +40,10 @@ shinyUI(
 
       column(
         width = 6,
-        tags$span(style = "color: red; font-size: 28px;", "Checkbox value:"),
+        tags$span(
+          style = "color: red; font-size: 28px;",
+          "Checkbox value:"
+        ),
         verbatimTextOutput("checkboxValue")
       )
 

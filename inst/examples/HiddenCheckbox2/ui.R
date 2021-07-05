@@ -6,6 +6,18 @@ shinyUI(
 
     br(),
 
+    chakraComponent(
+      "description",
+      Tag$Text(
+        fontFamily = "cursive",
+        "This example illustrates the usage of the ",
+        Tag$Code(colorScheme = "yellow", "useBoolean"),
+        " hook."
+      )
+    ),
+
+    br(), tags$hr(), br(),
+
     fluidRow(
 
       column(
@@ -15,6 +27,7 @@ shinyUI(
           jsx(paste(
             '<Stack>',
             '  <Button',
+            '    colorScheme = "purple"',
             '    onClick = {setFlag.toggle}',
             '  >',
             '    {flag ? "Show checkbox" : "Hide checkbox"}',
@@ -35,7 +48,10 @@ shinyUI(
 
       column(
         width = 6,
-        tags$span(style = "color: red; font-size: 28px;", "Checkbox value:"),
+        tags$span(
+          style = "color: red; font-size: 28px;",
+          "Checkbox value:"
+        ),
         verbatimTextOutput("checkboxValue")
       )
 

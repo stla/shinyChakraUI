@@ -36,7 +36,8 @@ shinyUI(
       column(
         width = 6,
         tags$span(
-          style = "color: red; font-size: 28px;", "Number input value:"
+          style = "color: red; font-size: 28px;",
+          "Number input value:"
         ),
         verbatimTextOutput("ninputValue")
       )

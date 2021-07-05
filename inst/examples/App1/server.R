@@ -82,12 +82,12 @@ shinyServer(
     )
 
     output[["gaussian"]] <- renderPlot({
-      plot(rnorm(100), rnorm(100))
+      plot(
+        rnorm(100), rnorm(100),
+        pch = 19, col = input[["drawerContainer"]][["color"]]
+      )
     })
 
-    # observe({
-    #   print(reactiveValuesToList(input))
-    # })
     output[["panel"]] <- renderUI({
       radio <- input[["drawerContainer"]][["radiogroup"]]
       if(radio == "table"){

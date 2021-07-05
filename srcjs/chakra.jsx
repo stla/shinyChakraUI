@@ -1581,6 +1581,7 @@ const chakraComponent = (
     component.name === "RadioGroup"
   ){
     shinyValue.add(props.id, radiogroupValues[props.id]);
+    const fonchange = props.onChange || ((value) => { });
     props = $.extend(props, 
       {
         onChange: (value) => {
@@ -1595,6 +1596,7 @@ const chakraComponent = (
           setRadiogroupValues(obj);
           Shiny.setInputValue(props.id, value);
           shinyValue.set(props.id, value);
+          fonchange(value);
         },
         value: radiogroupValues[props.id],
         className: "chakraShiny",

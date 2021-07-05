@@ -16,18 +16,27 @@ shinyUI(
             id = "checkboxgroup",
             defaultValue = c("naruto", "sasuke"),
             colorScheme = "yellow",
-            Tag$Heading("Checkbox group"),
-            Tag$HStack(
-              spacing = 8,
-              Tag$Checkbox(
-                icon = Tag$CheckCircleIcon(),
-                value = "naruto",
-                "Naruto"
-              ),
-              Tag$Checkbox(
-                icon = Tag$CheckCircleIcon(),
-                value = "sasuke",
-                "Sasuke"
+            size = "lg",
+            Tag$Heading(
+              fontFamily = "cursive",
+              "Checkbox group"
+            ),
+            Tag$Box(
+              bg = "orange.50",
+              p = 5,
+              shadow = "md",
+              Tag$HStack(
+                spacing = 8,
+                Tag$Checkbox(
+                  icon = Tag$CheckCircleIcon(),
+                  value = "naruto",
+                  "Naruto"
+                ),
+                Tag$Checkbox(
+                  icon = Tag$CheckCircleIcon(),
+                  value = "sasuke",
+                  "Sasuke"
+                )
               )
             )
           )

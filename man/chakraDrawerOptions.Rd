@@ -39,7 +39,7 @@ or \code{"bottom"}, the drawer will occupy the viewport height}
 \code{"2xl"}, \code{"full"}, \code{"xs"}, \code{"3xl"}, \code{"4xl"},
 \code{"5xl"}, or \code{"6xl"}}
 
-\item{...}{other attributes}
+\item{...}{other attributes of \code{Drawer}}
 }
 \value{
 A named list, for usage in \code{\link{chakraDrawer}}.

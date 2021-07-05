@@ -16,7 +16,7 @@
 #' @param size modal size, \code{"sm"}, \code{"md"}, \code{"lg"}, \code{"xl"},
 #'   \code{"2xl"}, \code{"full"}, \code{"xs"}, \code{"3xl"}, \code{"4xl"},
 #'   \code{"5xl"}, or \code{"6xl"}
-#' @param ... other attributes
+#' @param ... other attributes of \code{Drawer}
 #'
 #' @return A named list, for usage in \code{\link{chakraDrawer}}.
 #' @export

@@ -6,6 +6,7 @@ shinyServer(
 
     ChakraTable <- chakraComponent(
       "chakratable",
+
       Tag$Table(
         variant = "striped",
         colorScheme = "teal",
@@ -14,68 +15,33 @@ shinyServer(
         ),
         Tag$Thead(
           Tag$Tr(
-            Tag$Th(
-              "To convert"
-            ),
-            Tag$Th(
-              "into"
-            ),
-            Tag$Th(
-              isNumeric = TRUE,
-              "multiply by"
-            )
+            Tag$Th("To convert"),
+            Tag$Th("into"),
+            Tag$Th(isNumeric = TRUE, "multiply by")
           )
         ),
         Tag$Tbody(
           Tag$Tr(
-            Tag$Td(
-              "inches"
-            ),
-            Tag$Td(
-              "millimetres (mm)"
-            ),
-            Tag$Td(
-              isNumeric = TRUE,
-              "25.4"
-            )
+            Tag$Td("inches"),
+            Tag$Td("millimetres (mm)"),
+            Tag$Td(isNumeric = TRUE, "25.4")
           ),
           Tag$Tr(
-            Tag$Td(
-              "feet"
-            ),
-            Tag$Td(
-              "centimetres (cm)"
-            ),
-            Tag$Td(
-              isNumeric = TRUE,
-              "30.48"
-            )
+            Tag$Td("feet"),
+            Tag$Td("centimetres (cm)"),
+            Tag$Td(isNumeric = TRUE, "30.48")
           ),
           Tag$Tr(
-            Tag$Td(
-              "yards"
-            ),
-            Tag$Td(
-              "metres (m)"
-            ),
-            Tag$Td(
-              isNumeric = TRUE,
-              "0.91444"
-            )
+            Tag$Td("yards"),
+            Tag$Td("metres (m)"),
+            Tag$Td(isNumeric = TRUE, "0.91444")
           )
         ),
         Tag$Tfoot(
           Tag$Tr(
-            Tag$Th(
-              "To convert"
-            ),
-            Tag$Th(
-              "into"
-            ),
-            Tag$Th(
-              isNumeric = TRUE,
-              "multiply by"
-            )
+            Tag$Th("To convert"),
+            Tag$Th("into"),
+            Tag$Th(isNumeric = TRUE, "multiply by")
           )
         )
       )
@@ -89,8 +55,8 @@ shinyServer(
     })
 
     output[["panel"]] <- renderUI({
-      radio <- input[["drawerContainer"]][["radiogroup"]]
-      if(radio == "table"){
+      panel <- input[["drawerContainer"]][["choosepanel"]]
+      if(panel == "table"){
         ChakraTable
       }else{
         plotOutput("gaussian")

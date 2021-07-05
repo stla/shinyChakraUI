@@ -30,20 +30,14 @@ shinyUI(
             withStates(
               Tag$Flex(
                 Tag$RadioGroup(
-                  id = "radiogroup",
+                  id = "choosepanel",
                   onChange =
-                    jseval('(value) => {setState("hidden", value === "table")}'),
+                    jseval('(value) => {setState("hidden", value !== "plot")}'),
                   value = "table",
                   Tag$Stack(
                     direction = "row",
-                    Tag$Radio(
-                      value = "table",
-                      "Table"
-                    ),
-                    Tag$Radio(
-                      value = "plot",
-                      "Graphic"
-                    )
+                    Tag$Radio(value = "table", "Table"),
+                    Tag$Radio(value = "plot", "Graphic")
                   )
                 ),
                 Tag$Spacer(),
@@ -53,14 +47,8 @@ shinyUI(
                   value = "red",
                   Tag$Stack(
                     direction = "row",
-                    Tag$Radio(
-                      value = "red",
-                      "Red"
-                    ),
-                    Tag$Radio(
-                      value = "blue",
-                      "Blue"
-                    )
+                    Tag$Radio(value = "red", "Red"),
+                    Tag$Radio(value = "blue", "Blue")
                   )
                 )
               ),
@@ -68,7 +56,8 @@ shinyUI(
             )
           ),
 
-        footer = Tag$DrawerFooter()
+        footer =
+          Tag$DrawerFooter()
 
       ),
       br(), tags$hr(), br()

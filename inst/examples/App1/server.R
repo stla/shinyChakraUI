@@ -85,10 +85,14 @@ shinyServer(
       plot(rnorm(100), rnorm(100))
     })
 
+    # observe({
+    #   print(reactiveValuesToList(input))
+    # })
     output[["panel"]] <- renderUI({
-      if(input[["radiogroup"]] == "table"){
+      radio <- input[["drawerContainer"]][["radiogroup"]]
+      if(radio == "table"){
         ChakraTable
-      }else if(input[["radiogroup"]] == "plot"){
+      }else{
         plotOutput("gaussian")
       }
     })

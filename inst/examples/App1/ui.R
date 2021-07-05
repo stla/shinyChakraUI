@@ -27,21 +27,44 @@ shinyUI(
 
         body =
           Tag$DrawerBody(
-            Tag$RadioGroup(
-              id = "radiogroup",
-              value = "table",
-              Tag$Stack(
-                direction = "row",
-                Tag$Radio(
+            withStates(
+              Tag$Flex(
+                Tag$RadioGroup(
+                  id = "radiogroup",
+                  onChange =
+                    jseval('(value) => {setState("hidden", value === "table")}'),
                   value = "table",
-                  "Table"
+                  Tag$Stack(
+                    direction = "row",
+                    Tag$Radio(
+                      value = "table",
+                      "Table"
+                    ),
+                    Tag$Radio(
+                      value = "plot",
+                      "Graphic"
+                    )
+                  )
                 ),
-                Tag$Radio(
-                  value = "plot",
-                  "Graphic"
+                Tag$Spacer(),
+                Tag$RadioGroup(
+                  id = "color",
+                  hidden = getState("hidden"),
+                  value = "red",
+                  Tag$Stack(
+                    direction = "row",
+                    Tag$Radio(
+                      value = "red",
+                      "Red"
+                    ),
+                    Tag$Radio(
+                      value = "blue",
+                      "Blue"
+                    )
+                  )
                 )
-              )
-
+              ),
+              states = list(hidden = TRUE)
             )
           ),
 

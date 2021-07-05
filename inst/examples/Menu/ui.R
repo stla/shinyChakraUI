@@ -51,7 +51,10 @@ shinyUI(
 
       column(
         width = 6,
-        tags$span(style = "color: red; font-size: 28px;", "Menu value:"),
+        tags$span(
+          style = "color: red; font-size: 28px;",
+          "Menu value:"
+        ),
         verbatimTextOutput("menuValue")
       )
 

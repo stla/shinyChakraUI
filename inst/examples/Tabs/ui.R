@@ -58,19 +58,22 @@ shinyUI(
         width = 6,
         #
         tags$span(
-          style = "color: red; font-size: 28px;", "Tabs value (index):"
+          style = "color: red; font-size: 28px;",
+          "Tabs value (index):"
         ),
         verbatimTextOutput("tabsValue"),
         #
         br(),
         tags$span(
-          style = "color: red; font-size: 28px;", "RadioGroup value:"
+          style = "color: red; font-size: 28px;",
+          "RadioGroup value:"
         ),
         verbatimTextOutput("radiogroupValue"),
         #
         br(),
         tags$span(
-          style = "color: red; font-size: 28px;", "Selectize value:"
+          style = "color: red; font-size: 28px;",
+          "Selectize value:"
         ),
         verbatimTextOutput("selectizeValue"),
       )

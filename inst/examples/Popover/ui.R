@@ -63,7 +63,10 @@ shinyUI(
 
       column(
         width = 6,
-        tags$span(style = "color: red; font-size: 28px;", "Popover value:"),
+        tags$span(
+          style = "color: red; font-size: 28px;",
+          "Popover value:"
+        ),
         verbatimTextOutput("popoverValue")
       )
 

@@ -1213,25 +1213,65 @@ const chakraComponent = (
     component.widget === "drawer"
   ){ 
     delete component.widget;
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen, onOpen, onClose } = 
+      useDisclosure({defaultIsOpen: component.isOpen});
     const btnRef = React.useRef();
     shinyValue.add(props.id, null);
-    const setShinyValue = (value) => Shiny.setInputValue(props.id, value);
-    let funcs = {
-      OpenButton: onOpen,
-      ClosingButton: onClose,
-      Button: (e) => {
-        let value = e.currentTarget.dataset.val;
-        if(value !== undefined){
-          setShinyValue(value);
-          shinyValue.set(props.id, value);
-        }
+    const setShinyValue = (e) => {
+      const value = e.currentTarget.dataset.val;
+      if(value !== undefined){
+        Shiny.setInputValue(props.id, value);
+        shinyValue.set(props.id, value);
       }
+    };
+    const [disabled, setDisabled] = React.useState(false);
+    const funcs = {
+      OpenButton: onOpen,
+      OpenIconButton: onOpen,
+      ClosingButton: (e) => {
+        setShinyValue(e);
+        onClose();
+      },
+      ClosingIconButton: (e) => {
+        setShinyValue(e);
+        onClose();
+      },
+      CancelButton: (e) => {
+        setShinyValue(e);
+        onClose();
+      },
+      CancelIconButton: (e) => {
+        setShinyValue(e);
+        onClose();
+      },
+      DisableButton: (e) => {
+        setShinyValue(e);
+        onClose();
+        setDisabled(true);
+      },
+      DisableIconButton: (e) => {
+        setShinyValue(e);
+        onClose();
+        setDisabled(true);
+      },
+      RemoveButton: (e) => {
+        setShinyValue(e);
+        onClose();
+        $("#" + props.id).remove();
+      },
+      RemoveIconButton: (e) => {
+        setShinyValue(e);
+        onClose();
+        $("#" + props.id).remove();
+      },
+      Button: setShinyValue,
+      IconButton: setShinyValue
     };
     mergeOnClick(component, funcs, states, inputId);
     patch = {
       OpenButton: {
-        ref: btnRef
+        ref: btnRef,
+        isDisabled: disabled
       },
       Drawer: {
         isOpen: isOpen,

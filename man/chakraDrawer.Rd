@@ -8,6 +8,7 @@ chakraDrawer(
   inputId,
   openButton,
   options = chakraDrawerOptions(),
+  isOpen = FALSE,
   closeButton = TRUE,
   header,
   body,
@@ -20,6 +21,8 @@ chakraDrawer(
 \item{openButton}{a Chakra button to open the drawer}
 
 \item{options}{list of options created with \code{\link{chakraDrawerOptions}}}
+
+\item{isOpen}{Boolean, whether the drawer is initially open}
 
 \item{closeButton}{Boolean, whether to include a closing button}
 

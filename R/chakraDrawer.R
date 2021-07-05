@@ -67,6 +67,7 @@ chakraDrawerOptions <- function(
 #' @param inputId widget id
 #' @param openButton a Chakra button to open the drawer
 #' @param options list of options created with \code{\link{chakraDrawerOptions}}
+#' @param isOpen Boolean, whether the drawer is initially open
 #' @param closeButton Boolean, whether to include a closing button
 #' @param header a \code{DrawerHeader} element
 #' @param body a \code{DrawerBody} element
@@ -131,10 +132,11 @@ chakraDrawerOptions <- function(
 #' }
 chakraDrawer <- function(
   inputId, openButton, options = chakraDrawerOptions(),
-  closeButton = TRUE, header, body, footer
+  isOpen = FALSE, closeButton = TRUE, header, body, footer
 ){
   stopifnot(isChakraButton(openButton))
   openButton[["attribs"]][["action"]] <- "open"
+  stopifnot(isBoolean(isOpen))
   stopifnot(isBoolean(closeButton))
   stopifnot(isReactComponent(header))
   stopifnot(isReactComponent(body))
@@ -169,6 +171,7 @@ chakraDrawer <- function(
     )
   )
   component[["widget"]] <- "drawer"
+  component[["isOpen"]] <- isOpen
   component
 }
 

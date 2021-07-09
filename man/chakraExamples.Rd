@@ -11,5 +11,7 @@ List of Chakra examples.
 }
 \examples{
 chakraExamples()
-chakraExample("MenuWithGroups")
+if(interactive()){
+  chakraExample("MenuWithGroups")
+}
 }

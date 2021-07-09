@@ -6,6 +6,10 @@ library(shiny)
 library(shinyChakraUI)
 ```
 
+The `shinyChakraUI` package is a wrapper of the React library
+`Chakra UI`. A very good documentation of this library is available at
+<https://chakra-ui.com/>.
+
 # Basics
 
 -   Use `chakraPage` to define your Shiny UI.

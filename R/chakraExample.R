@@ -5,6 +5,7 @@
 #'
 #' @examples
 #' chakraExamples()
+#' chakraExample("MenuWithGroups")
 chakraExamples <- function(){
   Folder <- system.file("examples", package = "shinyChakraUI")
   Examples <- list.dirs(Folder, full.names = FALSE, recursive = FALSE)

@@ -16,3 +16,4 @@
 ^inst/ztemp$
 ^inst/V8/V8tests$
 ^cran-comments\.md$
+^CRAN-RELEASE$

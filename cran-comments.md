@@ -1,3 +1,6 @@
+This is a resubmission. I fixed the 'Title' field, it was not in title case.
+
+
 ## Test environments
 
 * local R installation, R 3.6.2

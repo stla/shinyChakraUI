@@ -15,6 +15,9 @@
 #' @param decrementStepperColor color of the decrement stepper
 #' @param ... other attributes of \code{NumberInput}
 #'
+#' @return A list of options to be passed to the
+#'   \code{numericInputOptions} argument in \code{\link{chakraCombinedSlider}}.
+#'
 #' @importFrom htmltools validateCssUnit
 #' @export
 numberInputOptions <- function(

@@ -9,6 +9,10 @@ chakraPage(...)
 \arguments{
 \item{...}{elements to include within the page}
 }
+\value{
+A UI definition that can be passed to the
+  \code{\link[shiny:shinyUI]{shinyUI}} function.
+}
 \description{
 Function to be used as the \code{ui} element of a Shiny app;
   it is intended to contain some \code{\link{chakraComponent}} elements.

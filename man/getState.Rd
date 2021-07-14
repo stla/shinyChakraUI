@@ -9,6 +9,9 @@ getState(state)
 \arguments{
 \item{state}{name of the state}
 }
+\value{
+A list like the return value of \code{\link{jseval}}.
+}
 \description{
 Get the value of a React state.
 }

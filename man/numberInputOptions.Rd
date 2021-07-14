@@ -40,6 +40,10 @@ e.g. \code{"3px"} or \code{"medium"}}
 
 \item{...}{other attributes of \code{NumberInput}}
 }
+\value{
+A list of options to be passed to the
+  \code{numericInputOptions} argument in \code{\link{chakraCombinedSlider}}.
+}
 \description{
 Create a list of options to be passed to the
   \code{numericInputOptions} argument in \code{\link{chakraCombinedSlider}}.

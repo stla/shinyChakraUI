@@ -6,6 +6,9 @@
 \usage{
 chakraExamples()
 }
+\value{
+No return value, only prints a message listing the Chakra examples.
+}
 \description{
 List of Chakra examples.
 }

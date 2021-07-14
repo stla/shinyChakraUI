@@ -6,6 +6,9 @@
 \usage{
 chakraIcons()
 }
+\value{
+The names of the Chakra icons in a vector.
+}
 \description{
 List of Chakra icons.
 }

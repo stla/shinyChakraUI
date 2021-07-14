@@ -94,6 +94,9 @@ parsedJSX2component <- function(jsx, ctx){
 #' @param jsxString JSX code given as a string
 #' @param clipboard whether to copy the output to the clipboard
 #'
+#' @return No return value, only prints the code in the console and copy it
+#'   to the clipboard if \code{clipboard = TRUE}.
+#'
 #' @export
 #' @importFrom formatR tidy_source
 #'

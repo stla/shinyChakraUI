@@ -11,6 +11,10 @@ jsxString2code(jsxString, clipboard = TRUE)
 
 \item{clipboard}{whether to copy the output to the clipboard}
 }
+\value{
+No return value, only prints the code in the console and copy it
+  to the clipboard if \code{clipboard = TRUE}.
+}
 \description{
 Given a JSX string, this function prints the code of the
   corresponding React component that can be used in

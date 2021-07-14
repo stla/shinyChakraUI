@@ -7,7 +7,10 @@
 jseval(code)
 }
 \arguments{
-\item{code}{JavaScript code given as a sting}
+\item{code}{JavaScript code given as a string}
+}
+\value{
+A list containing the URL-encoded JavaScript code.
 }
 \description{
 Evaluate JavaScript code in the application.

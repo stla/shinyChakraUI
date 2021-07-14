@@ -9,6 +9,9 @@ useRef(initialValue = NA)
 \arguments{
 \item{initialValue}{optional initial value}
 }
+\value{
+A list like the return value of \code{\link{jseval}}.
+}
 \description{
 The React `useRef` hook.
 }

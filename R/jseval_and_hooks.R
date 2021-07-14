@@ -1,7 +1,9 @@
 #' @title Evaluate JS code
 #' @description Evaluate JavaScript code in the application.
 #'
-#' @param code JavaScript code given as a sting
+#' @param code JavaScript code given as a string
+#'
+#' @return A list containing the URL-encoded JavaScript code.
 #'
 #' @export
 #' @importFrom utils URLencode
@@ -43,6 +45,8 @@ jseval <- function(code){
 #' @description Get the value of a React state.
 #'
 #' @param state name of the state
+#'
+#' @return A list like the return value of \code{\link{jseval}}.
 #'
 #' @export
 #' @seealso \code{\link{withStates}}
@@ -124,6 +128,8 @@ getState <- function(state){
 #'
 #' @param value a string
 #'
+#' @return A list containing some URL-encoded JavaScript code.
+#'
 #' @export
 #' @importFrom utils URLencode
 #' @details See \href{https://chakra-ui.com/docs/hooks/use-clipboard}{useClipboard}.
@@ -199,7 +205,10 @@ useClipboard <- function(value){
 
 #' @title The `useRef` hook
 #' @description The React `useRef` hook.
+#'
 #' @param initialValue optional initial value
+#'
+#' @return A list like the return value of \code{\link{jseval}}.
 #'
 #' @export
 #' @importFrom jsonlite toJSON
@@ -217,6 +226,8 @@ useRef <- function(initialValue = NA){
 #' @description The `useDisclosure` hook.
 #'
 #' @param defaultIsOpen Boolean, the initial value of the \code{isOpen} property
+#'
+#' @return A list containing some URL-encoded JavaScript code.
 #'
 #' @export
 #' @importFrom utils URLencode
@@ -284,6 +295,8 @@ useDisclosure <- function(defaultIsOpen = FALSE){
 #' @title The `useToast` hook
 #' @description The `useToast` hook.
 #'
+#' @return A list containing some URL-encoded JavaScript code.
+#'
 #' @export
 #' @importFrom utils URLencode
 #' @note It does not work well. Use \code{\link{createStandaloneToast}} instead.
@@ -293,6 +306,8 @@ useToast <- function(){
 
 #' @title The `createStandaloneToast` hook
 #' @description The `createStandaloneToast` hook.
+#'
+#' @return A list containing some URL-encoded JavaScript code.
 #'
 #' @export
 #' @importFrom utils URLencode
@@ -356,6 +371,8 @@ createStandaloneToast <- function(){
 #' @param hook the name of the hook, usually created in the \code{states} list
 #'   of the \code{\link{withStates}} function
 #' @param property the hook property you want to get
+#'
+#' @return A list like the return value of \code{\link{jseval}}.
 #'
 #' @export
 getHookProperty <- function(hook, property){

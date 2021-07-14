@@ -27,7 +27,10 @@ fixjsx <- function(jsx){ # assumes `checkjsx` has been executed before
 #' @description Create a JSX element.
 #'
 #' @param element the JSX element given as a string
-#' @param preamble JavaScript code to run before
+#' @param preamble JavaScript code to run before, given as a string
+#'
+#' @return A list containing the URL-encoded strings \code{element}
+#'   and \code{preamble}.
 #'
 #' @export
 #' @importFrom utils URLencode

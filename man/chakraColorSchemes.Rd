@@ -6,6 +6,9 @@
 \usage{
 chakraColorSchemes()
 }
+\value{
+The names of the Chakra color schemes in a vector.
+}
 \description{
 List of Chakra color schemes (to use as a \code{colorScheme}
   attribute in e.g. Chakra buttons).

@@ -1,6 +1,8 @@
 #' @title Chakra examples
 #' @description List of Chakra examples.
 #'
+#' @return No return value, only prints a message listing the Chakra examples.
+#'
 #' @export
 #'
 #' @examples
@@ -22,6 +24,8 @@ chakraExamples <- function(){
 #' @param display.mode the display mode to use when running the example; see
 #'   \code{\link[shiny:runApp]{runApp}}
 #' @param ... arguments passed to \code{\link[shiny:runApp]{runApp}}
+#'
+#' @return No return value, just launches a Shiny app.
 #'
 #' @export
 #' @importFrom shiny runApp

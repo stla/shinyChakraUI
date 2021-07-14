@@ -9,6 +9,9 @@ useDisclosure(defaultIsOpen = FALSE)
 \arguments{
 \item{defaultIsOpen}{Boolean, the initial value of the \code{isOpen} property}
 }
+\value{
+A list containing some URL-encoded JavaScript code.
+}
 \description{
 The `useDisclosure` hook.
 }

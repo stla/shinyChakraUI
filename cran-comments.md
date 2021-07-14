@@ -1,4 +1,4 @@
-This is a resubmission. I fixed the 'Title' field, it was not in title case.
+This is a resubmission. I completed the `@return` fields of the documentations.
 
 
 ## Test environments

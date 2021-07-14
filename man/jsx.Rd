@@ -9,7 +9,11 @@ jsx(element, preamble = "")
 \arguments{
 \item{element}{the JSX element given as a string}
 
-\item{preamble}{JavaScript code to run before}
+\item{preamble}{JavaScript code to run before, given as a string}
+}
+\value{
+A list containing the URL-encoded strings \code{element}
+  and \code{preamble}.
 }
 \description{
 Create a JSX element.

@@ -12,6 +12,9 @@ of the \code{\link{withStates}} function}
 
 \item{property}{the hook property you want to get}
 }
+\value{
+A list like the return value of \code{\link{jseval}}.
+}
 \description{
 Chakra hooks are JavaScript objects; this function allows to
   get a property (key) of a hook. See \code{\link{useDisclosure}} for an

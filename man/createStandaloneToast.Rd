@@ -6,6 +6,9 @@
 \usage{
 createStandaloneToast()
 }
+\value{
+A list containing some URL-encoded JavaScript code.
+}
 \description{
 The `createStandaloneToast` hook.
 }

@@ -6,6 +6,9 @@
 \usage{
 useToast()
 }
+\value{
+A list containing some URL-encoded JavaScript code.
+}
 \description{
 The `useToast` hook.
 }

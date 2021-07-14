@@ -11,6 +11,10 @@ chakraComponent(componentId, ...)
 
 \item{...}{elements to include within the component}
 }
+\value{
+A Shiny widget to use in a UI definition, preferably in
+  \code{\link{chakraPage}}.
+}
 \description{
 Create a Chakra component.
 }

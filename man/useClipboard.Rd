@@ -9,6 +9,9 @@ useClipboard(value)
 \arguments{
 \item{value}{a string}
 }
+\value{
+A list containing some URL-encoded JavaScript code.
+}
 \description{
 The `useClipboard` hook.
 }

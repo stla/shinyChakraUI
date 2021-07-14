@@ -10,6 +10,8 @@
 #'   \code{\link{jsx}} function, a Shiny widget, or some HTML code created with
 #'   the \code{\link[htmltools:HTML]{HTML}} function
 #'
+#' @return No return value, called for side effect.
+#'
 #' @export
 #' @importFrom utils URLencode
 #' @seealso \code{\link{withStates}}
@@ -222,6 +224,9 @@ withStates <- function(component, states){
 #'
 #' @param ... elements to include within the page
 #'
+#' @return A UI definition that can be passed to the
+#'   \code{\link[shiny:shinyUI]{shinyUI}} function.
+#'
 #' @importFrom htmltools htmlDependency tags attachDependencies
 #' @export
 chakraPage <- function(...){
@@ -251,6 +256,9 @@ chakraPage <- function(...){
 #'
 #' @param componentId component id
 #' @param ... elements to include within the component
+#'
+#' @return A Shiny widget to use in a UI definition, preferably in
+#'   \code{\link{chakraPage}}.
 #'
 #' @importFrom reactR createReactShinyInput
 #' @importFrom htmltools htmlDependency tags attachDependencies
@@ -299,6 +307,8 @@ chakraComponent <- function(componentId, ...){
 #' @description List of Chakra color schemes (to use as a \code{colorScheme}
 #'   attribute in e.g. Chakra buttons).
 #'
+#' @return The names of the Chakra color schemes in a vector.
+#'
 #' @export
 #'
 #' @examples
@@ -328,6 +338,8 @@ chakraColorSchemes <- function(){
 
 #' @title Chakra icons
 #' @description List of Chakra icons.
+#'
+#' @return The names of the Chakra icons in a vector.
 #'
 #' @export
 #' @details See \href{https://chakra-ui.com/docs/media-and-icons/icon#all-icons}{all chakra icons}.

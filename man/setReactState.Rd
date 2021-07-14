@@ -19,6 +19,9 @@ to JSON, a React component, a JSX element created with the
 \code{\link{jsx}} function, a Shiny widget, or some HTML code created with
 the \code{\link[htmltools:HTML]{HTML}} function}
 }
+\value{
+No return value, called for side effect.
+}
 \description{
 Set a React state from the Shiny server.
 }

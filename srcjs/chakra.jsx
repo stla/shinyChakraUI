@@ -167,7 +167,11 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbSeparator,
-  Portal
+  Portal,
+  RangeSlider,
+  RangeSliderTrack,
+  RangeSliderFilledTrack,
+  RangeSliderThumb
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -475,7 +479,11 @@ const ChakraComponents = {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbSeparator,
-  Portal
+  Portal,
+  RangeSlider,
+  RangeSliderTrack,
+  RangeSliderFilledTrack,
+  RangeSliderThumb
 };
 
 const ChakraTags = Object.keys(ChakraComponents);
@@ -1715,6 +1723,51 @@ const chakraComponent = (
         Shiny.setInputValue(props.id, val);
         shinyValue.set(props.id, val);
         setSliderValue(val);
+      };
+    }
+  }else if( /******************************************** WIDGET RANGE SLIDER */
+    component.widget === "rangeslider"
+  ){
+    let rslider = component.children[component.children.length - 1];
+    const defaultValue = rslider.attribs.defaultValue;
+    //props.class = "chakraShiny";
+    props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
+    shinyValue.add(props.id, defaultValue);
+    const tooltip = rslider.children[1].name === "Tooltip";
+    let rsliderValue = null;
+    let rsetSliderValue = () => {};
+    if(tooltip){
+      [rsliderValue, rsetSliderValue] = React.useState(defaultValue);
+      let tooltipleft = rslider.children[1]; 
+      const tooltipleftAttribs = $.extend(tooltipleft.attribs, {label: rsliderValue[0]});
+      const thumbleftAttribs = tooltipleft.children[0].attribs;
+      rslider.children[1] = 
+          <Tooltip {...tooltipleftAttribs}>
+            <RangeSliderThumb {...thumbleftAttribs}/>
+          </Tooltip>;
+      let tooltipright = rslider.children[2]; 
+      const tooltiprightAttribs = $.extend(tooltipright.attribs, {label: rsliderValue[1]});
+      const thumbrightAttribs = tooltipright.children[0].attribs;
+      rslider.children[2] = 
+          <Tooltip {...tooltiprightAttribs}>
+            <RangeSliderThumb {...thumbrightAttribs}/>
+          </Tooltip>;
+    }
+    if(component.shinyValueOn === "end"){
+      rslider.attribs.onChangeEnd = (val) => {
+        Shiny.setInputValue(props.id, val);
+        shinyValue.set(props.id, val);
+      };
+      if(tooltip){
+        rslider.attribs.onChange = (val) => {
+          rsetSliderValue(val);
+        };  
+      }
+    }else{
+      rslider.attribs.onChange = (val) => {
+        Shiny.setInputValue(props.id, val);
+        shinyValue.set(props.id, val);
+        rsetSliderValue(val);
       };
     }
   }else if( /****************************************** WIDGET COMBINEDSLIDER */

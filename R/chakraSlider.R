@@ -82,7 +82,7 @@ sliderMarkOptions <- function(
 }
 
 #' @title Slider tooltip options
-#' @description Defined the slider tooltip options.
+#' @description Define the slider tooltip options.
 #'
 #' @param hasArrow whether to include an arrow
 #' @param backgroundColor background color
@@ -343,7 +343,7 @@ chakraSlider <- function(
 #' @export
 #' @importFrom htmltools validateCssUnit tags
 #'
-#' @examples
+#' @examples # Run `chakraExample("RangeSlider")` to see a better example.
 #' library(shiny)
 #' library(shinyChakraUI)
 #'

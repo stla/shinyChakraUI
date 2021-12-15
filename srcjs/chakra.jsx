@@ -763,7 +763,7 @@ const setState = (states, inputId) => ((state, value) => {
 
 
 const Eval = (ev, states, inputId) => {
-  const scope = $.extend(Hooks, {
+  const scope = $.extend(Hooks, ChakraComponents, {
     states: states,
     getState: getState(states, inputId),
     setState: setState(states, inputId),
@@ -1057,6 +1057,15 @@ const jsxParser = (jsxString, preamble, inputId, states) => {
   return output;
 };
 
+
+const childToAttribs = (component, shinyValue, inputId) => {
+  let attribs = component.attribs;
+  if(isNonEmptyArray(component.children)){
+    const child = chakraComponent(component.children[0], shinyValue, {}, {}, inputId);
+    attribs = $.extend(attribs, {children: child});
+  }
+  return attribs;
+};
 
 /* MAIN FUNCTION ----------------------------------------------------------- */
 const chakraComponent = (
@@ -1690,18 +1699,20 @@ const chakraComponent = (
     props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
     shinyValue.add(props.id, defaultValue);
     const sliderMark = slider.children.length === 3;
-    const tooltip = slider.children[1].name === "Tooltip";
+    const hastooltip = slider.children[1].name === "Tooltip";
     let sliderValue = null;
     let setSliderValue = () => {};
-    if(sliderMark || tooltip){
+    if(sliderMark || hastooltip){
       [sliderValue, setSliderValue] = React.useState(defaultValue);
       let child1 = slider.children[1]; 
       if(sliderMark){
         child1.attribs.value = sliderValue;
         child1.children = [sliderValue];
       }else{ // tooltip
-        const tooltipAttribs = $.extend(child1.attribs, {label: sliderValue});
-        const thumbAttribs = child1.children[0].attribs;
+        const tooltip = child1;
+        const tooltipAttribs = $.extend(tooltip.attribs, {label: sliderValue});
+        const thumb = tooltip.children[0];
+        const thumbAttribs = childToAttribs(thumb, shinyValue, inputId);
         slider.children[1] = 
           <Tooltip {...tooltipAttribs}>
             <SliderThumb {...thumbAttribs}/>
@@ -1739,15 +1750,23 @@ const chakraComponent = (
     if(tooltip){
       [rsliderValue, rsetSliderValue] = React.useState(defaultValue);
       let tooltipleft = rslider.children[1]; 
+      tooltipleft.attribs = $.extend(tooltipleft.attribs, {label: rsliderValue[0]});
       const tooltipleftAttribs = $.extend(tooltipleft.attribs, {label: rsliderValue[0]});
-      const thumbleftAttribs = tooltipleft.children[0].attribs;
+      const thumbleft = tooltipleft.children[0];
+      const thumbleftAttribs = childToAttribs(thumbleft, shinyValue, inputId);
+      // let thumbleftAttribs = thumbleft.attribs;
+      // if(isNonEmptyArray(thumbleft.children)){
+      //   const child = chakraComponent(thumbleft.children[0], shinyValue, {}, {}, inputId);
+      //   thumbleftAttribs = $.extend(thumbleftAttribs, {children: child});
+      // }
       rslider.children[1] = 
           <Tooltip {...tooltipleftAttribs}>
             <RangeSliderThumb {...thumbleftAttribs}/>
           </Tooltip>;
       let tooltipright = rslider.children[2]; 
       const tooltiprightAttribs = $.extend(tooltipright.attribs, {label: rsliderValue[1]});
-      const thumbrightAttribs = tooltipright.children[0].attribs;
+      const thumbright = tooltipright.children[0];
+      const thumbrightAttribs = childToAttribs(thumbright, shinyValue, inputId);
       rslider.children[2] = 
           <Tooltip {...tooltiprightAttribs}>
             <RangeSliderThumb {...thumbrightAttribs}/>
@@ -1780,11 +1799,13 @@ const chakraComponent = (
     props["data-shinyinitvalue"] = JSON.stringify(defaultValue);
     shinyValue.add(props.id, defaultValue);
     const [sliderValue, setSliderValue] = React.useState(defaultValue);
-    const tooltip = slider.children[1].name === "Tooltip";
-    if(tooltip){
-      const child1 = slider.children[1]; 
-      const tooltipAttribs = $.extend(child1.attribs, {label: sliderValue});
-      const thumbAttribs = child1.children[0].attribs;
+    const hastooltip = slider.children[1].name === "Tooltip";
+    if(hastooltip){
+      const tooltip = slider.children[1]; 
+      const tooltipAttribs = $.extend(tooltip.attribs, {label: sliderValue});
+      const thumb = tooltip.children[0];
+      const thumbAttribs = childToAttribs(thumb, shinyValue, inputId);
+      //const thumbAttribs = child1.children[0].attribs;
       slider.children[1] = 
         <Tooltip {...tooltipAttribs}>
           <SliderThumb {...thumbAttribs}/>

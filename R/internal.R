@@ -135,6 +135,10 @@ shinyTag <- function(name, attribs = emptyNamedList, children = list(), ...){
   stopifnot(isString(name))
   stopifnot(isNamedList(attribs))
   stopifnot(isUnnamedList(children))
+  if("children" %in% names(attribs)){
+    children <- append(children, list(attribs[["children"]]))
+    attribs[["children"]] <- NULL
+  }
   structure(
     list(
       name = name,

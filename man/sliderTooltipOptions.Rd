@@ -32,5 +32,5 @@ A list of attributes for usage in \code{\link{chakraSlider}} or
   \code{\link{chakraCombinedSlider}}.
 }
 \description{
-Defined the slider tooltip options.
+Define the slider tooltip options.
 }

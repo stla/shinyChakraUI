@@ -86,6 +86,7 @@ A widget to use in \code{\link{chakraComponent}}.
 Create a Chakra range slider.
 }
 \examples{
+# Run `chakraExample("RangeSlider")` to see a better example.
 library(shiny)
 library(shinyChakraUI)
 

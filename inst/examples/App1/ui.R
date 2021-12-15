@@ -1,5 +1,6 @@
 library(shiny)
 library(shinyChakraUI)
+library(fontawesome)
 
 shinyUI(
   chakraPage(
@@ -36,8 +37,12 @@ shinyUI(
                   value = "table",
                   Tag$Stack(
                     direction = "row",
-                    Tag$Radio(value = "table", "Table"),
-                    Tag$Radio(value = "plot", "Graphic")
+                    Tag$Radio(
+                      value = "table", tags$span(fa_i("table"), " Table")
+                    ),
+                    Tag$Radio(
+                      value = "plot", tags$span(fa_i("chart-line"), " Graphic")
+                    )
                   )
                 ),
                 Tag$Spacer(),

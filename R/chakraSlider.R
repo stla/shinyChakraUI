@@ -86,18 +86,20 @@ sliderMarkOptions <- function(
 #'
 #' @param hasArrow whether to include an arrow
 #' @param backgroundColor background color
+#' @param color content color
 #' @param placement tooltip placement; see
 #'   \href{https://chakra-ui.com/docs/overlay/tooltip#placement}{tooltip placement}
 #' @param closeOnClick whether to close the tooltip on click
 #' @param isOpen whether the tooltip is open
 #' @param ... other attributes passed to \code{Tooltip}
 #'
-#' @return A list of attributes for usage in \code{\link{chakraSlider}} or
-#'   \code{\link{chakraCombinedSlider}}.
+#' @return A list of attributes for usage in \code{\link{chakraSlider}},
+#'   \code{\link{chakraCombinedSlider}}, or \code{\link{chakraRangeSlider}}.
 #' @export
 sliderTooltipOptions <- function(
   hasArrow = TRUE,
   backgroundColor = "red.600",
+  color = "white",
   placement = "top",
   closeOnClick = FALSE,
   isOpen = TRUE,
@@ -114,6 +116,7 @@ sliderTooltipOptions <- function(
   list(
     hasArrow = hasArrow,
     bg = validateColor(backgroundColor),
+    color = validateColor(color),
     placement = placement,
     closeOnClick = closeOnClick,
     isOpen = isOpen,

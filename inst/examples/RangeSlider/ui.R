@@ -1,5 +1,6 @@
 library(shiny)
 library(shinyChakraUI)
+library(fontawesome)
 
 shinyUI(
   chakraPage(
@@ -29,7 +30,7 @@ shinyUI(
         "slider",
         label = tags$span(
           style="font-family: cursive;",
-          "I have icons on my thumbs!"
+          "I have Chakra icons on my thumbs!"
         ),
         values = c(2, 8),
         min = 0, max = 10,
@@ -54,7 +55,54 @@ shinyUI(
         ),
         shinyValueOn = "end",
         minStepsBetweenThumbs = 4
+      ),
+
+      br(), Tag$Divider(), br(),
+
+      Tag$Box(
+        Tag$Text(
+          as = "mark",
+          fontSize = "xl",
+          "You can also use 'fontawesome' icons:"
+        )
+      ),
+
+      br(),
+
+      chakraRangeSlider(
+        "vslider",
+        label = tags$span(
+          style="font-family: cursive;",
+          "I have fontawesome icons on my thumbs!"
+        ),
+        values = c(2, 8),
+        min = 0, max = 10,
+        step = 0.5,
+        orientation = "vertical",
+        width = 0,
+        size = "lg",
+        trackColor = "cyan",
+        filledTrackColor = "navy",
+        tooltip = TRUE,
+        tooltipOptions = sliderTooltipOptions(
+          backgroundColor = "aliceblue",
+          color = "black",
+          placement = "right"
+        ),
+        thumbOptionsLeft = sliderThumbOptions(
+          width = 22, height = 22,
+          color = "yellow",
+          children = fa_i("arrow-down")
+        ),
+        thumbOptionsRight = sliderThumbOptions(
+          width = 22, height = 22,
+          color = "yellow",
+          children = fa_i("arrow-up")
+        ),
+        minStepsBetweenThumbs = 4,
+        minH = "150"
       )
+
 
     )
 

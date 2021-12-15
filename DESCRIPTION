@@ -32,7 +32,8 @@ Imports:
     stringr,
     grDevices,
     utils,
-    formatR
+    formatR,
+    fontawesome
 Suggests: 
     testthat (>= 3.0.0),
     V8

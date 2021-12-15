@@ -228,6 +228,7 @@ withStates <- function(component, states){
 #'   \code{\link[shiny:shinyUI]{shinyUI}} function.
 #'
 #' @importFrom htmltools htmlDependency tags attachDependencies
+#' @importFrom fontawesome fa_html_dependency
 #' @export
 chakraPage <- function(...){
   attachDependencies(
@@ -246,7 +247,8 @@ chakraPage <- function(...){
         src = "www/css",
         stylesheet = "chakra.css",
         package = "shinyChakraUI"
-      )
+      ),
+      fa_html_dependency()
     )
   )
 }

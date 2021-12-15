@@ -7,6 +7,7 @@
 sliderTooltipOptions(
   hasArrow = TRUE,
   backgroundColor = "red.600",
+  color = "white",
   placement = "top",
   closeOnClick = FALSE,
   isOpen = TRUE,
@@ -18,6 +19,8 @@ sliderTooltipOptions(
 
 \item{backgroundColor}{background color}
 
+\item{color}{content color}
+
 \item{placement}{tooltip placement; see
 \href{https://chakra-ui.com/docs/overlay/tooltip#placement}{tooltip placement}}
 
@@ -28,8 +31,8 @@ sliderTooltipOptions(
 \item{...}{other attributes passed to \code{Tooltip}}
 }
 \value{
-A list of attributes for usage in \code{\link{chakraSlider}} or
-  \code{\link{chakraCombinedSlider}}.
+A list of attributes for usage in \code{\link{chakraSlider}},
+  \code{\link{chakraCombinedSlider}}, or \code{\link{chakraRangeSlider}}.
 }
 \description{
 Define the slider tooltip options.

@@ -136,7 +136,11 @@ shinyTag <- function(name, attribs = emptyNamedList, children = list(), ...){
   stopifnot(isNamedList(attribs))
   stopifnot(isUnnamedList(children))
   if("children" %in% names(attribs)){
-    children <- append(children, list(attribs[["children"]]))
+    child <- attribs[["children"]]
+    if(isShinyTag(child) && !isReactComponent(child)){
+      child <- HTML(as.character(child))
+    }
+    children <- append(children, list(child))
     attribs[["children"]] <- NULL
   }
   structure(

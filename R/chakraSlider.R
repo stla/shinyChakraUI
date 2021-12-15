@@ -8,8 +8,8 @@
 #' @param borderWidth thumb border width
 #' @param ... other attributes passed to \code{SliderThumb}
 #'
-#' @return A list of attributes for usage in \code{\link{chakraSlider}} or
-#'   \code{\link{chakraCombinedSlider}}.
+#' @return A list of attributes for usage in \code{\link{chakraSlider}},
+#'   \code{\link{chakraCombinedSlider}}, or \code{\link{chakraRangeSlider}}.
 #'
 #' @export
 #' @importFrom htmltools validateCssUnit

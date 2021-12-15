@@ -135,7 +135,6 @@ unclassComponent <- function(component, inputId, call){
       )
     }else{
       htmltools::htmlDependencies(component) <- NULL
-      #component <- list("__html" = URLencode(as.character(component)))
     }
   }else if(!isChakraIcon(component) && grepl("Icon$", component[["name"]])){
     if(component[["name"]] %notin% chakraIcons()){

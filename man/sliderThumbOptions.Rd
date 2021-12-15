@@ -27,8 +27,8 @@ sliderThumbOptions(
 \item{...}{other attributes passed to \code{SliderThumb}}
 }
 \value{
-A list of attributes for usage in \code{\link{chakraSlider}} or
-  \code{\link{chakraCombinedSlider}}.
+A list of attributes for usage in \code{\link{chakraSlider}},
+  \code{\link{chakraCombinedSlider}}, or \code{\link{chakraRangeSlider}}.
 }
 \description{
 Define the Chakra slider thumb options.

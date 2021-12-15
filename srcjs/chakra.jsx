@@ -1724,7 +1724,7 @@ const chakraComponent = (
         Shiny.setInputValue(props.id, val);
         shinyValue.set(props.id, val);
       };
-      if(sliderMark || tooltip){
+      if(sliderMark || hastooltip){
         slider.attribs.onChange = (val) => {
           setSliderValue(val);
         };  

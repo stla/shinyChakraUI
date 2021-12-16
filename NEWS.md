@@ -6,6 +6,10 @@
 * Dependency to the 'fontawesome' package. Fontawesome icons can be used on 
 the thumbs of the sliders.
 
+* Added the Super Tiny Icons.
+
+* Added the ionicons.
+
 
 
 # shinyChakraUI 1.0.0

@@ -16,6 +16,8 @@ ui <- chakraPage(
   chakraComponent(
     "mycomponent",
 
+    Tag$WomanIonIcon(boxSize=100),
+
     withStates(
       Tag$Fragment(
 

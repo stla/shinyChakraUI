@@ -20,7 +20,9 @@ Authors@R: c(
     person(given = "Terence",
            family = "Eden",
            role = "cph",
-           comment = "'SuperTinyIcons' library (https://github.com/edent/SuperTinyIcons/)"))
+           comment = "'SuperTinyIcons' library (https://github.com/edent/SuperTinyIcons/)"),
+    person(given = "Ionic (http://ionic.io/)",
+           role = "cph"))       
 Description: Makes the 'React' library 'Chakra UI' usable in 'Shiny' apps. 'Chakra UI' components include alert dialogs, drawers (sliding panels), menus, modals, popovers, sliders, and more. 
 License: GPL (>= 3)
 Encoding: UTF-8

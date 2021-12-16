@@ -137,7 +137,7 @@ unclassComponent <- function(component, inputId, call){
       htmltools::htmlDependencies(component) <- NULL
     }
   }else if(!isChakraIcon(component) && grepl("Icon$", component[["name"]])){
-    if(component[["name"]] %notin% chakraIcons()){
+    if(component[["name"]] %notin% allIcons()){
       stop(
         sprintf("Invalid icon '%s'.", component[["name"]]),
         call. = FALSE
@@ -180,7 +180,7 @@ unclassComponent <- function(component, inputId, call){
       component[["attribs"]][[attribname]] <- URLencode(attrib)
     }
     if(isReactComponent(attrib) && grepl("Icon$", attrib[["name"]])){
-      if(attrib[["name"]] %notin% chakraIcons()){
+      if(attrib[["name"]] %notin% allIcons()){
         stop(
           sprintf("Invalid icon '%s'.", attrib[["name"]]),
           call. = FALSE

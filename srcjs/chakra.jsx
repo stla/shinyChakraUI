@@ -172,7 +172,8 @@ import {
   RangeSliderTrack,
   RangeSliderFilledTrack,
   RangeSliderThumb,
-  Icon
+  Icon,
+  Link
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -3626,7 +3627,8 @@ const ChakraComponents = {
   RangeSlider,
   RangeSliderTrack,
   RangeSliderFilledTrack,
-  RangeSliderThumb
+  RangeSliderThumb,
+  Link
 };
 
 const ChakraTags = Object.keys(ChakraComponents);

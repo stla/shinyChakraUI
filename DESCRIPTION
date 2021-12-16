@@ -16,7 +16,11 @@ Authors@R: c(
            comment = "'json-normalize.js'"),
     person(given = "RubyLouvre",
            role = "cph",
-           comment = "'jsx-parser' library"))
+           comment = "'jsx-parser' library"),
+    person(given = "Terence",
+           family = "Eden",
+           role = "cph",
+           comment = "'SuperTinyIcons' library (https://github.com/edent/SuperTinyIcons/)"))
 Description: Makes the 'React' library 'Chakra UI' usable in 'Shiny' apps. 'Chakra UI' components include alert dialogs, drawers (sliding panels), menus, modals, popovers, sliders, and more. 
 License: GPL (>= 3)
 Encoding: UTF-8

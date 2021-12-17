@@ -65,6 +65,10 @@ isBoolean <- function(x){
   is.logical(x) && (length(x) == 1L) && !is.na(x)
 }
 
+isPositiveInteger <- function(x){
+  is.numeric(x) && length(x) == 1L && !is.na(x) && floor(x) == x && x != 0
+}
+
 emptyNamedList <- `names<-`(list(), character(0L))
 
 randomString <- function(size){

@@ -10,6 +10,8 @@ the thumbs of the sliders.
 
 * Added the ionicons.
 
+* Added the pin input widget (`chakraPinInput`).
+
 
 
 # shinyChakraUI 1.0.0

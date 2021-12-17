@@ -15213,6 +15213,30 @@ const chakraComponent = (
       shinyValue.set(props.id, valNumber);
       setSliderValue(valNumber);
     };
+  }else if ( /********************************************** WIDGET PIN INPUT */
+    component.widget === "pininput"
+  ) {
+    const nchildren = component.children.length;
+    let pininput = component.children[nchildren-1].children[0];
+    const nfields = pininput.children.length;
+    const defaultValue = pininput.attribs.defaultValue;
+    if(defaultValue.length === nfields){
+      props["data-shinyinitvalue"] = defaultValue;
+      shinyValue.add(props.id, defaultValue);
+    }else{
+      props["data-shinyinitvalue"] = "";
+      shinyValue.add(props.id, "");
+    }
+    pininput.attribs.onComplete = (value) => {
+      Shiny.setInputValue(props.id, value);
+      shinyValue.set(props.id, value);
+    };
+    pininput.attribs.onChange = (value) => {
+      if(value.length < nfields){
+        Shiny.setInputValue(props.id, "");
+        shinyValue.set(props.id, "");  
+      }
+    };
   }
   /* ------------------------------------------------------------------------ */
   for (const key in props) {

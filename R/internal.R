@@ -130,6 +130,8 @@ asShinyTag <- function(x){
   structure(x, class = "shiny.tag")
 }
 
+#' @importFrom htmltools HTML
+#' @noRd
 shinyTag <- function(name, attribs = emptyNamedList, children = list(), ...){
   if(invalidNamedDotsList(list(...))){
     stop(

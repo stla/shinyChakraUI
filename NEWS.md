@@ -1,4 +1,4 @@
-# shinyChakraUI 1.0.0.9000
+# shinyChakraUI 1.1.0
 
 * Added the range slider (`chakraRangeSlider`), provided by the new version of 
 **Chakra UI**.

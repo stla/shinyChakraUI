@@ -1,6 +1,6 @@
 Package: shinyChakraUI
 Title: A Wrapper of the 'React' Library 'Chakra UI' for 'Shiny'
-Version: 1.0.0.9000
+Version: 1.1.0
 Authors@R: c(
     person(given = "Stéphane",
            family = "Laurent",

@@ -1,6 +1,6 @@
-# shinyChakraUI 1.1.0.9000
+# shinyChakraUI 1.1.1
 
-* Fixed `createStandaloneToast`.
+* Fixed `createStandaloneToast`, it didn't work.
 
 
 # shinyChakraUI 1.1.0
